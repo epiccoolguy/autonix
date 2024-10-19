@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/zsh
 
 if [ -z "$(xcode-select --print-path 2> /dev/null)" ];
 then
