@@ -23,8 +23,10 @@ if ! type "nix" > /dev/null; then
   . /etc/zprofile && . /etc/zshrc
 fi
 
-# clone the nix config repository
-nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
+if [ ! -d  "$HOME/.config/nix" ]; then
+  # clone the nix config repository
+  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
+fi
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
 nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
