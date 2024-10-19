@@ -19,6 +19,9 @@ curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 # load system-wide profile changes from nix
 source /etc/zprofile && source /etc/zshrc
 
+# clone the nix config repository
+nix-shell -p git --run 'git clone https://github.com/epiccoolguy/autonix ~/.config/nix'
+
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
 nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake ~/.config/nix
 
