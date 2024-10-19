@@ -1,4 +1,4 @@
-#! /bin/zsh
+#! /bin/sh
 
 # inform softwareupdate to fetch command line tools
 touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
@@ -20,10 +20,10 @@ curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 source /etc/zprofile && source /etc/zshrc
 
 # clone the nix config repository
-nix-shell -p git --run 'git clone https://github.com/epiccoolguy/autonix ~/.config/nix'
+nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake ~/.config/nix
+nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
 
 # load system-wide profile changes from nix-darwin
 source /etc/zshenv && source /etc/zprofile && source /etc/zshrc

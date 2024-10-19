@@ -161,7 +161,7 @@
           programs.zsh = {
             enable = true;
             shellAliases = {
-              switch = "darwin-rebuild switch --flake ~/.config/nix";
+              switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
             };
           };
 
@@ -180,8 +180,8 @@
     in
     {
       # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#Miguels-MacBook-Air
-      darwinConfigurations."Miguels-MacBook-Air" = nix-darwin.lib.darwinSystem {
+      # $ darwin-rebuild build --flake .#mac
+      darwinConfigurations.mac = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           nix-homebrew.darwinModules.nix-homebrew
@@ -218,7 +218,7 @@
       };
 
       # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations."Miguels-MacBook-Air".pkgs;
+      darwinPackages = self.darwinConfigurations.mac.pkgs;
 
       # Enable nixfmt as formatter
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
