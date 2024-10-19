@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/zsh
 
 # inform softwareupdate to fetch command line tools
 touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
@@ -16,11 +16,11 @@ rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
 # download and install nix
 curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 
-# launch a new shell to load system-wide profile changes from nix
-exec zsh
+# load system-wide profile changes from nix
+source /etc/zprofile && source /etc/zshrc
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
 nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake ~/.config/nix
 
-# launch a new shell to load system-wide profile changes from nix-darwin
-exec zsh
+# load system-wide profile changes from nix-darwin
+source /etc/zshenv && source /etc/zprofile && source /etc/zshrc
