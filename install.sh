@@ -31,5 +31,4 @@ fi
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
 nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
 
-# load system-wide profile changes from nix-darwin
-source /etc/zshenv && source /etc/zprofile && source /etc/zshrc
+echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
