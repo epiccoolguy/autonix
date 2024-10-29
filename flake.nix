@@ -22,6 +22,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs =
@@ -34,6 +35,7 @@
       homebrew-cask,
       homebrew-bundle,
       home-manager,
+      mac-app-util,
     }:
     let
       configuration =
@@ -207,12 +209,16 @@
               mutableTaps = false;
             };
           }
+          mac-app-util.darwinModules.default
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.verbose = true;
             home-manager.users.miguel = homeconfig;
+            home-manager.sharedModules = [
+              mac-app-util.homeManagerModules.default
+            ];
           }
         ];
       };
