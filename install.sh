@@ -29,13 +29,6 @@ if ! type "nix" > /dev/null; then
   # download and install nix
   curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 
-  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/zshrc > /dev/null
-  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/bashrc > /dev/null
-  echo "ssl-cert-file = $CA_BUNDLE" | sudo tee -a /etc/nix/nix.conf > /dev/null
-
-  # restart nix-daemon after updating nix.conf
-  sudo launchctl kickstart -k system/org.nixos.nix-daemon
-
   # load system-wide profile changes from nix
   . /etc/zprofile && . /etc/zshrc
 fi
