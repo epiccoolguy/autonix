@@ -35,10 +35,10 @@ fi
 
 if [ ! -d  "$HOME/.config/nix" ]; then
   # clone the nix config repository
-  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
+  nix-shell --option ssl-cert-file $CA_BUNDLE -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
 fi
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
+nix run --ssl-cert-file $CA_BUNDLE --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
