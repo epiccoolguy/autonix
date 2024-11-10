@@ -29,16 +29,27 @@ if ! type "nix" > /dev/null; then
   # download and install nix
   curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 
+  # temporarily add configuration to use the created bundle
+  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/zshrc > /dev/null
+  echo "ssl-cert-file = $CA_BUNDLE" | sudo tee -a /etc/nix/nix.conf > /dev/null
+
+  # restart nix-daemon after updating nix.conf
+  sudo launchctl kickstart -k system/org.nixos.nix-daemon
+
   # load system-wide profile changes from nix
   . /etc/zprofile && . /etc/zshrc
+
+  # remove configuration after reloading so nix-darwin will not complain about unrecognised changes
+  cat /etc/zshrc | tail -r | tail -n +2 | tail -r | sudo tee /etc/zshrc > /dev/null
+  cat /etc/nix/nix.conf | tail -r | tail -n +2 | tail -r | sudo tee /etc/nix/nix.conf > /dev/null
 fi
 
 if [ ! -d  "$HOME/.config/nix" ]; then
   # clone the nix config repository
-  nix-shell --option ssl-cert-file $CA_BUNDLE -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
+  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
 fi
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-nix run --ssl-cert-file $CA_BUNDLE --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
+nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
