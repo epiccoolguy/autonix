@@ -116,6 +116,10 @@
 
           # Enable using Touch ID authentication for `sudo`
           security.pam.enableSudoTouchIdAuth = true;
+
+          nix.extraOptions = ''
+            ssl-cert-file = /Users/miguel/.config/ssl/ca-bundle.crt
+          '';
         };
       homeconfig =
         { pkgs, ... }:
