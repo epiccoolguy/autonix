@@ -160,6 +160,7 @@
               init.defaultBranch = "master";
               push.autoSetupRemote = true;
               credential.helper = "/run/current-system/sw/bin/git-credential-manager";
+              credential.useHttpPath = true;
             };
           };
         };
