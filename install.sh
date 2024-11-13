@@ -28,21 +28,21 @@ export NIX_SSL_CERT_FILE=$CA_BUNDLE
 if ! type "nix" > /dev/null; then
   # download and install nix
   curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
+
+  # temporarily add configuration to use the created bundle
+  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/zshrc > /dev/null
+  echo "ssl-cert-file = $CA_BUNDLE" | sudo tee -a /etc/nix/nix.conf > /dev/null
+
+  # restart nix-daemon after updating nix.conf
+  sudo launchctl kickstart -k system/org.nixos.nix-daemon
+
+  # load system-wide profile changes from nix
+  . /etc/zprofile && . /etc/zshrc
+
+  # remove configuration after reloading so nix-darwin will not complain about unrecognised changes
+  cat /etc/zshrc | tail -r | tail -n +2 | tail -r | sudo tee /etc/zshrc > /dev/null
+  cat /etc/nix/nix.conf | tail -r | tail -n +2 | tail -r | sudo tee /etc/nix/nix.conf > /dev/null
 fi
-
-# temporarily add configuration to use the created bundle
-echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/zshrc > /dev/null
-echo "ssl-cert-file = $CA_BUNDLE" | sudo tee -a /etc/nix/nix.conf > /dev/null
-
-# restart nix-daemon after updating nix.conf
-sudo launchctl kickstart -k system/org.nixos.nix-daemon
-
-# load system-wide profile changes from nix
-. /etc/zprofile && . /etc/zshrc
-
-# remove configuration after reloading so nix-darwin will not complain about unrecognised changes
-cat /etc/zshrc | tail -r | tail -n +2 | tail -r | sudo tee /etc/zshrc > /dev/null
-cat /etc/nix/nix.conf | tail -r | tail -n +2 | tail -r | sudo tee /etc/nix/nix.conf > /dev/null
 
 if [ ! -d  "$HOME/.config/nix" ]; then
   # clone the nix config repository
