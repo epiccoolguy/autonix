@@ -158,7 +158,7 @@
             extraConfig = {
               init.defaultBranch = "master";
               push.autoSetupRemote = true;
-              credential.helper = "/run/current-system/sw/bin/git-credential-manager";
+              credential.helper = "manager";
               credential.useHttpPath = true;
             };
           };
