@@ -55,9 +55,7 @@
             azure-cli
             bat
             fzf
-            git-credential-manager
             google-cloud-sdk
-            mkalias
             neovim
             nixfmt-rfc-style
             tmux
@@ -131,7 +129,8 @@
           programs.home-manager.enable = true;
 
           home.packages = with pkgs; [
-
+            git
+            git-credential-manager
           ];
 
           home.sessionVariables = {
