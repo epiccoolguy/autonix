@@ -132,6 +132,7 @@
             git-credential-manager
             nodejs_22
             pnpm
+            vscode
           ];
 
           home.sessionVariables = {
