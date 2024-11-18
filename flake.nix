@@ -159,6 +159,7 @@
             extraConfig = {
               init.defaultBranch = "master";
               push.autoSetupRemote = true;
+              pull.rebase = true;
               credential.helper = "manager";
               credential.useHttpPath = true;
             };
