@@ -130,6 +130,8 @@
           home.packages = with pkgs; [
             git
             git-credential-manager
+            nodejs_22
+            pnpm
           ];
 
           home.sessionVariables = {
