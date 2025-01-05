@@ -76,6 +76,7 @@
               "firefox"
               "google-chrome"
               "iina"
+              "transmission"
             ];
             masApps = {
               "WireGuard" = 1451685025;
