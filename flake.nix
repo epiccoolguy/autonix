@@ -18,6 +18,10 @@
       url = "github:homebrew/homebrew-bundle";
       flake = false;
     };
+    homebrew-powershell = {
+      url = "github:PowerShell/Homebrew-Tap";
+      flake = false;
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,6 +38,7 @@
       homebrew-core,
       homebrew-cask,
       homebrew-bundle,
+      homebrew-powershell,
       home-manager,
       mac-app-util,
     }:
@@ -70,6 +75,7 @@
             onActivation.upgrade = true;
             brews = [
               "mas"
+              "powershell/tap/powershell"
             ];
             casks = [
               "1password"
@@ -198,6 +204,7 @@
                 "homebrew/homebrew-core" = homebrew-core;
                 "homebrew/homebrew-cask" = homebrew-cask;
                 "homebrew/homebrew-bundle" = homebrew-bundle;
+                "powershell/homebrew-tap" = homebrew-powershell;
               };
 
               # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
