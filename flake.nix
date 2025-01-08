@@ -139,7 +139,7 @@
             git
             git-credential-manager
             nodejs_22
-            pnpm
+            nodejs_22.pkgs.pnpm
             vscode
           ];
 
