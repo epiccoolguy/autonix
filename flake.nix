@@ -57,7 +57,6 @@
           # $ nix-env -qaP | grep wget
           environment.systemPackages = with pkgs; [
             awscli2
-            azure-cli
             bat
             fzf
             google-cloud-sdk
@@ -136,6 +135,9 @@
           programs.home-manager.enable = true;
 
           home.packages = with pkgs; [
+            (azure-cli.withExtensions [
+              azure-cli.extensions.azure-devops
+            ])
             git
             git-credential-manager
             nodejs_22
