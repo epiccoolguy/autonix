@@ -137,6 +137,22 @@
         "type": "github"
       }
     },
+    "homebrew-mssql": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1728315581,
+        "narHash": "sha256-xxr0wUaiuTaWYW7vwLtG813GyCy81zgV1nGXsxgkYHk=",
+        "owner": "microsoft",
+        "repo": "homebrew-mssql-release",
+        "rev": "a960992fa212f06df2716b24d7b370ed05ccfc03",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microsoft",
+        "repo": "homebrew-mssql-release",
+        "type": "github"
+      }
+    },
     "homebrew-powershell": {
       "flake": false,
       "locked": {
@@ -300,6 +316,7 @@
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
+        "homebrew-mssql": "homebrew-mssql",
         "homebrew-powershell": "homebrew-powershell",
         "mac-app-util": "mac-app-util",
         "nix-darwin": "nix-darwin",

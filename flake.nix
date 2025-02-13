@@ -22,6 +22,10 @@
       url = "github:PowerShell/Homebrew-Tap";
       flake = false;
     };
+    homebrew-mssql = {
+      url = "github:microsoft/homebrew-mssql-release";
+      flake = false;
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,6 +43,7 @@
       homebrew-cask,
       homebrew-bundle,
       homebrew-powershell,
+      homebrew-mssql,
       home-manager,
       mac-app-util,
     }:
@@ -76,6 +81,7 @@
               "mas"
               "openssl"
               "powershell/tap/powershell"
+              "microsoft/mssql-release/mssql-tools18"
             ];
             casks = [
               "1password"
@@ -156,6 +162,9 @@
             shellAliases = {
               switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
             };
+            initExtra = ''
+              export HOMEBREW_ACCEPT_EULA=Y;
+            '';
           };
 
           programs.alacritty = {
@@ -236,6 +245,7 @@
                 "homebrew/homebrew-cask" = homebrew-cask;
                 "homebrew/homebrew-bundle" = homebrew-bundle;
                 "powershell/homebrew-tap" = homebrew-powershell;
+                "microsoft/homebrew-mssql-release" = homebrew-mssql;
               };
 
               # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
