@@ -194,6 +194,8 @@
             EDITOR = "nvim";
           };
 
+          home.shell.enableShellIntegration = true;
+
           home.file.".alacritty.toml".source = ./.alacritty.toml;
 
           programs.zsh = {
@@ -219,7 +221,10 @@
 
           programs.fzf = {
             enable = true;
-            enableZshIntegration = true;
+          };
+
+          programs.zoxide = {
+            enable = true;
           };
 
           programs.alacritty = {
