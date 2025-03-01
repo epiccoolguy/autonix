@@ -197,6 +197,7 @@
               "files.trimFinalNewLines" = true;
               "files.trimTrailingWhitespace" = true;
               "git.autofetch" = "all";
+              "git.confirmSync" = false;
               "npm.packageManager" = "pnpm";
               "typescript.enablePromptUseWorkspaceTsdk" = true;
               "window.autoDetectColorScheme" = true;
