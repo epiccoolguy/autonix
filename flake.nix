@@ -104,7 +104,7 @@
           };
 
           # Auto upgrade nix package and the daemon service.
-          services.nix-daemon.enable = true;
+          nix.enable = true;
           # nix.package = pkgs.nix;
 
           # Necessary for using flakes on this system.
@@ -125,7 +125,7 @@
           nixpkgs.hostPlatform = "aarch64-darwin";
 
           # Enable using Touch ID authentication for `sudo`
-          security.pam.enableSudoTouchIdAuth = true;
+          security.pam.services.sudo_local.touchIdAuth = true;
 
           nix.extraOptions = ''
             ssl-cert-file = /Users/miguel/.config/ssl/ca-bundle.crt
