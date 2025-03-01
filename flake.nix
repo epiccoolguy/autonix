@@ -221,9 +221,22 @@
 
           programs.fzf = {
             enable = true;
+            defaultCommand = "fd --hidden --exclude .git";
+            fileWidgetCommand = "fd --hidden --exclude .git --type file";
+            fileWidgetOptions = [
+              "--preview='bat --color=always {}'"
+            ];
           };
 
           programs.zoxide = {
+            enable = true;
+          };
+
+          programs.fd = {
+            enable = true;
+          };
+
+          programs.bat = {
             enable = true;
           };
 
