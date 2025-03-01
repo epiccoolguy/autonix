@@ -297,6 +297,38 @@
                       command = "git.checkout";
                     }
                   ];
+
+                  globalSnippets = {
+                    generate-uuid = {
+                      prefix = [
+                        "uuid"
+                      ];
+                      body = [
+                        "\${UUID}"
+                      ];
+                      description = "Generate a version 4 UUID";
+                    };
+
+                    unix-timestamp = {
+                      prefix = [
+                        "unix"
+                      ];
+                      body = [
+                        "\${CURRENT_SECONDS_UNIX}"
+                      ];
+                      description = "The number of seconds since the Unix epoch";
+                    };
+
+                    iso8601-timestamp = {
+                      prefix = [
+                        "iso8601"
+                      ];
+                      body = [
+                        "\${CURRENT_YEAR}-\${CURRENT_MONTH}-\${CURRENT_DATE}T\${CURRENT_HOUR}:\${CURRENT_MINUTE}:\${CURRENT_SECOND}\${CURRENT_TIMEZONE_OFFSET}"
+                      ];
+                      description = "Current time expressed as ISO 8601 timestamp";
+                    };
+                  };
                 };
               };
             };
