@@ -63,7 +63,6 @@
           environment.systemPackages = with pkgs; [
             awscli2
             bat
-            fzf
             google-cloud-sdk
             neovim
             nixfmt-rfc-style
@@ -205,6 +204,11 @@
             initExtra = ''
               export HOMEBREW_ACCEPT_EULA=Y;
             '';
+          };
+
+          programs.fzf = {
+            enable = true;
+            enableZshIntegration = true;
           };
 
           programs.alacritty = {
