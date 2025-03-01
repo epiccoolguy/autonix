@@ -198,102 +198,92 @@
 
           home.file.".alacritty.toml".source = ./.alacritty.toml;
 
-          programs.zsh = {
-            enable = true;
-            enableCompletion = true;
-
-            syntaxHighlighting = {
+          programs = {
+            zsh = {
               enable = true;
+              enableCompletion = true;
+
+              syntaxHighlighting = {
+                enable = true;
+              };
+
+              autosuggestion = {
+                enable = true;
+              };
+
+              shellAliases = {
+                switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
+              };
+
+              initExtra = ''
+                export HOMEBREW_ACCEPT_EULA=Y;
+              '';
             };
 
-            autosuggestion = {
+            fzf = {
               enable = true;
+              defaultCommand = "fd --hidden --exclude .git";
+              fileWidgetCommand = "fd --hidden --exclude .git --type file";
+              fileWidgetOptions = [
+                "--preview='bat --color=always {}'"
+              ];
             };
 
-            shellAliases = {
-              switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
+            zoxide.enable = true;
+            fd.enable = true;
+            bat.enable = true;
+
+            git = {
+              enable = true;
+              userName = "Miguel Lo-A-Foe";
+              userEmail = "miguel@loafoe.dev";
+              ignores = [ ".DS_Store" ];
+              extraConfig = {
+                init.defaultBranch = "master";
+                push.autoSetupRemote = true;
+                credential.helper = "manager";
+              };
             };
 
-            initExtra = ''
-              export HOMEBREW_ACCEPT_EULA=Y;
-            '';
-          };
+            vscode = {
+              enable = true;
 
-          programs.fzf = {
-            enable = true;
-            defaultCommand = "fd --hidden --exclude .git";
-            fileWidgetCommand = "fd --hidden --exclude .git --type file";
-            fileWidgetOptions = [
-              "--preview='bat --color=always {}'"
-            ];
-          };
+              profiles = {
+                default = {
+                  userSettings = {
+                    "editor.defaultFormatter" = "esbenp.prettier-vscode";
+                    "editor.formatOnSave" = true;
+                    "editor.minimap.enabled" = false;
+                    "editor.tabSize" = 2;
+                    "eslint.useFlatConfig" = true;
+                    "files.encoding" = "utf8";
+                    "files.insertFinalNewLine" = true;
+                    "files.trimFinalNewLines" = true;
+                    "files.trimTrailingWhitespace" = true;
+                    "git.autofetch" = "all";
+                    "git.confirmSync" = false;
+                    "npm.packageManager" = "pnpm";
+                    "typescript.enablePromptUseWorkspaceTsdk" = true;
+                    "window.autoDetectColorScheme" = true;
+                    "workbench.colorTheme" = "GitHub Light Default";
+                    "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
+                    "workbench.preferredLightColorTheme" = "GitHub Light Default";
+                  };
 
-          programs.zoxide = {
-            enable = true;
-          };
-
-          programs.fd = {
-            enable = true;
-          };
-
-          programs.bat = {
-            enable = true;
-          };
-
-          programs.alacritty = {
-            enable = true;
-          };
-
-          programs.git = {
-            enable = true;
-            userName = "Miguel Lo-A-Foe";
-            userEmail = "miguel@loafoe.dev";
-            ignores = [ ".DS_Store" ];
-            extraConfig = {
-              init.defaultBranch = "master";
-              push.autoSetupRemote = true;
-              credential.helper = "manager";
-            };
-          };
-
-          programs.vscode = {
-            enable = true;
-
-            profiles = {
-              default = {
-                userSettings = {
-                  "editor.defaultFormatter" = "esbenp.prettier-vscode";
-                  "editor.formatOnSave" = true;
-                  "editor.minimap.enabled" = false;
-                  "editor.tabSize" = 2;
-                  "eslint.useFlatConfig" = true;
-                  "files.encoding" = "utf8";
-                  "files.insertFinalNewLine" = true;
-                  "files.trimFinalNewLines" = true;
-                  "files.trimTrailingWhitespace" = true;
-                  "git.autofetch" = "all";
-                  "git.confirmSync" = false;
-                  "npm.packageManager" = "pnpm";
-                  "typescript.enablePromptUseWorkspaceTsdk" = true;
-                  "window.autoDetectColorScheme" = true;
-                  "workbench.colorTheme" = "GitHub Light Default";
-                  "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
-                  "workbench.preferredLightColorTheme" = "GitHub Light Default";
+                  extensions = with pkgs.vscode-extensions; [
+                    bierner.markdown-mermaid
+                    davidanson.vscode-markdownlint
+                    dbaeumer.vscode-eslint
+                    editorconfig.editorconfig
+                    esbenp.prettier-vscode
+                    github.copilot
+                    github.copilot-chat
+                    github.github-vscode-theme
+                    mikestead.dotenv
+                    streetsidesoftware.code-spell-checker
+                    timonwong.shellcheck
+                  ];
                 };
-
-                extensions = with pkgs.vscode-extensions; [
-                  bierner.markdown-mermaid
-                  davidanson.vscode-markdownlint
-                  dbaeumer.vscode-eslint
-                  editorconfig.editorconfig
-                  esbenp.prettier-vscode
-                  github.copilot
-                  github.copilot-chat
-                  github.github-vscode-theme
-                  mikestead.dotenv
-                  streetsidesoftware.code-spell-checker
-                  timonwong.shellcheck
-                ];
               };
             };
           };
