@@ -186,39 +186,43 @@
           programs.vscode = {
             enable = true;
 
-            userSettings = {
-              "editor.defaultFormatter" = "esbenp.prettier-vscode";
-              "editor.formatOnSave" = true;
-              "editor.minimap.enabled" = false;
-              "editor.tabSize" = 2;
-              "eslint.useFlatConfig" = true;
-              "files.encoding" = "utf8";
-              "files.insertFinalNewLine" = true;
-              "files.trimFinalNewLines" = true;
-              "files.trimTrailingWhitespace" = true;
-              "git.autofetch" = "all";
-              "git.confirmSync" = false;
-              "npm.packageManager" = "pnpm";
-              "typescript.enablePromptUseWorkspaceTsdk" = true;
-              "window.autoDetectColorScheme" = true;
-              "workbench.colorTheme" = "GitHub Light Default";
-              "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
-              "workbench.preferredLightColorTheme" = "GitHub Light Default";
-            };
+            profiles = {
+              default = {
+                userSettings = {
+                  "editor.defaultFormatter" = "esbenp.prettier-vscode";
+                  "editor.formatOnSave" = true;
+                  "editor.minimap.enabled" = false;
+                  "editor.tabSize" = 2;
+                  "eslint.useFlatConfig" = true;
+                  "files.encoding" = "utf8";
+                  "files.insertFinalNewLine" = true;
+                  "files.trimFinalNewLines" = true;
+                  "files.trimTrailingWhitespace" = true;
+                  "git.autofetch" = "all";
+                  "git.confirmSync" = false;
+                  "npm.packageManager" = "pnpm";
+                  "typescript.enablePromptUseWorkspaceTsdk" = true;
+                  "window.autoDetectColorScheme" = true;
+                  "workbench.colorTheme" = "GitHub Light Default";
+                  "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
+                  "workbench.preferredLightColorTheme" = "GitHub Light Default";
+                };
 
-            extensions = with pkgs.vscode-extensions; [
-              bierner.markdown-mermaid
-              davidanson.vscode-markdownlint
-              dbaeumer.vscode-eslint
-              editorconfig.editorconfig
-              esbenp.prettier-vscode
-              github.copilot
-              github.copilot-chat
-              github.github-vscode-theme
-              mikestead.dotenv
-              streetsidesoftware.code-spell-checker
-              timonwong.shellcheck
-            ];
+                extensions = with pkgs.vscode-extensions; [
+                  bierner.markdown-mermaid
+                  davidanson.vscode-markdownlint
+                  dbaeumer.vscode-eslint
+                  editorconfig.editorconfig
+                  esbenp.prettier-vscode
+                  github.copilot
+                  github.copilot-chat
+                  github.github-vscode-theme
+                  mikestead.dotenv
+                  streetsidesoftware.code-spell-checker
+                  timonwong.shellcheck
+                ];
+              };
+            };
           };
         };
     in
