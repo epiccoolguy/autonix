@@ -198,9 +198,20 @@
 
           programs.zsh = {
             enable = true;
+            enableCompletion = true;
+
+            syntaxHighlighting = {
+              enable = true;
+            };
+
+            autosuggestion = {
+              enable = true;
+            };
+
             shellAliases = {
               switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
             };
+
             initExtra = ''
               export HOMEBREW_ACCEPT_EULA=Y;
             '';
