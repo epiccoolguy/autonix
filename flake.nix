@@ -285,6 +285,18 @@
                     streetsidesoftware.code-spell-checker
                     timonwong.shellcheck
                   ];
+
+                  keybindings = [
+                    {
+                      key = "shift+cmd+c";
+                      command = "-workbench.action.terminal.openNativeConsole";
+                      when = "!terminalFocus";
+                    }
+                    {
+                      key = "shift+cmd+c";
+                      command = "git.checkout";
+                    }
+                  ];
                 };
               };
             };
