@@ -183,6 +183,7 @@
             (azure-cli.withExtensions [
               azure-cli.extensions.azure-devops
             ])
+            curl
             git
             git-credential-manager
             nodejs_22
@@ -232,6 +233,7 @@
             zoxide.enable = true;
             fd.enable = true;
             bat.enable = true;
+            jq.enable = true;
 
             git = {
               enable = true;
