@@ -218,6 +218,18 @@
 
               initExtra = ''
                 export PROMPT='%n %~/ ? %? %% '
+
+                export LC_CTYPE=C
+
+                HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
+                HISTSIZE=1000000
+                SAVEHIST=1000000
+                setopt APPEND_HISTORY
+                setopt INC_APPEND_HISTORY
+                setopt HIST_IGNORE_DUPS
+
+                zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
                 export HOMEBREW_ACCEPT_EULA=Y;
               '';
             };
@@ -294,10 +306,12 @@
                     github.github-vscode-theme
                     humao.rest-client
                     mikestead.dotenv
+                    # ms-playwright.playwright
                     mechatroner.rainbow-csv
                     redhat.vscode-xml
                     streetsidesoftware.code-spell-checker
                     timonwong.shellcheck
+                    # typespec.typespec-vscode
                   ];
 
                   keybindings = [
