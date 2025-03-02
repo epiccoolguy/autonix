@@ -217,6 +217,7 @@
               };
 
               initExtra = ''
+                export PROMPT='%n %~/ ? %? %% '
                 export HOMEBREW_ACCEPT_EULA=Y;
               '';
             };
