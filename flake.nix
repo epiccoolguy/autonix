@@ -285,12 +285,16 @@
                     bierner.markdown-mermaid
                     davidanson.vscode-markdownlint
                     dbaeumer.vscode-eslint
+                    eamodio.gitlens
                     editorconfig.editorconfig
                     esbenp.prettier-vscode
                     github.copilot
                     github.copilot-chat
                     github.github-vscode-theme
+                    humao.rest-client
                     mikestead.dotenv
+                    mechatroner.rainbow-csv
+                    redhat.vscode-xml
                     streetsidesoftware.code-spell-checker
                     timonwong.shellcheck
                   ];
