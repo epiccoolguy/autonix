@@ -10,4 +10,5 @@ Update using the following command:
 
 ```sh
 nix flake update
+switch
 ```
