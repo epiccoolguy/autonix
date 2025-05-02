@@ -292,6 +292,7 @@
                     "workbench.colorTheme" = "GitHub Light Default";
                     "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
                     "workbench.preferredLightColorTheme" = "GitHub Light Default";
+                    "[xml]"."editor.defaultFormatter" = "redhat.vscode-xml";
                   };
 
                   extensions = with pkgs.vscode-extensions; [
