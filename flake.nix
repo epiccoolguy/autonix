@@ -325,6 +325,22 @@
                       key = "shift+cmd+c";
                       command = "git.checkout";
                     }
+                    {
+                      key = "ctrl+tab";
+                      command = "-workbench.action.quickOpenNavigateNextInEditorPicker";
+                    }
+                    {
+                      key = "ctrl+tab";
+                      command = "workbench.action.focusNextGroup";
+                    }
+                    {
+                      key = "ctrl+shift+tab";
+                      command = "-workbench.action.quickOpenNavigatePreviousInEditorPicker";
+                    }
+                    {
+                      key = "ctrl+shift+tab";
+                      command = "workbench.action.focusPreviousGroup";
+                    }
                   ];
 
                   globalSnippets = {
