@@ -282,6 +282,7 @@
                     "files.trimTrailingWhitespace" = true;
                     "git.autofetch" = "all";
                     "git.confirmSync" = false;
+"git.replaceTagsWhenPull" = true;
                     "gitlens.plusFeatures.enabled" = false;
                     "npm.packageManager" = "pnpm";
                     "redhat.telemetry.enabled" = false;
