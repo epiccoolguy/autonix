@@ -190,9 +190,9 @@
             git
             git-credential-manager
             k9s
+            kind
             kubectl
             kubernetes-helm
-            minikube
             nodejs_22
             nodejs_22.pkgs.pnpm
             podman
