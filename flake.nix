@@ -217,7 +217,7 @@
               };
 
               shellAliases = {
-                switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
+                switch = "sudo darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
               };
 
               initContent = ''
