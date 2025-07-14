@@ -69,7 +69,6 @@
             neovim
             nixfmt-rfc-style
             tmux
-            zoxide
           ];
 
           homebrew = {
@@ -192,6 +191,7 @@
             git-credential-manager
             nodejs_22
             nodejs_22.pkgs.pnpm
+            podman
             vscode
           ];
 
