@@ -218,6 +218,7 @@
 
               shellAliases = {
                 switch = "sudo darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
+                docker = "podman";
               };
 
               initContent = ''
