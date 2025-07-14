@@ -220,7 +220,7 @@
                 switch = "darwin-rebuild switch --flake \"$HOME/.config/nix#mac\"";
               };
 
-              initExtra = ''
+              initContent = ''
                 export PROMPT='%n %~/ ? %? %% '
 
                 export LC_CTYPE=C
