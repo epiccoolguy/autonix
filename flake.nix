@@ -185,6 +185,7 @@
               azure-cli.extensions.azure-devops
             ])
             curl
+            deno
             git
             git-credential-manager
             nodejs_22
