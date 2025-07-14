@@ -81,6 +81,7 @@
               "openssl"
               "powershell/tap/powershell"
               "microsoft/mssql-release/mssql-tools18"
+              "wimlib"
             ];
             casks = [
               "1password"
@@ -282,7 +283,7 @@
                     "files.trimTrailingWhitespace" = true;
                     "git.autofetch" = "all";
                     "git.confirmSync" = false;
-"git.replaceTagsWhenPull" = true;
+                    "git.replaceTagsWhenPull" = true;
                     "gitlens.plusFeatures.enabled" = false;
                     "npm.packageManager" = "pnpm";
                     "redhat.telemetry.enabled" = false;
