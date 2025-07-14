@@ -56,6 +56,8 @@
             home = "/Users/miguel";
           };
 
+          system.primaryUser = "miguel";
+
           nixpkgs.config.allowUnfree = true;
 
           # List packages installed in system profile. To search by name, run:
