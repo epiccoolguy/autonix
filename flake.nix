@@ -235,6 +235,8 @@
                 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
                 export HOMEBREW_ACCEPT_EULA=Y;
+
+                export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
               '';
             };
 
