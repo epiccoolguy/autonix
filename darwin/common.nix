@@ -22,17 +22,12 @@
       "openssl"
       "powershell/tap/powershell"
       "microsoft/mssql-release/mssql-tools18"
-      # "wimlib"
     ];
     casks = [
-      # "1password"
       "firefox"
       "google-chrome"
-      # "iina"
-      # "transmission"
     ];
     masApps = {
-      # "WireGuard" = 1451685025;
     };
   };
 
