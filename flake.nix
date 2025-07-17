@@ -48,15 +48,18 @@
       mac-app-util,
     }:
     let
+      username = "miguel";
+      fullname = "Miguel Lo-A-Foe";
+      email = "miguel@loafoe.dev";
       configuration =
         { pkgs, config, ... }:
         {
-          users.users.miguel = {
-            name = "miguel";
-            home = "/Users/miguel";
-          };
+          system.primaryUser = username;
 
-          system.primaryUser = "miguel";
+          users.users.${username} = {
+            name = username;
+            home = "/Users/${username}";
+          };
 
           nixpkgs.config.allowUnfree = true;
 
@@ -169,7 +172,7 @@
           security.pam.services.sudo_local.touchIdAuth = true;
 
           nix.extraOptions = ''
-            ssl-cert-file = /Users/miguel/.config/ssl/ca-bundle.crt
+            ssl-cert-file = /Users/${username}/.config/ssl/ca-bundle.crt
           '';
         };
       homeconfig =
@@ -263,8 +266,8 @@
 
             git = {
               enable = true;
-              userName = "Miguel Lo-A-Foe";
-              userEmail = "miguel@loafoe.dev";
+              userName = fullname;
+              userEmail = email;
               ignores = [ ".DS_Store" ];
               extraConfig = {
                 init.defaultBranch = "master";
@@ -415,7 +418,7 @@
               enableRosetta = false;
 
               # User owning the Homebrew prefix
-              user = "miguel";
+              user = username;
 
               # Declarative tap management
               taps = {
@@ -436,7 +439,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.verbose = true;
-            home-manager.users.miguel = homeconfig;
+            home-manager.users.${username} = homeconfig;
             home-manager.sharedModules = [
               mac-app-util.homeManagerModules.default
             ];
