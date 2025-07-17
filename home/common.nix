@@ -9,23 +9,28 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    awscli2
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
     ])
+    bat
     curl
     deno
     git
     git-credential-manager
+    google-cloud-sdk
     k9s
     kind
     kubectl
     kubernetes-helm
+    neovim
     nixd
     nixfmt-rfc-style
     nodejs_22
     nodejs_22.pkgs.pnpm
     podman
     skaffold
+    tmux
     vscode
   ];
 
