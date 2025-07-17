@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   inputs,
   ...
@@ -30,6 +31,10 @@
     masApps = {
     };
   };
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.monaspace
+  ];
 
   system.defaults = {
     NSGlobalDomain = {
