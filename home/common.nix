@@ -58,6 +58,7 @@
       shellAliases = {
         switch = "sudo darwin-rebuild switch --flake \"$HOME/.config/nix\"";
         docker = "podman";
+        createcacerts = "security export -t certs -p -o \"$HOME/.config/ssl/ca-certificates.crt\"";
       };
 
       initContent = ''

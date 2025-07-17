@@ -18,6 +18,6 @@
   };
 
   nix.extraOptions = ''
-    ssl-cert-file = /Users/AS33AI/.config/ssl/ca-bundle.crt
+    ssl-cert-file = /Users/AS33AI/.config/ssl/ca-certificates.crt
   '';
 }

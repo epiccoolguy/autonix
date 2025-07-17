@@ -16,23 +16,22 @@ then
 fi
 
 # create system certificate authority bundle to account for an HTTPS-intercepting man in the middle proxy
-CA_BUNDLE_DIR="$HOME/.config/ssl"
-CA_BUNDLE="$CA_BUNDLE_DIR/ca-bundle.crt"
-mkdir -p $CA_BUNDLE_DIR
-security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain > "$CA_BUNDLE"
-security find-certificate -a -p /Library/Keychains/System.keychain >> "$CA_BUNDLE"
+CERT_DIR="$HOME/.config/ssl"
+CERT="$CERT_DIR/ca-certificates.crt"
+mkdir -p $CERT_DIR
+security export -t certs -p -o "$CERT"
 
 # tell nix to use the created bundle instead of its own
-export NIX_SSL_CERT_FILE=$CA_BUNDLE
+export NIX_SSL_CERT_FILE=$CERT
 
 if ! type "nix" > /dev/null; then
   # download and install nix
   curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
 
   # temporarily add configuration to use the created bundle
-  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/bashrc > /dev/null
-  echo "export NIX_SSL_CERT_FILE=$CA_BUNDLE" | sudo tee -a /etc/zshrc > /dev/null
-  echo "ssl-cert-file = $CA_BUNDLE" | sudo tee -a /etc/nix/nix.conf > /dev/null
+  echo "export NIX_SSL_CERT_FILE=$CERT" | sudo tee -a /etc/bashrc > /dev/null
+  echo "export NIX_SSL_CERT_FILE=$CERT" | sudo tee -a /etc/zshrc > /dev/null
+  echo "ssl-cert-file = $CERT" | sudo tee -a /etc/nix/nix.conf > /dev/null
 
   # restart nix-daemon after updating nix.conf
   sudo launchctl kickstart -k system/org.nixos.nix-daemon
