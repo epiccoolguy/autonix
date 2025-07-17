@@ -297,6 +297,8 @@
                     "git.confirmSync" = false;
                     "git.replaceTagsWhenPull" = true;
                     "gitlens.plusFeatures.enabled" = false;
+                    "nix.enableLanguageServer" = true;
+                    "nix.serverPath" = "nixd";
                     "npm.packageManager" = "pnpm";
                     "redhat.telemetry.enabled" = false;
                     "security.workspace.trust.untrustedFiles" = "open";
@@ -308,6 +310,7 @@
                     "workbench.preferredLightColorTheme" = "GitHub Light Default";
                     "workbench.sideBar.location" = "right";
                     "[xml]"."editor.defaultFormatter" = "redhat.vscode-xml";
+                    "[nix]"."editor.defaultFormatter" = "jnoortheen.nix-ide";
                   };
 
                   extensions = with pkgs.vscode-extensions; [
