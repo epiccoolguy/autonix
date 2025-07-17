@@ -72,6 +72,39 @@
           ];
           specialArgs = { inherit inputs; };
         };
+        "MPCE-MBP-HKDC2N1VJ4" = nix-darwin.lib.darwinSystem {
+          modules = [
+            ./darwin/AS33AI.nix
+            mac-app-util.darwinModules.default
+            home-manager.darwinModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.AS33AI = import ./home/AS33AI.nix;
+              home-manager.sharedModules = [
+                mac-app-util.homeManagerModules.default
+              ];
+            }
+            nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                user = "AS33AI";
+                enable = true;
+                enableRosetta = false;
+                mutableTaps = false;
+
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                  "powershell/homebrew-tap" = homebrew-powershell;
+                  "microsoft/homebrew-mssql-release" = homebrew-mssql;
+                };
+              };
+            }
+          ];
+          specialArgs = { inherit inputs; };
+        };
       };
 
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
