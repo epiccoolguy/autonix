@@ -79,4 +79,6 @@
       spans-displays = false;
     };
   };
+
+  programs.zsh.enable = true;
 }
