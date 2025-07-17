@@ -31,4 +31,47 @@
     };
   };
 
+  system.defaults = {
+    NSGlobalDomain = {
+      "com.apple.trackpad.scaling" = 3.0; # Set "Tracking speed" to "Fast"
+      "com.apple.trackpad.forceClick" = true; # Enable "Force Click and haptic feedback"
+      KeyRepeat = 2; # Set "Key repeat rate" to "Fast"
+      InitialKeyRepeat = 15; # Set "Delay until repeat" to "Short"
+      "com.apple.keyboard.fnState" = true; # "Use F1, F2, etc as standard function keys"
+      NSDocumentSaveNewDocumentsToCloud = false; # Disable saving to iCloud by default
+    };
+
+    trackpad = {
+      FirstClickThreshold = 2; # Set "Click" to "Firm"
+    };
+
+    dock = {
+      tilesize = 16;
+      magnification = true;
+      largesize = 128;
+      autohide = true;
+      autohide-delay = 0.0;
+      autohide-time-modifier = 1.0;
+      show-recents = false;
+      mru-spaces = false;
+      expose-group-apps = true;
+    };
+
+    finder = {
+      AppleShowAllExtensions = true;
+      AppleShowAllFiles = true;
+      ShowPathbar = true;
+      ShowStatusBar = true;
+      FXPreferredViewStyle = "Nlsv";
+      _FXSortFoldersFirst = true;
+      _FXSortFoldersFirstOnDesktop = true;
+      FXDefaultSearchScope = "SCcf";
+      FXEnableExtensionChangeWarning = false;
+      NewWindowTarget = "Home";
+    };
+
+    spaces = {
+      spans-displays = false;
+    };
+  };
 }
