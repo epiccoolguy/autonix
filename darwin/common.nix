@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   ...
 }:
@@ -9,4 +10,30 @@
   system.stateVersion = 6;
 
   nixpkgs.hostPlatform = "aarch64-darwin";
+
+  homebrew = {
+    enable = true;
+    taps = builtins.attrNames config.nix-homebrew.taps;
+    onActivation.cleanup = "zap";
+    onActivation.autoUpdate = true;
+    onActivation.upgrade = true;
+    brews = [
+      "mas"
+      "openssl"
+      "powershell/tap/powershell"
+      "microsoft/mssql-release/mssql-tools18"
+      # "wimlib"
+    ];
+    casks = [
+      # "1password"
+      "firefox"
+      "google-chrome"
+      # "iina"
+      # "transmission"
+    ];
+    masApps = {
+      # "WireGuard" = 1451685025;
+    };
+  };
+
 }

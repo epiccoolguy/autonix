@@ -8,6 +8,17 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     mac-app-util.url = "github:hraban/mac-app-util";
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    homebrew-core.url = "github:homebrew/homebrew-core";
+    homebrew-core.flake = false;
+    homebrew-cask.url = "github:homebrew/homebrew-cask";
+    homebrew-cask.flake = false;
+    homebrew-bundle.url = "github:homebrew/homebrew-bundle";
+    homebrew-bundle.flake = false;
+    homebrew-powershell.url = "github:PowerShell/Homebrew-Tap";
+    homebrew-powershell.flake = false;
+    homebrew-mssql.url = "github:microsoft/homebrew-mssql-release";
+    homebrew-mssql.flake = false;
   };
 
   outputs =
@@ -17,6 +28,12 @@
       nixpkgs,
       home-manager,
       mac-app-util,
+      nix-homebrew,
+      homebrew-core,
+      homebrew-cask,
+      homebrew-bundle,
+      homebrew-powershell,
+      homebrew-mssql,
     }:
     {
       # Build darwin flake using:
@@ -34,6 +51,23 @@
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
               ];
+            }
+            nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                user = "miguel";
+                enable = true;
+                enableRosetta = false;
+                mutableTaps = false;
+
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                  "powershell/homebrew-tap" = homebrew-powershell;
+                  "microsoft/homebrew-mssql-release" = homebrew-mssql;
+                };
+              };
             }
           ];
           specialArgs = { inherit inputs; };
