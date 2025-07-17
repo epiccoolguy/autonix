@@ -193,6 +193,7 @@
             kind
             kubectl
             kubernetes-helm
+            nixd
             nodejs_22
             nodejs_22.pkgs.pnpm
             podman
