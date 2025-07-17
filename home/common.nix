@@ -21,6 +21,7 @@
     kubectl
     kubernetes-helm
     nixd
+    nixfmt-rfc-style
     nodejs_22
     nodejs_22.pkgs.pnpm
     podman
