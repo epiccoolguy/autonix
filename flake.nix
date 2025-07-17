@@ -321,6 +321,7 @@
                     github.copilot-chat
                     github.github-vscode-theme
                     humao.rest-client
+                    jnoortheen.nix-ide
                     mikestead.dotenv
                     # ms-playwright.playwright
                     mechatroner.rainbow-csv
