@@ -10,12 +10,10 @@
   users.users.miguel.home = "/Users/miguel";
 
   homebrew.brews = [
-    "waydabber/betterdisplay/betterdisplaycli"
     "wimlib"
   ];
   homebrew.casks = [
     "1password"
-    "betterdisplay"
     "iina"
     "transmission"
   ];
