@@ -19,6 +19,8 @@
     homebrew-powershell.flake = false;
     homebrew-mssql.url = "github:microsoft/homebrew-mssql-release";
     homebrew-mssql.flake = false;
+    homebrew-betterdisplay.url = "github:waydabber/homebrew-betterdisplay";
+    homebrew-betterdisplay.flake = false;
   };
 
   outputs =
@@ -34,6 +36,7 @@
       homebrew-bundle,
       homebrew-powershell,
       homebrew-mssql,
+      homebrew-betterdisplay,
     }:
     {
       # Build darwin flake using:
@@ -66,6 +69,7 @@
                   "homebrew/homebrew-bundle" = homebrew-bundle;
                   "powershell/homebrew-tap" = homebrew-powershell;
                   "microsoft/homebrew-mssql-release" = homebrew-mssql;
+                  "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
                 };
               };
             }
@@ -99,6 +103,7 @@
                   "homebrew/homebrew-bundle" = homebrew-bundle;
                   "powershell/homebrew-tap" = homebrew-powershell;
                   "microsoft/homebrew-mssql-release" = homebrew-mssql;
+                  "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
                 };
               };
             }

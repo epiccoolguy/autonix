@@ -29,6 +29,7 @@
       "google-chrome"
     ];
     masApps = {
+      Xcode = 497799835;
     };
   };
 
