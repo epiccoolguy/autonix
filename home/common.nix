@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 {
@@ -61,20 +62,32 @@
         createcacerts = "security export -t certs -p -o \"$HOME/.config/ssl/ca-certificates.crt\"";
       };
 
-      initContent = ''
-        export PROMPT='%n %~/ ? %? %% '
+      # Removed initExtra, replaced with ordered initContent below
 
-        HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
-        HISTSIZE=1000000
-        SAVEHIST=1000000
-        setopt APPEND_HISTORY
-        setopt INC_APPEND_HISTORY
-        setopt HIST_IGNORE_DUPS
+      initContent =
+        let
+          zshEarlyInit = lib.mkOrder 500 ''
+            [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+          '';
+          zshGeneralConfig = lib.mkOrder 1000 ''
+            export PROMPT='%n %~/ ? %? %% '
 
-        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+            HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
+            HISTSIZE=1000000
+            SAVEHIST=1000000
+            setopt APPEND_HISTORY
+            setopt INC_APPEND_HISTORY
+            setopt HIST_IGNORE_DUPS
 
-        export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
-      '';
+            zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+            export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
+          '';
+        in
+        lib.mkMerge [
+          zshEarlyInit
+          zshGeneralConfig
+        ];
     };
 
     fzf = {
