@@ -27,6 +27,7 @@
     casks = [
       "firefox"
       "google-chrome"
+      "drawio"
     ];
     masApps = {
       Xcode = 497799835;
