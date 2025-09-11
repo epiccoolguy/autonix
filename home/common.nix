@@ -112,7 +112,7 @@
         init.defaultBranch = "master";
         push.autoSetupRemote = true;
         credential.helper = "manager";
-        credential.credentialStore = "keychain";
+        credential.useHttpPath = true;
       };
     };
 

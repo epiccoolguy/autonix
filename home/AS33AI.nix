@@ -10,7 +10,6 @@
   home.homeDirectory = "/Users/AS33AI";
 
   programs.git.userEmail = "miguel.lo-a-foe@nn.nl";
-  programs.git.extraConfig.credential.azreposCredentialType = "pat";
 
   home.sessionVariables = {
     NIX_SSL_CERT_FILE = "/Users/AS33AI/.config/ssl/ca-certificates.crt";
