@@ -8,6 +8,7 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     mac-app-util.url = "github:hraban/mac-app-util";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     homebrew-core.url = "github:homebrew/homebrew-core";
     homebrew-core.flake = false;
@@ -37,6 +38,7 @@
       homebrew-powershell,
       homebrew-mssql,
       homebrew-betterdisplay,
+      nix-vscode-extensions,
     }:
     {
       # Build darwin flake using:
@@ -47,6 +49,11 @@
             ./darwin/miguel.nix
             mac-app-util.darwinModules.default
             home-manager.darwinModules.home-manager
+            {
+              nixpkgs.overlays = [
+                inputs.nix-vscode-extensions.overlays.default
+              ];
+            }
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
@@ -81,6 +88,11 @@
             ./darwin/AS33AI.nix
             mac-app-util.darwinModules.default
             home-manager.darwinModules.home-manager
+            {
+              nixpkgs.overlays = [
+                inputs.nix-vscode-extensions.overlays.default
+              ];
+            }
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;

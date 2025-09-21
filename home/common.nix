@@ -157,7 +157,7 @@
             "[nix]"."editor.defaultFormatter" = "jnoortheen.nix-ide";
           };
 
-          extensions = with pkgs.vscode-extensions; [
+          extensions = with pkgs.vscode-marketplace; [
             bierner.markdown-mermaid
             davidanson.vscode-markdownlint
             dbaeumer.vscode-eslint
@@ -170,12 +170,12 @@
             humao.rest-client
             jnoortheen.nix-ide
             mikestead.dotenv
-            # ms-playwright.playwright
             mechatroner.rainbow-csv
+            ms-playwright.playwright
             redhat.vscode-xml
             streetsidesoftware.code-spell-checker
             timonwong.shellcheck
-            # typespec.typespec-vscode
+            typespec.typespec-vscode
           ];
 
           keybindings = [
