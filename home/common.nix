@@ -20,10 +20,13 @@
     git
     git-credential-manager
     google-cloud-sdk
+    gradle
+    jdk
     k9s
     kind
     kubectl
     kubernetes-helm
+    maven
     neovim
     nixd
     nixfmt-rfc-style
@@ -169,13 +172,16 @@
             github.github-vscode-theme
             humao.rest-client
             jnoortheen.nix-ide
-            mikestead.dotenv
             mechatroner.rainbow-csv
+            mikestead.dotenv
             ms-playwright.playwright
             redhat.vscode-xml
             streetsidesoftware.code-spell-checker
             timonwong.shellcheck
             typespec.typespec-vscode
+            vmware.vscode-boot-dev-pack
+            vscjava.vscode-gradle
+            vscjava.vscode-java-pack
           ];
 
           keybindings = [
