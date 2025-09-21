@@ -73,7 +73,7 @@
             [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
           '';
           zshGeneralConfig = lib.mkOrder 1000 ''
-            export PROMPT='%n %~/ ? %? %% '
+            export PROMPT='%n %1~ ? %? %% '
 
             HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
             HISTSIZE=1000000
