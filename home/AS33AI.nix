@@ -11,6 +11,10 @@
 
   programs.git.userEmail = "miguel.lo-a-foe@nn.nl";
 
+  programs.git.extraConfig = {
+    credential."https://gitlab.insim.biz".useHttpPath = false;
+  };
+
   home.sessionVariables = {
     NIX_SSL_CERT_FILE = "/Users/AS33AI/.config/ssl/ca-certificates.crt";
     NODE_EXTRA_CA_CERTS = "/Users/AS33AI/.config/ssl/ca-certificates.crt";
