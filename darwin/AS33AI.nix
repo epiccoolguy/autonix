@@ -12,6 +12,7 @@
   homebrew.brews = [
   ];
   homebrew.casks = [
+    "soapui"
   ];
   homebrew.masApps = {
     "Windows App" = 1295203466;
