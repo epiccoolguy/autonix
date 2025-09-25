@@ -15,6 +15,7 @@
       azure-cli.extensions.azure-devops
     ])
     bat
+    bruno
     curl
     deno
     git
