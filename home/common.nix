@@ -126,6 +126,11 @@
       profiles = {
         default = {
           userSettings = {
+            "cSpell.dictionaries" = [
+              "aws"
+              "google"
+            ];
+            "cSpell.language" = "en-GB,nl";
             "editor.defaultFormatter" = "esbenp.prettier-vscode";
             "editor.formatOnSave" = true;
             "editor.insertSpaces" = true;
@@ -178,6 +183,9 @@
             ms-playwright.playwright
             redhat.vscode-xml
             streetsidesoftware.code-spell-checker
+            streetsidesoftware.code-spell-checker-british-english
+            streetsidesoftware.code-spell-checker-british-english-ise
+            streetsidesoftware.code-spell-checker-dutch
             timonwong.shellcheck
             typespec.typespec-vscode
             vmware.vscode-boot-dev-pack
