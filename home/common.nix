@@ -157,6 +157,7 @@
             "typescript.enablePromptUseWorkspaceTsdk" = true;
             "typescript.tsserver.log" = "off";
             "window.autoDetectColorScheme" = true;
+            "window.confirmBeforeClose" = "keyboardOnly";
             "window.restoreWindows" = "none";
             "workbench.colorTheme" = "GitHub Light Default";
             "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
