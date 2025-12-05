@@ -131,6 +131,7 @@
               "google"
             ];
             "cSpell.language" = "en-GB,nl";
+            "diffEditor.maxComputationTime" = 0;
             "editor.defaultFormatter" = "esbenp.prettier-vscode";
             "editor.formatOnSave" = true;
             "editor.insertSpaces" = true;
