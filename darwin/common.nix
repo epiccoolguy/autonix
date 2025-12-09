@@ -25,9 +25,10 @@
       "microsoft/mssql-release/mssql-tools18"
     ];
     casks = [
-      "firefox"
-      "google-chrome"
       "drawio"
+      "firefox"
+      "ghostty"
+      "google-chrome"
     ];
     masApps = {
       Xcode = 497799835;
