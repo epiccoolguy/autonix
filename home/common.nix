@@ -34,6 +34,7 @@
     nodejs_22
     nodejs_22.pkgs.pnpm
     podman
+    python3
     skaffold
     tmux
     vscode
@@ -64,6 +65,8 @@
         switch = "sudo darwin-rebuild switch --flake \"$HOME/.config/nix\"";
         docker = "podman";
         createcacerts = "security export -t certs -p -o \"$HOME/.config/ssl/ca-certificates.crt\"";
+        python = "python3";
+        pip = "pip3";
       };
 
       # Removed initExtra, replaced with ordered initContent below
