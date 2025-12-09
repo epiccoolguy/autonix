@@ -113,13 +113,15 @@
 
     git = {
       enable = true;
-      userName = "Miguel Lo-A-Foe";
       ignores = [ ".DS_Store" ];
-      extraConfig = {
-        init.defaultBranch = "master";
-        push.autoSetupRemote = true;
+      settings = {
         credential.helper = "manager";
         credential.useHttpPath = true;
+        init.defaultBranch = "master";
+        push.autoSetupRemote = true;
+        user = {
+          name = "Miguel Lo-A-Foe";
+        };
       };
     };
 

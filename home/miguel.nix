@@ -9,5 +9,5 @@
   home.username = "miguel";
   home.homeDirectory = "/Users/miguel";
 
-  programs.git.userEmail = "miguel@loafoe.dev";
+  programs.git.settings.user.email = "miguel@loafoe.dev";
 }

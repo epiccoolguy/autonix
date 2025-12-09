@@ -19,9 +19,9 @@ in
   home.username = "AS33AI";
   home.homeDirectory = "/Users/AS33AI";
 
-  programs.git.userEmail = "miguel.lo-a-foe@nn.nl";
+  programs.git.settings.user.email = "miguel.lo-a-foe@nn.nl";
 
-  programs.git.extraConfig = {
+  programs.git.settings = {
     credential."https://gitlab.insim.biz".useHttpPath = false;
   };
 
