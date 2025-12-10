@@ -22,6 +22,7 @@
     git-credential-manager
     google-cloud-sdk
     gradle
+    inetutils
     jdk
     k9s
     kind
