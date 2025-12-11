@@ -162,6 +162,7 @@
             "npm.packageManager" = "pnpm";
             "redhat.telemetry.enabled" = false;
             "security.workspace.trust.untrustedFiles" = "open";
+            "terminal.integrated.shellIntegration.enabled" = false;
             "typescript.enablePromptUseWorkspaceTsdk" = true;
             "typescript.tsserver.log" = "off";
             "window.autoDetectColorScheme" = true;
