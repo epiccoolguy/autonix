@@ -36,6 +36,7 @@
     nodejs_22.pkgs.pnpm
     podman
     python3
+    shellcheck
     skaffold
     tmux
     vscode
