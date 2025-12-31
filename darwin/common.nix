@@ -81,6 +81,10 @@
     spaces = {
       spans-displays = false;
     };
+
+    screencapture = {
+      disable-shadow = true; # Disable shadow in screenshots
+    };
   };
 
   programs.zsh.enable = true;
