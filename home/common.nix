@@ -32,8 +32,8 @@
     neovim
     nixd
     nixfmt-rfc-style
-    nodejs_22
-    nodejs_22.pkgs.pnpm
+    nodejs_24
+    nodejs_24.pkgs.pnpm
     podman
     python3
     shellcheck
