@@ -41,12 +41,15 @@ if ! type "nix" > /dev/null; then
 
 fi
 
-if [ -d  "$HOME/.config/nix" ]; then
+if [ -d  "/etc/nix-darwin" ]; then
   # update the nix config repository
-  nix-shell -p git --run "git pull -C $HOME/.config/nix"
+  nix-shell -p git --run "git -C /etc/nix-darwin/ pull"
 else
+  # create default config dir for nix-darwin
+  sudo mkdir -p /etc/nix-darwin
+  sudo chown $(id -nu):$(id -ng) /etc/nix-darwin
   # clone the nix config repository
-  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix $HOME/.config/nix"
+  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin"
 fi
 
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
@@ -54,6 +57,6 @@ sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "$HOME/.config/nix#mac"
+sudo -HE nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "/etc/nix-darwin"
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
