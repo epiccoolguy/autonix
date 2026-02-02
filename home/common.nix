@@ -30,7 +30,7 @@
     maven
     neovim
     nixd
-    nixfmt-rfc-style
+    nixfmt
     nodejs_24
     nodejs_24.pkgs.pnpm
     podman
