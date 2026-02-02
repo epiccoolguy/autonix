@@ -197,7 +197,6 @@
             streetsidesoftware.code-spell-checker-dutch
             timonwong.shellcheck
             typespec.typespec-vscode
-            vmware.vscode-boot-dev-pack
             vscjava.vscode-gradle
             vscjava.vscode-java-pack
           ];
