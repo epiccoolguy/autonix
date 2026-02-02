@@ -64,7 +64,7 @@
       };
 
       shellAliases = {
-        switch = "sudo darwin-rebuild switch --flake \"$HOME/.config/nix\"";
+        switch = "sudo darwin-rebuild switch";
         docker = "podman";
         createcacerts = "security export -t certs -p -o \"$HOME/.config/ssl/ca-certificates.crt\"";
         python = "python3";
