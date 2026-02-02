@@ -28,6 +28,7 @@
       "drawio"
       "firefox"
       "ghostty"
+      "git-credential-manager"
       "google-chrome"
     ];
     masApps = {

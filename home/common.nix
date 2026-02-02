@@ -19,7 +19,6 @@
     curl
     deno
     git
-    git-credential-manager
     google-cloud-sdk
     gradle
     inetutils
