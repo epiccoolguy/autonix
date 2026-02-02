@@ -57,6 +57,6 @@ sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-sudo -H NIX_SSL_CERT_FILE=$CERT nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake "/etc/nix-darwin"
+sudo -H NIX_SSL_CERT_FILE=$CERT nix --extra-experimental-features "nix-command flakes" run nix-darwin/master#darwin-rebuild -- switch
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
