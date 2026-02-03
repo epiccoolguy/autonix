@@ -46,7 +46,7 @@ sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 cd "$NIX_DARWIN_DIR"
 
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin"
+nix shell nixpkgs#git -c git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin
 sudo nix --extra-experimental-features "nix-command flakes" run nix-darwin/master#darwin-rebuild -- switch
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
