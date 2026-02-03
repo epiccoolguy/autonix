@@ -44,6 +44,45 @@
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .
       darwinConfigurations = {
+        "tests-Virtual-Machine" = nix-darwin.lib.darwinSystem {
+          modules = [
+            ./darwin/miguel.nix
+            mac-app-util.darwinModules.default
+            home-manager.darwinModules.home-manager
+            {
+              nixpkgs.overlays = [
+                inputs.nix-vscode-extensions.overlays.default
+              ];
+            }
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.miguel = import ./home/miguel.nix;
+              home-manager.sharedModules = [
+                mac-app-util.homeManagerModules.default
+              ];
+            }
+            nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                user = "miguel";
+                enable = true;
+                enableRosetta = false;
+                mutableTaps = false;
+
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                  "powershell/homebrew-tap" = homebrew-powershell;
+                  "microsoft/homebrew-mssql-release" = homebrew-mssql;
+                  "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
+                };
+              };
+            }
+          ];
+          specialArgs = { inherit inputs; };
+        };
         "Miguels-MacBook-Air" = nix-darwin.lib.darwinSystem {
           modules = [
             ./darwin/miguel.nix
