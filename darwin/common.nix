@@ -19,7 +19,6 @@
     onActivation.autoUpdate = true;
     onActivation.upgrade = true;
     brews = [
-      "mas"
       "openssl"
       "powershell/tap/powershell"
     ];

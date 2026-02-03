@@ -14,9 +14,6 @@
   homebrew.casks = [
     "soapui"
   ];
-  homebrew.masApps = {
-    "Windows App" = 1295203466;
-  };
 
   nix.extraOptions = ''
     ssl-cert-file = /Users/AS33AI/.config/ssl/ca-certificates.crt
