@@ -34,12 +34,7 @@ export NIX_SSL_CERT_FILE=$CERT_FILE
 
 if ! type "nix" > /dev/null; then
   # download and install nix
-  curl -fsSL https://nixos.org/nix/install | sh -s -- --yes
-
-  # temporarily add configuration to use the created bundle
-  echo "export NIX_SSL_CERT_FILE=$CERT_FILE" | sudo tee -a /etc/bashrc > /dev/null
-  echo "export NIX_SSL_CERT_FILE=$CERT_FILE" | sudo tee -a /etc/zshrc > /dev/null
-  echo "ssl-cert-file = $CERT_FILE" | sudo tee -a /etc/nix/nix.conf > /dev/null
+  curl -fsSL https://install.lix.systems/lix | sh -s -- install --enable-flakes --no-confirm --ssl-cert-file "$CERT_FILE"
 
   # restart nix-daemon after updating nix.conf
   sudo launchctl kickstart -k system/org.nixos.nix-daemon
