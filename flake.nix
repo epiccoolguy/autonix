@@ -46,7 +46,7 @@
       darwinConfigurations = {
         "tests-Virtual-Machine" = nix-darwin.lib.darwinSystem {
           modules = [
-            ./darwin/miguel.nix
+            ./darwin/test.nix
             mac-app-util.darwinModules.default
             home-manager.darwinModules.home-manager
             {
@@ -57,7 +57,7 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.miguel = import ./home/miguel.nix;
+              home-manager.users.test = import ./home/test.nix;
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
               ];
@@ -65,7 +65,7 @@
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
-                user = "miguel";
+                user = "test";
                 enable = true;
                 enableRosetta = false;
                 mutableTaps = false;
