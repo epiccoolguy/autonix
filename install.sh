@@ -1,5 +1,19 @@
 #! /bin/zsh
 
+# Parse command-line flags
+USE_CA_BUNDLE=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --ca-bundle)
+      USE_CA_BUNDLE=true
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
 if [ -z "$(xcode-select --print-path 2> /dev/null)" ];
 then
   # inform softwareupdate to fetch command line tools
@@ -22,18 +36,25 @@ sudo chown $(id -nu):$(id -ng) "$NIX_DARWIN_DIR"
 find "$NIX_DARWIN_DIR" -mindepth 1 -delete
 
 # create system certificate authority bundle to account for an HTTPS-intercepting man in the middle proxy
-CERT_DIR="/usr/local/share/ca-certificates"
-CERT_FILE="$CERT_DIR/cacerts.crt"
-sudo mkdir -p "$CERT_DIR"
-sudo chown $(id -nu):$(id -ng) "$CERT_DIR"
-security export -t certs -p -o "$CERT_FILE"
+CERT_FILE=""
+if [ "$USE_CA_BUNDLE" = true ]; then
+  CERT_DIR="/usr/local/share/ca-certificates"
+  CERT_FILE="$CERT_DIR/cacerts.crt"
+  sudo mkdir -p "$CERT_DIR"
+  sudo chown $(id -nu):$(id -ng) "$CERT_DIR"
+  security export -t certs -p -o "$CERT_FILE"
 
-# tell nix to use the created bundle instead of its own
-export NIX_SSL_CERT_FILE=$CERT_FILE
+  # tell nix to use the created bundle instead of its own
+  export NIX_SSL_CERT_FILE=$CERT_FILE
+fi
 
 if ! type "nix" > /dev/null; then
   # download and install nix
-  curl -fsSL https://install.lix.systems/lix | sh -s -- install --enable-flakes --no-confirm --ssl-cert-file "$CERT_FILE"
+  if [ -z "$CERT_FILE" ]; then
+    curl -fsSL https://install.lix.systems/lix | sh -s -- install --enable-flakes --no-confirm
+  else
+    curl -fsSL https://install.lix.systems/lix | sh -s -- install --enable-flakes --no-confirm --ssl-cert-file "$CERT_FILE"
+  fi
 
   . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
