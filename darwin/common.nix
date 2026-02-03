@@ -30,9 +30,6 @@
       "git-credential-manager"
       "google-chrome"
     ];
-    masApps = {
-      Xcode = 497799835;
-    };
   };
 
   fonts.packages = with pkgs; [
