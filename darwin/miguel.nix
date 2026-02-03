@@ -17,7 +17,4 @@
     "iina"
     "transmission"
   ];
-  homebrew.masApps = {
-    "WireGuard" = 1451685025;
-  };
 }
