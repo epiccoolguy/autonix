@@ -24,7 +24,6 @@ find "$NIX_DARWIN_DIR" -mindepth 1 -delete
 # create system certificate authority bundle to account for an HTTPS-intercepting man in the middle proxy
 CERT_DIR="/usr/local/share/ca-certificates"
 CERT_FILE="$CERT_DIR/cacerts.crt"
-sudo chmod 755 "/usr/local/share"
 sudo mkdir -p "$CERT_DIR"
 sudo chown $(id -nu):$(id -ng) "$CERT_DIR"
 security export -t certs -p -o "$CERT_FILE"
