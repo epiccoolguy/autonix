@@ -38,9 +38,9 @@ if ! type "nix" > /dev/null; then
   . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
-# sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
-# sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
-# sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
+sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
 cd "$NIX_DARWIN_DIR"
 
