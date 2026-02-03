@@ -19,11 +19,14 @@ fi
 NIX_DARWIN_DIR="/etc/nix-darwin"
 sudo mkdir -p "$NIX_DARWIN_DIR"
 sudo chown $(id -nu):$(id -ng) "$NIX_DARWIN_DIR"
+find "$NIX_DARWIN_DIR" -mindepth 1 -delete
 
 # create system certificate authority bundle to account for an HTTPS-intercepting man in the middle proxy
-CERT_DIR="$NIX_DARWIN_DIR/certs"
-CERT_FILE="$CERT_DIR/ca-certificates.crt"
-mkdir -p $CERT_DIR
+CERT_DIR="/usr/local/share/ca-certificates"
+CERT_FILE="$CERT_DIR/cacerts.crt"
+sudo chmod 755 "/usr/local/share"
+sudo mkdir -p "$CERT_DIR"
+sudo chown $(id -nu):$(id -ng) "$CERT_DIR"
 security export -t certs -p -o "$CERT_FILE"
 
 # tell nix to use the created bundle instead of its own
@@ -43,22 +46,16 @@ if ! type "nix" > /dev/null; then
 
   # load system-wide profile changes from nix
   . /etc/zprofile && . /etc/zshrc
-
-fi
-
-if [ -d  "/etc/nix-darwin" ]; then
-  # update the nix config repository
-  nix-shell -p git --run "git -C /etc/nix-darwin/ pull"
-else
-  # clone the nix config repository
-  nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin"
 fi
 
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
+cd "$NIX_DARWIN_DIR"
+
 # install nix-darwin using flakes, rebuild the system and switch to the new generation
-sudo -H NIX_SSL_CERT_FILE=$CERT_FILE nix --extra-experimental-features "nix-command flakes" run nix-darwin/master#darwin-rebuild -- switch
+nix-shell -p git --run "git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin"
+sudo nix --extra-experimental-features "nix-command flakes" run nix-darwin/master#darwin-rebuild -- switch
 
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
