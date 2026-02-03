@@ -28,6 +28,7 @@
       "ghostty"
       "git-credential-manager"
       "google-chrome"
+      "windows-app"
     ];
   };
 
