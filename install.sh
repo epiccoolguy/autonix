@@ -36,11 +36,7 @@ if ! type "nix" > /dev/null; then
   # download and install nix
   curl -fsSL https://install.lix.systems/lix | sh -s -- install --enable-flakes --no-confirm --ssl-cert-file "$CERT_FILE"
 
-  # restart nix-daemon after updating nix.conf
-  sudo launchctl kickstart -k system/org.nixos.nix-daemon
-
-  # load system-wide profile changes from nix
-  . /etc/zprofile && . /etc/zshrc
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
