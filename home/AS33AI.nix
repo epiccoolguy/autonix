@@ -5,8 +5,8 @@
   ...
 }:
 let
-  certDir = "${config.home.homeDirectory}/.config/ssl";
-  certPath = "${certDir}/ca-certificates.crt";
+  certDir = "/usr/local/share/ca-certificates";
+  certPath = "${certDir}/cacerts.crt";
   trustStorePath = "${certDir}/java-truststore.jks";
   security = "/usr/bin/security";
   awk = "/usr/bin/awk";

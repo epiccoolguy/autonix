@@ -17,6 +17,6 @@
   ];
 
   nix.extraOptions = ''
-    ssl-cert-file = /Users/AS33AI/.config/ssl/ca-certificates.crt
+    ssl-cert-file = /usr/local/share/ca-certificates/cacerts.crt
   '';
 }
