@@ -13,6 +13,7 @@
   ];
   homebrew.casks = [
     "soapui"
+    "citrix-workspace"
   ];
 
   nix.extraOptions = ''
