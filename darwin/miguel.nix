@@ -16,5 +16,6 @@
     "1password"
     "iina"
     "transmission"
+    "wireguard"
   ];
 }
