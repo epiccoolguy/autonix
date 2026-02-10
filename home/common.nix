@@ -65,7 +65,7 @@
       shellAliases = {
         switch = "sudo darwin-rebuild switch";
         docker = "podman";
-        createcacerts = "security export -t certs -p -o \"/usr/local/share/ca-certificates/cacerts.crt\"";
+        createcacerts = "security export -t certs -k /System/Library/Keychains/SystemCertificates.keychain -p > \"/usr/local/share/ca-certificates/cacerts.crt\" && security export -t certs -k /Library/Keychains/System.keychain -p >> \"/usr/local/share/ca-certificates/cacerts.crt\"";
         python = "python3";
         pip = "pip3";
       };

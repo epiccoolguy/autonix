@@ -42,7 +42,8 @@ if [ "$USE_CA_BUNDLE" = true ]; then
   CERT_FILE="$CERT_DIR/cacerts.crt"
   sudo mkdir -p "$CERT_DIR"
   sudo chown $(id -nu):$(id -ng) "$CERT_DIR"
-  security export -t certs -p -o "$CERT_FILE"
+  security export -t certs -p -k /System/Library/Keychains/SystemRootCertificates.keychain > "$CERT_FILE"
+  security export -t certs -p -k /Library/Keychains/System.keychain >> "$CERT_FILE"
 
   # tell nix to use the created bundle instead of its own
   export NIX_SSL_CERT_FILE=$CERT_FILE

@@ -41,7 +41,8 @@ in
     set -euo pipefail
     echo "Exporting macOS keychain certificates..." >&2
     mkdir -p ${lib.escapeShellArg certDir}
-    ${security} export -t certs -p -o ${lib.escapeShellArg certPath}
+    ${security} export -t certs -p -k /System/Library/Keychains/SystemRootCertificates.keychain > ${lib.escapeShellArg certPath}
+    ${security} export -t certs -p -k /Library/Keychains/System.keychain >> ${lib.escapeShellArg certPath}
     chmod 0644 ${lib.escapeShellArg certPath}
   '';
 
