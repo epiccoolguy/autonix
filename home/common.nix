@@ -26,6 +26,7 @@
     k9s
     kind
     kubectl
+    kubelogin
     kubernetes-helm
     maven
     neovim
@@ -176,7 +177,6 @@
           };
 
           extensions = with pkgs.vscode-marketplace; [
-            bierner.markdown-mermaid
             davidanson.vscode-markdownlint
             dbaeumer.vscode-eslint
             eamodio.gitlens
@@ -199,6 +199,7 @@
             typespec.typespec-vscode
             vscjava.vscode-gradle
             vscjava.vscode-java-pack
+            vstirbu.vscode-mermaid-preview
           ];
 
           keybindings = [
