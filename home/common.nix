@@ -38,6 +38,7 @@
     python3
     shellcheck
     skaffold
+    texliveFull
     tmux
     vscode
   ];
