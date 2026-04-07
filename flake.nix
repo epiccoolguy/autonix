@@ -16,8 +16,6 @@
     homebrew-cask.flake = false;
     homebrew-bundle.url = "github:homebrew/homebrew-bundle";
     homebrew-bundle.flake = false;
-    homebrew-powershell.url = "github:PowerShell/Homebrew-Tap";
-    homebrew-powershell.flake = false;
     homebrew-mssql.url = "github:microsoft/homebrew-mssql-release";
     homebrew-mssql.flake = false;
     homebrew-betterdisplay.url = "github:waydabber/homebrew-betterdisplay";
@@ -35,7 +33,6 @@
       homebrew-core,
       homebrew-cask,
       homebrew-bundle,
-      homebrew-powershell,
       homebrew-mssql,
       homebrew-betterdisplay,
       nix-vscode-extensions,
@@ -74,7 +71,6 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
-                  "powershell/homebrew-tap" = homebrew-powershell;
                   "microsoft/homebrew-mssql-release" = homebrew-mssql;
                   "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
                 };
@@ -113,7 +109,6 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
-                  "powershell/homebrew-tap" = homebrew-powershell;
                   "microsoft/homebrew-mssql-release" = homebrew-mssql;
                   "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
                 };
@@ -152,7 +147,6 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
-                  "powershell/homebrew-tap" = homebrew-powershell;
                   "microsoft/homebrew-mssql-release" = homebrew-mssql;
                   "waydabber/homebrew-betterdisplay" = homebrew-betterdisplay;
                 };

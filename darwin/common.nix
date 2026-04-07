@@ -19,8 +19,7 @@
     onActivation.autoUpdate = true;
     onActivation.upgrade = true;
     brews = [
-      "openssl"
-      "powershell/tap/powershell"
+      "powershell"
     ];
     casks = [
       "drawio"
