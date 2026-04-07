@@ -33,7 +33,7 @@
     nixd
     nixfmt
     nodejs_24
-    nodejs_24.pkgs.pnpm
+    pnpm
     podman
     python3
     shellcheck
