@@ -14,6 +14,7 @@
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
     ])
+    github-copilot-cli
     bat
     bruno
     curl
