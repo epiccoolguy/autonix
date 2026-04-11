@@ -48,6 +48,7 @@
     LC_CTYPE = "C";
     EDITOR = "nvim";
     HOMEBREW_ACCEPT_EULA = "Y";
+    SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
   };
 
   home.shell.enableShellIntegration = true;
@@ -114,6 +115,14 @@
     fd.enable = true;
     bat.enable = true;
     jq.enable = true;
+
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      matchBlocks."*" = {
+        addKeysToAgent = "yes";
+      };
+    };
 
     git = {
       enable = true;

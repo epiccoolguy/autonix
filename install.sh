@@ -70,4 +70,29 @@ cd "$NIX_DARWIN_DIR"
 nix --extra-experimental-features "nix-command flakes" shell nixpkgs#git -c git clone https://github.com/epiccoolguy/autonix /etc/nix-darwin
 sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin#darwin-rebuild -- switch --flake /etc/nix-darwin
 
+# generate a Secure Enclave-backed SSH key if one does not already exist
+SSH_DIR="$HOME/.ssh"
+SSH_KEY="$SSH_DIR/id_ecdsa_sk"
+SSH_RK_KEY="$SSH_KEY"_rk
+SSH_COMMENT="$(id -nu)@$(scutil --get LocalHostName)"
+if [ ! -f "${SSH_KEY}" ]; then
+  echo 'Generating Secure Enclave SSH key (Touch ID will be required for each use)...'
+  mkdir -p "$SSH_DIR"
+  chmod 700 "$SSH_DIR"
+  # create a non-exportable P-256 key in the Secure Enclave requiring biometrics (skip if identity already exists)
+  # label must be "ssh" — ssh-keychain.dylib filters by this label (SSH_KEYCHAIN_LABEL defaults to "ssh")
+  if ! sc_auth list-ctk-identities | grep -q " ssh "; then
+    sc_auth create-ctk-identity -l ssh -k p-256-ne -t bio
+  fi
+  # download the key handle from the Secure Enclave into ~/.ssh/id_ecdsa_sk_rk
+  echo 'When prompted for a PIN, press Enter (empty) - Touch ID is the authenticator, no PIN is used.'
+  (cd "$SSH_DIR" && SSH_SK_PROVIDER=/usr/lib/ssh-keychain.dylib ssh-keygen -K -N "")
+  mv "$SSH_RK_KEY" "${SSH_KEY}"
+  mv "$SSH_RK_KEY.pub" "${SSH_KEY}.pub"
+  # update the key comment to be descriptive (the sc_auth label "ssh" cannot be used as a comment directly)
+  ssh-keygen -c -C "${SSH_COMMENT}" -f "${SSH_KEY}" -P ""
+  echo "SSH public key: $(cat ${SSH_KEY}.pub)"
+  echo 'Add the above public key to GitHub or any other services before using SSH.'
+fi
+
 echo 'Done setting up the system. Restart the shell for the "switch" command to become available.'
