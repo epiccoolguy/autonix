@@ -121,6 +121,9 @@
       enableDefaultConfig = false;
       matchBlocks."*" = {
         addKeysToAgent = "yes";
+        extraOptions = {
+          SecurityKeyProvider = "/usr/lib/ssh-keychain.dylib";
+        };
       };
     };
 
