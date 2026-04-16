@@ -41,6 +41,7 @@
     skaffold
     texliveFull
     tmux
+    uv
     vscode
   ];
 
@@ -48,6 +49,8 @@
     LC_CTYPE = "C";
     EDITOR = "nvim";
     HOMEBREW_ACCEPT_EULA = "Y";
+    UV_PYTHON = "${pkgs.python3}/bin/python3";
+    UV_PYTHON_DOWNLOADS = "never";
     SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
   };
 
