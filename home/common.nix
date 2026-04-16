@@ -51,6 +51,8 @@
     SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
   };
 
+  home.sessionPath = [ "$HOME/.local/bin" ];
+
   home.shell.enableShellIntegration = true;
 
   programs = {
