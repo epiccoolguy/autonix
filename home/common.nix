@@ -14,12 +14,14 @@
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
     ])
-    github-copilot-cli
     bat
     bruno
+    claude-code
     curl
     deno
+    gemini-cli
     git
+    github-copilot-cli
     google-cloud-sdk
     gradle
     inetutils
