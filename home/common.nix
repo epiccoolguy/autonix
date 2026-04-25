@@ -16,10 +16,8 @@
     ])
     bat
     bruno
-    claude-code
     curl
     deno
-    gemini-cli
     git
     github-copilot-cli
     google-cloud-sdk
