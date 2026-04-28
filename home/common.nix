@@ -97,10 +97,45 @@
 
             export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
           '';
+          zshFunctions = lib.mkOrder 1000 ''
+            # git-clone wrapper: derive local path from URL
+            #   https://user@host/org/_git/repo  →  ~/host/org/repo
+            #   https://host/org/repo.git        →  ~/host/org/repo
+            function git() {
+              [[ "$1" == "clone" ]] || { command git "$@"; return; }
+
+              local url="" found=0
+              for arg in "''${@:2}"; do
+                case "$arg" in
+                  -*) ;;
+                  *://*)
+                    url="$arg"
+                    found=1
+                    ;;
+                  *)
+                    # non-flag arg after URL = explicit target dir; pass through
+                    (( found )) && { command git "$@"; return; }
+                    ;;
+                esac
+              done
+
+              [[ -z "$url" ]] && { command git "$@"; return; }
+
+              local target="''${url#*://}"
+              target="''${target#*@}"
+              [[ "$target" == *"/_git/"* ]] && target="''${target%%/_git/*}/''${target#*/_git/}"
+              target="''${target%.git}"
+              target="$HOME/$target"
+
+              mkdir -p "''${target:h}"
+              command git clone "''${@:2}" "$target"
+            }
+          '';
         in
         lib.mkMerge [
           zshEarlyInit
           zshGeneralConfig
+          zshFunctions
         ];
     };
 
