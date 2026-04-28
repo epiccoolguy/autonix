@@ -14,5 +14,10 @@
     gemini-cli
   ];
 
+  programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
+    anthropic.claude-code
+    google.gemini-cli-vscode-ide-companion
+  ];
+
   programs.git.settings.user.email = "miguel@loafoe.dev";
 }

@@ -209,7 +209,6 @@
           };
 
           extensions = with pkgs.vscode-marketplace; [
-            anthropic.claude-code
             davidanson.vscode-markdownlint
             dbaeumer.vscode-eslint
             eamodio.gitlens
@@ -218,7 +217,6 @@
             github.copilot
             github.copilot-chat
             github.github-vscode-theme
-            google.gemini-cli-vscode-ide-companion
             humao.rest-client
             jnoortheen.nix-ide
             mechatroner.rainbow-csv
