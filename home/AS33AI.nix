@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   ...
@@ -28,6 +27,15 @@ in
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
     sonarsource.sonarlint-vscode
   ];
+
+  programs.vscode.profiles.default.userSettings = {
+    "sonarlint.connectedMode.connections.sonarqube" = [
+      {
+        connectionId = "sonarqube.insim.biz";
+        serverUrl = "https://sonarqube.insim.biz";
+      }
+    ];
+  };
 
   # after zshGeneralConfig (1000)
   programs.zsh.initContent = lib.mkOrder 1100 ''
