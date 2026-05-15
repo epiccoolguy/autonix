@@ -249,7 +249,6 @@
             eamodio.gitlens
             editorconfig.editorconfig
             esbenp.prettier-vscode
-            github.copilot
             github.copilot-chat
             github.github-vscode-theme
             humao.rest-client
