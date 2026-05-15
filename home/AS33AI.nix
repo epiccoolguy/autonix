@@ -25,6 +25,10 @@ in
     credential."https://gitlab.insim.biz".useHttpPath = false;
   };
 
+  programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
+    sonarsource.sonarlint-vscode
+  ];
+
   # after zshGeneralConfig (1000)
   programs.zsh.initContent = lib.mkOrder 1100 ''
     # --- AS33AI environment exports (after general config) ---
