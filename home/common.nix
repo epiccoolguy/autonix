@@ -14,12 +14,15 @@
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
     ])
-    bat
     bruno
+    coreutils
     curl
     deno
-    git
+    findutils
+    gawk
     github-copilot-cli
+    gnumake
+    gnused
     google-cloud-sdk
     gradle
     inetutils
@@ -37,11 +40,15 @@
     pnpm
     podman
     python3
+    ripgrep
     shellcheck
     skaffold
     texliveFull
     tmux
-    vscode
+    tree
+    unzip
+    yq
+    zip
   ];
 
   home.sessionVariables = {
