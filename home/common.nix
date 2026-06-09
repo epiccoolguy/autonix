@@ -20,6 +20,7 @@
     deno
     findutils
     gawk
+    gh
     github-copilot-cli
     gnumake
     gnused
