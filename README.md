@@ -19,6 +19,8 @@ Automatically set up a system using Nix.
 Update using the following command:
 
 ```sh
-nix flake update
+python3 scripts/update_flake_lock.py
 switch
 ```
+
+The repository also runs a daily GitHub Action that refreshes `flake.lock`, skips any source newer than 24 hours, validates the updated flake on macOS, and opens a pull request when the filtered lockfile changes.
