@@ -21,12 +21,12 @@ jobs:
       changed: ${{ steps.status.outputs.changed }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Restore Nix download cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/nix
           key: ${{ runner.os }}-nix-cache-${{ hashFiles('flake.lock') }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload updated lockfile
         if: steps.status.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: updated-flake-lock
           path: flake.lock
@@ -68,12 +68,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out update branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Download updated lockfile
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: updated-flake-lock
           path: .
@@ -108,12 +108,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Download updated lockfile
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: updated-flake-lock
           path: .
