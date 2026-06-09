@@ -53,6 +53,13 @@ def node_age_hours(node: dict[str, Any], now_ts: float) -> float | None:
     return (now_ts - modified) / 3600.0
 
 
+def log_decision(node_name: str, action: str, age_hours: float, min_age_hours: float) -> None:
+    print(
+        f"[age-filter] {action}: {node_name} (age={age_hours:.2f}h, min={min_age_hours:.2f}h)",
+        file=sys.stderr,
+    )
+
+
 def main() -> int:
     args = parse_args()
     lockfile = Path(args.lockfile)
@@ -75,6 +82,9 @@ def main() -> int:
         now_ts = datetime.now(timezone.utc).timestamp()
         min_age_hours = args.min_age_hours
         updated = False
+        changed_count = 0
+        kept_count = 0
+        reverted_count = 0
 
         for node_name in sorted(set(before_nodes) | set(after_nodes)):
             old_node = before_nodes.get(node_name)
@@ -82,6 +92,8 @@ def main() -> int:
 
             if old_node == new_node:
                 continue
+
+            changed_count += 1
 
             if new_node is None:
                 if isinstance(old_node, dict):
@@ -95,6 +107,11 @@ def main() -> int:
                     if old_age < min_age_hours:
                         after_nodes[node_name] = old_node
                         updated = True
+                        reverted_count += 1
+                        log_decision(node_name, "reverted removal", old_age, min_age_hours)
+                    else:
+                        kept_count += 1
+                        log_decision(node_name, "kept removal", old_age, min_age_hours)
                 continue
 
             if not isinstance(new_node, dict):
@@ -115,9 +132,19 @@ def main() -> int:
                 else:
                     del after_nodes[node_name]
                 updated = True
+                reverted_count += 1
+                log_decision(node_name, "reverted update", age_hours, min_age_hours)
+            else:
+                kept_count += 1
+                log_decision(node_name, "kept update", age_hours, min_age_hours)
 
         if updated:
             write_json(lockfile, after)
+
+        print(
+            f"[age-filter] changed={changed_count}, kept={kept_count}, reverted={reverted_count}",
+            file=sys.stderr,
+        )
 
         return 0
     except subprocess.CalledProcessError as error:
