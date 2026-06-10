@@ -1,4 +1,4 @@
-name: Daily flake.lock update
+name: Daily nix flake update
 
 on:
   schedule:
@@ -10,7 +10,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: daily-flake-lock-update
+  group: daily-nix-flake-update
   cancel-in-progress: false
 
 jobs:
@@ -133,7 +133,7 @@ jobs:
       - name: Commit and push bot branch
         shell: bash
         env:
-          BRANCH: bot/daily-flake-lock-update
+          BRANCH: bot/daily-nix-flake-update
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           if [[ "$BRANCH" == "$BASE_BRANCH" ]]; then
@@ -150,14 +150,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
           git add flake.lock
-          git commit -m "chore: daily flake.lock update"
+          git commit -m "chore: daily nix flake update"
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
       - name: Create pull request
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          BRANCH: bot/daily-flake-lock-update
+          BRANCH: bot/daily-nix-flake-update
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           existing_pr=$(gh pr list --head "$BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number')
@@ -170,5 +170,5 @@ jobs:
           gh pr create \
             --head "$BRANCH" \
             --base "$BASE_BRANCH" \
-            --title "chore: daily flake.lock update" \
-            --body "Automated daily flake.lock refresh with a 24-hour age filter."
+            --title "chore: daily nix flake update" \
+            --body "Automated daily nix flake update with a 24-hour age filter."
