@@ -78,10 +78,6 @@ jobs:
           name: updated-flake-lock
           path: .
 
-      - name: Restore updated lockfile
-        shell: bash
-        run: cp updated-flake-lock/flake.lock flake.lock
-
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
@@ -120,10 +116,6 @@ jobs:
         with:
           name: updated-flake-lock
           path: .
-
-      - name: Restore updated lockfile
-        shell: bash
-        run: cp updated-flake-lock/flake.lock flake.lock
 
       - name: Commit and push bot branch
         shell: bash
