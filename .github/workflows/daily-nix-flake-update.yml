@@ -160,10 +160,37 @@ jobs:
           BRANCH: bot/daily-nix-flake-update
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          body=$(python3 - <<'PYEOF'
+          import json, subprocess
+
+          result = subprocess.run(['git', 'show', 'HEAD:flake.lock'], capture_output=True, text=True)
+          try:
+              old_nodes = json.loads(result.stdout).get('nodes', {}) if result.returncode == 0 else {}
+          except json.JSONDecodeError:
+              old_nodes = {}
+
+          with open('flake.lock') as f:
+              new_nodes = json.load(f).get('nodes', {})
+
+          lines = []
+          for name, new_node in sorted(new_nodes.items()):
+              if name == 'root':
+                  continue
+              old_rev = old_nodes.get(name, {}).get('locked', {}).get('rev', '')
+              new_rev = new_node.get('locked', {}).get('rev', '')
+              if old_rev and new_rev and old_rev != new_rev:
+                  lines.append(f'- **{name}**: `{old_rev[:7]}` → `{new_rev[:7]}`')
+
+          prefix = 'Automated daily nix flake update with a 24-hour age filter.'
+          print(prefix + '\n\n## Changes\n\n' + '\n'.join(lines) if lines else prefix)
+          PYEOF
+          )
+
           existing_pr=$(gh pr list --head "$BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number')
 
           if [[ -n "$existing_pr" ]]; then
-            echo "Pull request already exists: #$existing_pr"
+            echo "Updating pull request #${existing_pr}"
+            gh pr edit "$existing_pr" --body "$body"
             exit 0
           fi
 
@@ -171,4 +198,4 @@ jobs:
             --head "$BRANCH" \
             --base "$BASE_BRANCH" \
             --title "chore: daily nix flake update" \
-            --body "Automated daily nix flake update with a 24-hour age filter."
+            --body "$body"
