@@ -64,7 +64,7 @@ def main() -> int:
         if old_rev and new_rev and old_rev != new_rev:
             lines.append(f"- **{name}**: `{short(old_rev)}` → `{short(new_rev)}`")
 
-    prefix = "Automated daily nix flake update with a 24-hour age filter."
+    prefix = "Automated daily nix flake update."
     if lines:
         print(prefix + "\n\n## Changes\n\n" + "\n".join(lines))
     else:
