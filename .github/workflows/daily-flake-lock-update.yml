@@ -66,6 +66,8 @@ jobs:
     needs: update
     if: needs.update.outputs.changed == 'true'
     runs-on: macos-latest
+    permissions:
+      actions: write
     steps:
       - name: Check out update branch
         uses: actions/checkout@v6
@@ -83,6 +85,17 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+
+      - name: Restore and save Nix store
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-macos: 8G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-last-accessed: P2D
+          purge-primary-key: never
 
       - name: Run flake checks
         run: nix flake check
