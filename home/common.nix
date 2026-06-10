@@ -180,11 +180,9 @@
     ssh = {
       enable = true;
       enableDefaultConfig = false;
-      matchBlocks."*" = {
-        addKeysToAgent = "yes";
-        extraOptions = {
-          SecurityKeyProvider = "/usr/lib/ssh-keychain.dylib";
-        };
+      settings."*" = {
+        AddKeysToAgent = "yes";
+        SecurityKeyProvider = "/usr/lib/ssh-keychain.dylib";
       };
     };
 
