@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +25,11 @@ def parse_args() -> argparse.Namespace:
         default="HEAD",
         help="Git ref to read the previous flake.lock from (default: HEAD).",
     )
+    parser.add_argument(
+        "--warnings-file",
+        default="",
+        help="Optional path to a file containing nix warnings to include in the PR body.",
+    )
     return parser.parse_args()
 
 
@@ -36,9 +42,37 @@ def short(rev: str) -> str:
     return rev[:7] if rev else rev
 
 
+def parse_warning_lines(text: str) -> list[str]:
+    warning_re = re.compile(r"(^|\s)warning:\s", re.IGNORECASE)
+    seen: set[str] = set()
+    warnings: list[str] = []
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if not warning_re.search(line):
+            continue
+        if line in seen:
+            continue
+        seen.add(line)
+        warnings.append(line)
+
+    return warnings
+
+
+def load_warnings(path: Path | None) -> list[str]:
+    if not path:
+        return []
+    if not path.exists():
+        return []
+    return parse_warning_lines(path.read_text(encoding="utf-8"))
+
+
 def main() -> int:
     args = parse_args()
     lockfile = Path(args.lockfile)
+    warnings_path = Path(args.warnings_file) if args.warnings_file else None
     if not lockfile.exists():
         print(f"error: {lockfile} does not exist", file=sys.stderr)
         return 1
@@ -65,8 +99,17 @@ def main() -> int:
             lines.append(f"- **{name}**: `{short(old_rev)}` → `{short(new_rev)}`")
 
     prefix = "Automated daily nix flake update."
+    warnings = load_warnings(warnings_path)
+
+    sections: list[str] = []
     if lines:
-        print(prefix + "\n\n## Changes\n\n" + "\n".join(lines))
+        sections.append("## Changes\n\n" + "\n".join(lines))
+
+    if warnings:
+        sections.append("## Warnings\n\n```text\n" + "\n".join(warnings) + "\n```")
+
+    if sections:
+        print(prefix + "\n\n" + "\n\n".join(sections))
     else:
         print(prefix)
 

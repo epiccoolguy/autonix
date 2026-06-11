@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -40,6 +41,11 @@ def parse_args() -> argparse.Namespace:
         default="chore: daily nix flake update",
         help="Pull request title.",
     )
+    parser.add_argument(
+        "--warnings-file",
+        default=os.environ.get("NIX_WARNINGS_FILE", ""),
+        help="Optional path to a file containing nix warnings to include in the PR body.",
+    )
     return parser.parse_args()
 
 
@@ -55,7 +61,34 @@ def short(rev: str) -> str:
     return rev[:7] if rev else rev
 
 
-def build_body(lockfile: Path, old_ref: str = "HEAD") -> str:
+def parse_warning_lines(text: str) -> list[str]:
+    warning_re = re.compile(r"(^|\s)warning:\s", re.IGNORECASE)
+    seen: set[str] = set()
+    warnings: list[str] = []
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if not warning_re.search(line):
+            continue
+        if line in seen:
+            continue
+        seen.add(line)
+        warnings.append(line)
+
+    return warnings
+
+
+def load_warnings(warnings_file: Path | None) -> list[str]:
+    if not warnings_file:
+        return []
+    if not warnings_file.exists():
+        return []
+    return parse_warning_lines(warnings_file.read_text(encoding="utf-8"))
+
+
+def build_body(lockfile: Path, warnings: list[str], old_ref: str = "HEAD") -> str:
     result = subprocess.run(
         ["git", "show", f"{old_ref}:{lockfile}"],
         capture_output=True,
@@ -79,8 +112,17 @@ def build_body(lockfile: Path, old_ref: str = "HEAD") -> str:
             lines.append(f"- **{name}**: `{short(old_rev)}` → `{short(new_rev)}`")
 
     prefix = "Automated daily nix flake update."
+    sections: list[str] = []
+
     if lines:
-        return prefix + "\n\n## Changes\n\n" + "\n".join(lines)
+        sections.append("## Changes\n\n" + "\n".join(lines))
+
+    if warnings:
+        sections.append("## Warnings\n\n```text\n" + "\n".join(warnings) + "\n```")
+
+    if sections:
+        return prefix + "\n\n" + "\n\n".join(sections)
+
     return prefix
 
 
@@ -89,6 +131,7 @@ def main() -> int:
     branch: str = args.branch
     base_branch: str = args.base_branch
     lockfile = Path(args.lockfile)
+    warnings_file = Path(args.warnings_file) if args.warnings_file else None
 
     if branch == base_branch:
         print(
@@ -109,7 +152,8 @@ def main() -> int:
         return 1
 
     # Build body before switching branches so HEAD still points to base.
-    body = build_body(lockfile)
+    warnings = load_warnings(warnings_file)
+    body = build_body(lockfile, warnings)
 
     try:
         run(["git", "config", "user.name", "github-actions[bot]"])

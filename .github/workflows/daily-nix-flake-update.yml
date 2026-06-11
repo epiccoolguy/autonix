@@ -98,15 +98,31 @@ jobs:
           purge-primary-key: never
 
       - name: Run flake checks
-        run: nix flake check
+        shell: bash
+        run: |
+          set -euo pipefail
+          nix flake check 2>&1 | tee validate.log
 
       - name: Build darwin configurations
         shell: bash
         run: |
           set -euo pipefail
           for host in tests-Virtual-Machine Miguels-MacBook-Air MPCE-MBP-HKDC2N1VJ4; do
-            nix build ".#darwinConfigurations.${host}.system"
+            nix build ".#darwinConfigurations.${host}.system" 2>&1 | tee -a validate.log
           done
+
+      - name: Extract nix warnings
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -E '(^|[[:space:]])warning:[[:space:]]' validate.log | awk '!seen[$0]++' > nix-warnings.txt || true
+
+      - name: Upload nix warnings
+        uses: actions/upload-artifact@v7
+        with:
+          name: nix-warnings
+          path: nix-warnings.txt
+          if-no-files-found: error
 
   create_pr:
     name: Open pull request
@@ -130,9 +146,16 @@ jobs:
           name: updated-flake-lock
           path: .
 
+      - name: Download nix warnings
+        uses: actions/download-artifact@v8
+        with:
+          name: nix-warnings
+          path: .
+
       - name: Commit, push and open pull request
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: bot/daily-nix-flake-update
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          NIX_WARNINGS_FILE: nix-warnings.txt
         run: python3 scripts/create_pr.py
