@@ -11,7 +11,6 @@
 
   home.packages = with pkgs; [
     claude-code
-    gemini-cli
   ];
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [

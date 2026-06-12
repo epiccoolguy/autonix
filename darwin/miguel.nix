@@ -14,6 +14,7 @@
   ];
   homebrew.casks = [
     "1password"
+    "antigravity-cli"
     "iina"
     "transmission"
   ];
