@@ -18,5 +18,6 @@
     "antigravity-ide"
     "iina"
     "transmission"
+    "visual-studio-code"
   ];
 }

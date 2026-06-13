@@ -4,10 +4,6 @@
   lib,
   ...
 }:
-let
-  jsonFormat = pkgs.formats.json { };
-  vscodeDefaults = config.programs.vscode.profiles.default;
-in
 {
   imports = [ ./common.nix ];
 
@@ -23,18 +19,21 @@ in
     google.gemini-cli-vscode-ide-companion
   ];
 
+  programs.antigravity.enable = true;
+
   # Reuse VS Code settings for Antigravity IDE (installed via homebrew cask)
   home.file = {
     "Library/Application Support/Antigravity IDE/User/settings.json".source =
-      jsonFormat.generate "antigravity-ide-settings.json" vscodeDefaults.userSettings;
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Library/Application Support/Antigravity/User/settings.json";
 
     "Library/Application Support/Antigravity IDE/User/keybindings.json".source =
-      jsonFormat.generate "antigravity-ide-keybindings.json" (
-        map (lib.filterAttrs (_: v: v != null)) vscodeDefaults.keybindings
-      );
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Library/Application Support/Antigravity/User/keybindings.json";
 
     "Library/Application Support/Antigravity IDE/User/snippets/global.code-snippets".source =
-      jsonFormat.generate "antigravity-ide-global-snippets.json" vscodeDefaults.globalSnippets;
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Library/Application Support/Antigravity/User/snippets/global.code-snippets";
+
+    ".antigravity-ide/extensions".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.antigravity/extensions";
   };
 
   programs.git.settings.user.email = "miguel@loafoe.dev";

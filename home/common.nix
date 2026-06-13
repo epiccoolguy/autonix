@@ -202,6 +202,7 @@
 
     vscode = {
       enable = true;
+      package = null;
 
       profiles = {
         default = {
@@ -334,6 +335,16 @@
             };
           };
         };
+      };
+    };
+
+    antigravity = {
+      package = null;
+      profiles.default = {
+        userSettings = config.programs.vscode.profiles.default.userSettings;
+        keybindings = config.programs.vscode.profiles.default.keybindings;
+        extensions = config.programs.vscode.profiles.default.extensions;
+        globalSnippets = config.programs.vscode.profiles.default.globalSnippets;
       };
     };
   };
