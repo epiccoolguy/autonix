@@ -95,7 +95,6 @@
               home-manager.users.miguel = import ./home/miguel.nix;
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
-                "${inputs.home-manager}/modules/programs/antigravity.nix"
               ];
             }
             nix-homebrew.darwinModules.nix-homebrew
