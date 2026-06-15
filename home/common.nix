@@ -17,6 +17,7 @@
     bruno
     coreutils
     curl
+    delve
     deno
     findutils
     gawk
@@ -24,7 +25,9 @@
     github-copilot-cli
     gnumake
     gnused
+    golangci-lint
     google-cloud-sdk
+    gopls
     gradle
     inetutils
     jdk
@@ -176,6 +179,7 @@
     fd.enable = true;
     bat.enable = true;
     jq.enable = true;
+    go.enable = true;
 
     ssh = {
       enable = true;
@@ -246,6 +250,12 @@
             "workbench.preferredDarkColorTheme" = "GitHub Dark Default";
             "workbench.preferredLightColorTheme" = "GitHub Light Default";
             "workbench.sideBar.location" = "right";
+            "[go]" = {
+              "editor.defaultFormatter" = "golang.go";
+              "editor.codeActionsOnSave" = {
+                "source.organizeImports" = "explicit";
+              };
+            };
             "[xml]"."editor.defaultFormatter" = "redhat.vscode-xml";
             "[nix]"."editor.defaultFormatter" = "jnoortheen.nix-ide";
           };
@@ -258,6 +268,7 @@
             esbenp.prettier-vscode
             github.copilot-chat
             github.github-vscode-theme
+            golang.go
             humao.rest-client
             jnoortheen.nix-ide
             mechatroner.rainbow-csv
