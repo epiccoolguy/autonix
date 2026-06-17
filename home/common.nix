@@ -107,6 +107,7 @@
             zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
             export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
+            export KUBECONFIG="''${HOME}/.kube/config:''${HOME}/.kube/config-mlzw"
           '';
           zshFunctions = lib.mkOrder 1000 ''
             # git-clone wrapper: derive local path from URL
