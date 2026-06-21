@@ -240,6 +240,9 @@
             "nix.serverPath" = "nixd";
             "npm.packageManager" = "pnpm";
             "redhat.telemetry.enabled" = false;
+            "search.exclude" = {
+              "/result" = true;
+            };
             "security.workspace.trust.untrustedFiles" = "open";
             "terminal.integrated.suggest.enabled" = false;
             "typescript.enablePromptUseWorkspaceTsdk" = true;
