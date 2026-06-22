@@ -10,6 +10,7 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    argocd
     awscli2
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
