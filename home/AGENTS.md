@@ -24,6 +24,7 @@ These global agent instructions are nix-managed — edit the source at `/etc/nix
 
 - Go: `gofmt`/`goimports`; table-driven tests; wrap errors with `%w`
 - TypeScript: prefer `type` over `interface` unless extending; avoid `any`
+- Nix: `nixfmt`
 
 ## Secrets
 
