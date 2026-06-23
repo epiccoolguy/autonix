@@ -18,6 +18,18 @@
     google.gemini-cli-vscode-ide-companion
   ];
 
+  # Cmd+Shift+I opens the Claude Code sidebar instead of the built-in chat.
+  programs.vscode.profiles.default.keybindings = [
+    {
+      key = "shift+cmd+i";
+      command = "-workbench.action.chat.open";
+    }
+    {
+      key = "shift+cmd+i";
+      command = "claude-vscode.sidebar.open";
+    }
+  ];
+
   programs.antigravity.enable = true;
 
   # Reuse VS Code settings for Antigravity IDE (installed via homebrew cask)
