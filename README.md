@@ -27,4 +27,4 @@ The repository also runs a daily GitHub Action that refreshes `flake.lock`, skip
 
 ## AI Agent Maintenance
 
-This repository is optimized for maintenance by AI coding assistants. Agents must read the [AGENT_INSTRUCTIONS.md](AGENT_INSTRUCTIONS.md) file before proposing architectural changes, adding new applications, or making changes to the Nix configuration.
+This repository is optimized for maintenance by AI coding assistants. Agents must read the [AGENTS.md](AGENTS.md) file before proposing architectural changes, adding new applications, or making changes to the Nix configuration.
