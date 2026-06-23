@@ -367,10 +367,19 @@
   };
 
   home.file = {
+    # Canonical global rules for agents
     "AGENTS.md".source = ./AGENTS.md;
+
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
-    ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
-    ".gemini/GEMINI.md".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".codex/AGENTS.md".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".gemini/GEMINI.md".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".copilot/copilot-instructions.md".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+
+    ".claude/settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
   };
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew

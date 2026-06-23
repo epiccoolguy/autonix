@@ -4,7 +4,7 @@
 
 I'm a software engineer working primarily with Go, TypeScript, and Nix. My machines are managed with nix-darwin and home-manager (repo at `/etc/nix-darwin`).
 
-These global agent instructions are nix-managed — edit the source at `/etc/nix-darwin/home/AGENTS.md` and run `switch` to apply. The deployed canonical is `~/AGENTS.md`; `~/.claude/CLAUDE.md` imports it and `~/.gemini/GEMINI.md` links to it. Don't edit the deployed files directly.
+These global agent instructions are nix-managed — edit the source at `/etc/nix-darwin/home/AGENTS.md` and run `switch` to apply. The deployed canonical is `~/AGENTS.md`; tool configs reference it: `~/.claude/CLAUDE.md` imports it, and `~/.gemini/GEMINI.md` (Gemini CLI + Antigravity), `~/.codex/AGENTS.md` (Codex), and `~/.copilot/copilot-instructions.md` (Copilot CLI) symlink to it. Don't edit the deployed files directly.
 
 ## General Preferences
 
