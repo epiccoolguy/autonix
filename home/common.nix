@@ -366,6 +366,7 @@
   };
 
   home.file = {
-    ".claude/CLAUDE.md".source = ./claude.md;
+    ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
+    ".claude/settings.json".source = ./claude/settings.json;
   };
 }

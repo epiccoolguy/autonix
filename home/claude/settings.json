@@ -1,0 +1,10 @@
+{
+  "theme": "auto",
+  "effortLevel": "high",
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}

@@ -13,6 +13,8 @@ I'm a software engineer working primarily with Go, TypeScript, and Nix. My machi
 
 ## Tools & Environment
 
+`~/.claude/` is nix-managed — to change `CLAUDE.md` or `settings.json`, edit the source files at `/etc/nix-darwin/home/claude/` and run `switch` to apply. Do not edit `~/.claude/` files directly.
+
 - Shell: zsh
 - Editor: VS Code
 - VCS: git with GitHub (`gh` CLI available)
