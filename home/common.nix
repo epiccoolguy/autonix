@@ -41,6 +41,7 @@
     neovim
     nixd
     nixfmt
+    nixfmt-tree
     nodejs_24
     pnpm
     podman
