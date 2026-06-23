@@ -279,6 +279,7 @@
             jnoortheen.nix-ide
             mechatroner.rainbow-csv
             mikestead.dotenv
+            ms-azuretools.vscode-containers
             ms-playwright.playwright
             redhat.vscode-xml
             streetsidesoftware.code-spell-checker
