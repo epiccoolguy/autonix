@@ -1,4 +1,5 @@
 {
   "theme": "auto",
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "model": "opus"
 }

@@ -368,7 +368,7 @@
 
   home.file = {
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
-    ".claude/settings.json".source = ./claude/settings.json;
+    ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
   };
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
