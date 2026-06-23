@@ -21,6 +21,7 @@
   # No personal Copilot subscription: disable VS Code's built-in AI/Copilot UI.
   programs.vscode.profiles.default.userSettings = {
     "chat.disableAIFeatures" = true;
+    "claudeCode.preferredLocation" = "sidebar";
   };
 
   # Ctrl+Shift+I opens the Claude Code sidebar (mirrors Copilot Chat on corporate).
