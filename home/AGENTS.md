@@ -42,6 +42,7 @@ These global agent instructions are nix-managed — edit the source at `/etc/nix
 ## Git & GitHub
 
 - Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
+- Don't add agent attributions: no `Co-Authored-By: Claude` trailer in commit messages and no "Generated with Claude Code" footer in PR bodies
 - Split unrelated changes into separate logical commits; don't bundle them
 - PRs: linear merge with fast-forward (no squash, no merge commits)
 - For remote operations (PRs, issues, reviews, code search), prefer the GitHub MCP server when available; otherwise use the `gh` CLI. If a stale `GITHUB_TOKEN` env var breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`
