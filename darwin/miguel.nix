@@ -16,6 +16,8 @@
     "1password"
     "antigravity-cli"
     "antigravity-ide"
+    "claude"
+    "claude-code"
     "iina"
     "transmission"
   ];

@@ -22,7 +22,6 @@
       "powershell"
     ];
     casks = [
-      "claude"
       "drawio"
       "firefox"
       "ghostty"

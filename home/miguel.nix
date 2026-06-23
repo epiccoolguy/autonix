@@ -11,7 +11,6 @@
   home.homeDirectory = "/Users/miguel";
 
   home.packages = with pkgs; [
-    claude-code
   ];
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
