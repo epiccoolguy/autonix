@@ -18,6 +18,11 @@
     google.gemini-cli-vscode-ide-companion
   ];
 
+  # No personal Copilot subscription: disable VS Code's built-in AI/Copilot UI.
+  programs.vscode.profiles.default.userSettings = {
+    "chat.disableAIFeatures" = true;
+  };
+
   # Ctrl+Shift+I opens the Claude Code sidebar (mirrors Copilot Chat on corporate).
   programs.vscode.profiles.default.keybindings = [
     {
