@@ -367,8 +367,10 @@
   };
 
   home.file = {
+    "AGENTS.md".source = ./AGENTS.md;
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
+    ".gemini/GEMINI.md".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
   };
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
