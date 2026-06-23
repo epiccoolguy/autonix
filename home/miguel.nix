@@ -18,14 +18,10 @@
     google.gemini-cli-vscode-ide-companion
   ];
 
-  # Cmd+Shift+I opens the Claude Code sidebar instead of the built-in chat.
+  # Ctrl+Shift+I opens the Claude Code sidebar (mirrors Copilot Chat on corporate).
   programs.vscode.profiles.default.keybindings = [
     {
-      key = "shift+cmd+i";
-      command = "-workbench.action.chat.open";
-    }
-    {
-      key = "shift+cmd+i";
+      key = "ctrl+shift+i";
       command = "claude-vscode.sidebar.open";
     }
   ];

@@ -29,6 +29,14 @@ in
     sonarsource.sonarlint-vscode
   ];
 
+  # Ctrl+Shift+I opens Copilot Chat (mirrors the Claude Code sidebar on personal).
+  programs.vscode.profiles.default.keybindings = [
+    {
+      key = "ctrl+shift+i";
+      command = "workbench.action.chat.open";
+    }
+  ];
+
   programs.vscode.profiles.default.userSettings = {
     "sonarlint.connectedMode.connections.sonarqube" = [
       {
