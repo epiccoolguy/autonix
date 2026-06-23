@@ -25,6 +25,7 @@ in
   };
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
+    github.copilot-chat
     sonarsource.sonarlint-vscode
   ];
 
