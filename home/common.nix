@@ -94,6 +94,7 @@
         let
           zshEarlyInit = lib.mkOrder 500 ''
             [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+            [[ -f "$HOME/.env" ]] && set -a && source "$HOME/.env" && set +a
           '';
           zshGeneralConfig = lib.mkOrder 1000 ''
             export PROMPT='%n %1~ ? %? %% '
@@ -369,4 +370,23 @@
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/settings.json".source = ./claude/settings.json;
   };
+
+  # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
+  # (programs.claude-code.package = null). That option works by wrapping the nix-managed binary
+  # with --plugin-dir; without a package, no wrapper is created and mcpServers is ignored.
+  # Instead, we call `claude mcp add-json` directly to write into ~/.claude.json, which is
+  # where the CLI reads MCP server registrations from regardless of how it was installed.
+  home.activation.githubMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    env_file="$HOME/.env"
+    claude_bin="$(command -v claude || true)"
+    if [ -f "$env_file" ] && [ -n "$claude_bin" ]; then
+      pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
+      if [ -n "$pat" ]; then
+        json="{\"type\":\"http\",\"url\":\"https://api.githubcopilot.com/mcp\",\"headers\":{\"Authorization\":\"Bearer $pat\"}}"
+        $DRY_RUN_CMD "$claude_bin" mcp remove github --scope user 2>/dev/null || true
+        $DRY_RUN_CMD "$claude_bin" mcp add-json github "$json" --scope user
+      fi
+    fi
+  '';
 }
