@@ -44,4 +44,4 @@ These global agent instructions are nix-managed — edit the source at `/etc/nix
 - Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
 - Split unrelated changes into separate logical commits; don't bundle them
 - PRs: linear merge with fast-forward (no squash, no merge commits)
-- Use `gh` CLI; if a stale `GITHUB_TOKEN` env var breaks auth, fall back with `env -u GITHUB_TOKEN gh ...`
+- For remote operations (PRs, issues, reviews, code search), prefer the GitHub MCP server when available; otherwise use the `gh` CLI. If a stale `GITHUB_TOKEN` env var breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`
