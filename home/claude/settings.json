@@ -1,5 +1,8 @@
 {
-  "theme": "auto",
+  "model": "opus",
   "effortLevel": "high",
-  "model": "opus"
+  "theme": "auto",
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
+  }
 }
