@@ -2,6 +2,9 @@
   "model": "opus",
   "effortLevel": "high",
   "theme": "auto",
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
   }
