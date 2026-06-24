@@ -21,14 +21,16 @@
   # No personal Copilot subscription: disable VS Code's built-in AI/Copilot UI.
   programs.vscode.profiles.default.userSettings = {
     "chat.disableAIFeatures" = true;
-    "claudeCode.preferredLocation" = "sidebar";
+    # Run Claude Code in an integrated terminal instead of the webview, which
+    # avoids the sidebar/panel relocation issues with the view UI.
+    "claudeCode.useTerminal" = true;
   };
 
-  # Ctrl+Shift+I opens the Claude Code sidebar (mirrors Copilot Chat on corporate).
+  # Ctrl+Shift+I opens Claude Code in a terminal (mirrors Copilot Chat on corporate).
   programs.vscode.profiles.default.keybindings = [
     {
       key = "ctrl+shift+i";
-      command = "claude-vscode.sidebar.open";
+      command = "claude-vscode.terminal.open";
     }
   ];
 
