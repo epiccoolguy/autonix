@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code status line: model · effort · context · usage
+# Claude Code status line: model | effort | context | usage
 # Receives session JSON on stdin. See https://code.claude.com/docs/en/statusline
 input=$(cat)
 
@@ -21,13 +21,13 @@ elif [ "$PCT" -ge 70 ]; then BAR_COLOR="$YELLOW"
 else BAR_COLOR="$GREEN"; fi
 FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
 printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
-BAR="${FILL// /█}${PAD// /░}"
+BAR="[${FILL// /#}${PAD// /-}]"
 
 # Subscription usage (absent for non-Claude.ai plans)
 USAGE=""
 [ "$FIVE_H" != "-" ] && USAGE="5h ${FIVE_H}%"
 [ "$WEEK"   != "-" ] && USAGE="${USAGE:+$USAGE }7d ${WEEK}%"
 
-LINE="${CYAN}${MODEL}${RESET} ${DIM}·${RESET} ⚡${EFFORT} ${DIM}·${RESET} ${BAR_COLOR}${BAR}${RESET} ${PCT}% ctx"
-[ -n "$USAGE" ] && LINE="${LINE} ${DIM}·${RESET} ${USAGE}"
+LINE="${CYAN}${MODEL}${RESET} ${DIM}|${RESET} eff:${EFFORT} ${DIM}|${RESET} ${BAR_COLOR}${BAR}${RESET} ${PCT}% ctx"
+[ -n "$USAGE" ] && LINE="${LINE} ${DIM}|${RESET} ${USAGE}"
 printf '%b\n' "$LINE"
