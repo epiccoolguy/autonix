@@ -381,6 +381,8 @@
 
     ".claude/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
+    ".claude/statusline.sh".source =
+      config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/statusline.sh";
   };
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
