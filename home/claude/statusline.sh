@@ -13,21 +13,11 @@ IFS=$'\t' read -r MODEL EFFORT PCT FIVE_H WEEK < <(
     ] | @tsv'
 )
 
-CYAN='\033[36m'; DIM='\033[2m'; GREEN='\033[32m'; YELLOW='\033[33m'; RED='\033[31m'; RESET='\033[0m'
-
-# Context bar, colored by fill
-if   [ "$PCT" -ge 90 ]; then BAR_COLOR="$RED"
-elif [ "$PCT" -ge 70 ]; then BAR_COLOR="$YELLOW"
-else BAR_COLOR="$GREEN"; fi
-FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
-printf -v FILL "%${FILLED}s"; printf -v PAD "%${EMPTY}s"
-BAR="[${FILL// /#}${PAD// /-}]"
-
 # Subscription usage (absent for non-Claude.ai plans)
 USAGE=""
 [ "$FIVE_H" != "-" ] && USAGE="5h ${FIVE_H}%"
 [ "$WEEK"   != "-" ] && USAGE="${USAGE:+$USAGE }7d ${WEEK}%"
 
-LINE="${CYAN}${MODEL}${RESET} ${DIM}|${RESET} eff:${EFFORT} ${DIM}|${RESET} ${BAR_COLOR}${BAR}${RESET} ${PCT}% ctx"
-[ -n "$USAGE" ] && LINE="${LINE} ${DIM}|${RESET} ${USAGE}"
-printf '%b\n' "$LINE"
+LINE="${MODEL} | eff:${EFFORT} | ${PCT}% ctx"
+[ -n "$USAGE" ] && LINE="${LINE} | ${USAGE}"
+printf '%s\n' "$LINE"
