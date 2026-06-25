@@ -1,11 +1,12 @@
 {
-  "model": "opus",
-  "effortLevel": "high",
-  "theme": "auto",
   "permissions": {
     "defaultMode": "auto"
   },
+  "model": "opus",
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
-  }
+  },
+  "effortLevel": "high",
+  "theme": "auto",
+  "enableWorkflows": true
 }
