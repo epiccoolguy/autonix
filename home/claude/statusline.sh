@@ -13,11 +13,8 @@ IFS=$'\t' read -r MODEL EFFORT PCT FIVE_H WEEK < <(
     ] | @tsv'
 )
 
-# Subscription usage (absent for non-Claude.ai plans)
-USAGE=""
-[ "$FIVE_H" != "-" ] && USAGE="5h ${FIVE_H}%"
-[ "$WEEK"   != "-" ] && USAGE="${USAGE:+$USAGE }7d ${WEEK}%"
-
-LINE="${MODEL} | eff:${EFFORT} | ${PCT}% ctx"
-[ -n "$USAGE" ] && LINE="${LINE} | ${USAGE}"
+LINE="${MODEL} | ${EFFORT} effort | ${PCT}% context"
+# Subscription usage segments are absent on non-Claude.ai plans
+[ "$FIVE_H" != "-" ] && LINE="${LINE} | 5h usage ${FIVE_H}%"
+[ "$WEEK"   != "-" ] && LINE="${LINE} | 7d usage ${WEEK}%"
 printf '%s\n' "$LINE"
