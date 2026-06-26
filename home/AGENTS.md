@@ -20,6 +20,17 @@ These global agent instructions are nix-managed — edit the source at `/etc/nix
 - Match existing conventions in a file/repo over generic best practices
 - When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory
 
+## Agent Efficiency
+
+Keep context lean and tool calls cheap — these levers are built in, use them by default:
+
+- Delegate broad searches, log-trawling, and multi-file audits to a subagent; surface only the conclusion, not the raw dumps, into the main thread.
+- Use plan mode for non-trivial or multi-file changes; act directly only when the path is obvious.
+- Prefer LSP navigation (go-to-definition, find-references) over blind grep to locate symbols — gopls, typescript-language-server, and pyright are installed and wired as LSP plugins.
+- Lean on the built-in review/cleanup skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
+- Keep memory and instruction files terse: they are paid as input tokens on every turn.
+- Prefer concise, telegraphic output; skip restating the task and sign-offs (see General Preferences).
+
 ## Language Conventions
 
 - Go: `gofmt`/`goimports`; table-driven tests; wrap errors with `%w`
