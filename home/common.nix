@@ -53,7 +53,6 @@
     texliveFull
     tmux
     tree
-    typescript
     typescript-language-server
     unzip
     yq
