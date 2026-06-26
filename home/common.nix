@@ -45,6 +45,7 @@
     nodejs_24
     pnpm
     podman
+    pyright
     python3
     ripgrep
     shellcheck
@@ -52,6 +53,8 @@
     texliveFull
     tmux
     tree
+    typescript
+    typescript-language-server
     unzip
     yq
     zip
@@ -401,6 +404,21 @@
         $DRY_RUN_CMD "$claude_bin" mcp remove github --scope user 2>/dev/null || true
         $DRY_RUN_CMD "$claude_bin" mcp add-json github "$json" --scope user
       fi
+    fi
+  '';
+
+  # LSP plugins must be *installed* (downloaded into ~/.claude/plugins) in addition to
+  # being enabled via settings.json's enabledPlugins. Installation state lives in mutable
+  # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
+  # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
+  # themselves (gopls, typescript-language-server, pyright) come from home.packages above.
+  home.activation.claudeLspPlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    claude_bin="$(command -v claude || true)"
+    if [ -n "$claude_bin" ]; then
+      for plugin in gopls-lsp typescript-lsp pyright-lsp; do
+        $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
+      done
     fi
   '';
 }
