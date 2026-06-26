@@ -48,6 +48,7 @@
     pyright
     python3
     ripgrep
+    rtk
     shellcheck
     skaffold
     texliveFull
@@ -374,6 +375,7 @@
     "AGENTS.md".source = ./AGENTS.md;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
+    ".claude/RTK.md".source = ./claude/RTK.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
     ".gemini/GEMINI.md".source =
