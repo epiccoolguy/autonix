@@ -408,6 +408,23 @@
     fi
   '';
 
+  # Read-only Kubernetes MCP server for the automatic-computing-machine k3s/Argo CD
+  # cluster, for incident diagnosis. Registered the same imperative way as githubMcp
+  # (brew claude, no nix wrapper). Runs with --read-only, so it cannot mutate; real
+  # changes stay on the GitOps path (PR -> Argo). Argo CD itself is read only via the
+  # `argocd app ...` CLI (allowlisted in settings.json) over an ad-hoc port-forward --
+  # no MCP server for it, since argocd-server isn't (and shouldn't be) publicly exposed.
+  home.activation.k8sMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    claude_bin="$(command -v claude || true)"
+    if [ -n "$claude_bin" ]; then
+      # Cluster-level reads via the kubeconfig current context (no secret needed).
+      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\"]}"
+      $DRY_RUN_CMD "$claude_bin" mcp remove kubernetes --scope user 2>/dev/null || true
+      $DRY_RUN_CMD "$claude_bin" mcp add-json kubernetes "$k8s_json" --scope user
+    fi
+  '';
+
   # LSP plugins must be *installed* (downloaded into ~/.claude/plugins) in addition to
   # being enabled via settings.json's enabledPlugins. Installation state lives in mutable
   # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
