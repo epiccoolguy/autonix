@@ -58,13 +58,22 @@
       "Bash(kubectl auth can-i:*)",
       "Bash(kubectl config get-contexts:*)",
       "Bash(kubectl config current-context:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl create:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl scale:*)",
+      "Bash(kubectl rollout restart:*)",
       "Bash(argocd app get:*)",
       "Bash(argocd app list:*)",
       "Bash(argocd app diff:*)",
       "Bash(argocd app history:*)",
       "Bash(argocd app resources:*)",
-      "Bash(argocd app manifests:*)"
+      "Bash(argocd app manifests:*)",
+      "Bash(argocd app sync:*)"
     ]
+  },
+  "env": {
+    "KUBECONFIG": "/Users/miguel/.kube/claude.config"
   },
   "model": "opus",
   "enabledPlugins": {
