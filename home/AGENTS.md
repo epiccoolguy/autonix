@@ -31,6 +31,14 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 - Keep memory and instruction files terse: they are paid as input tokens on every turn.
 - Prefer concise, telegraphic output; skip restating the task and sign-offs (see General Preferences).
 
+## Code Review
+
+- Default to `/code-review` on diffs (plus `/simplify`, `/verify`); apply the fixes.
+- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy, wide blast radius) are not merge-ready until an **ultracode** review has run. Flow: regular `/code-review` first → fix → **one** ultracode pass → fix → reverify with a regular `/code-review` only. Ultracode runs at most once per change — never loop it.
+- Ultracode is a local dynamic workflow that fans out reviewer subagents to adversarially cross-check each other (`xhigh` effort + workflow orchestration), so it catches more than a single pass. It runs locally and counts toward plan usage (needs Claude Code v2.1.154+, a paid plan, and workflows enabled in `/config`).
+- Don't escalate to ultracode silently — it spawns a workflow that needs an approval prompt, so tell me you're running it. If a plan/task pinned a specific `/code-review` effort, confirm before overriding it with ultracode.
+- Opt in one of two ways: per review, prefix the request with the `ultracode` keyword (e.g. `ultracode: review the current branch diff for correctness, concurrency/locking, and security boundaries`); or for the whole session set `/effort ultracode`, run the review, then revert with `/effort high` for routine work.
+
 ## Language Conventions
 
 - Go: `gofmt`/`goimports`; table-driven tests; wrap errors with `%w`
@@ -52,8 +60,10 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 
 ## Git & GitHub
 
+- Worktrees: for a new feature or any change that may run alongside other agents, work in a dedicated `git worktree` rather than the shared checkout, so parallel agents don't collide
+- Feature delivery: on a feature branch, when work is complete and verified, autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. Never merge a PR unless I explicitly request it. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
 - Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
 - Don't add agent attributions: no `Co-Authored-By: Claude` trailer in commit messages and no "Generated with Claude Code" footer in PR bodies
 - Split unrelated changes into separate logical commits; don't bundle them
-- PRs: linear merge with fast-forward (no squash, no merge commits)
+- PRs: keep history linear — when merging, use `gh pr merge --ff` if the branch is a direct child of the base, else `gh pr merge --rebase`. Never `--merge` (the `gh` default; creates a 2-parent merge commit) and never `--squash`
 - For remote operations (PRs, issues, reviews, code search), prefer the GitHub MCP server when available; otherwise use the `gh` CLI. If a stale `GITHUB_TOKEN` env var breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`
