@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code status line: [worktree] model | effort | context | usage
+# Claude Code status line: [worktree name] model | effort | context | usage
 # Receives session JSON on stdin. See https://code.claude.com/docs/en/statusline
 input=$(cat)
 
@@ -37,7 +37,7 @@ fmt_left() {
 }
 
 LINE="${MODEL} | ${EFFORT} effort | ${PCT}% context"
-[ -n "$WORKTREE" ] && LINE="⎇ ${WORKTREE} | ${LINE}"
+[ -n "$WORKTREE" ] && LINE="worktree ${WORKTREE} | ${LINE}"
 # Subscription usage segments are absent on non-Claude.ai plans
 if [ "$FIVE_H" != "-" ]; then
   SEG="5h usage ${FIVE_H}%"
