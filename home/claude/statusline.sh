@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code status line: [worktree name] model | effort | context | usage
+# Claude Code status line: worktree | model | effort | context | usage
 # Receives session JSON on stdin. See https://code.claude.com/docs/en/statusline
 input=$(cat)
 
