@@ -26,10 +26,14 @@
     "claudeCode.useTerminal" = true;
   };
 
-  # Ctrl+Shift+I opens Claude Code in a terminal (mirrors Copilot Chat on corporate).
+  # Cmd+Shift+I opens Claude Code in a terminal (mirrors the Copilot CLI on corporate).
   programs.vscode.profiles.default.keybindings = [
     {
-      key = "ctrl+shift+i";
+      key = "shift+cmd+i";
+      command = "-workbench.action.chat.open";
+    }
+    {
+      key = "shift+cmd+i";
       command = "claude-vscode.terminal.open";
     }
   ];
