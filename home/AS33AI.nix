@@ -37,7 +37,7 @@ in
     }
     {
       key = "shift+cmd+i";
-      command = "workbench.action.chat.openNewSessionEditor.copilot.cli";
+      command = "workbench.action.chat.openNewSessionEditor.copilotcli";
     }
   ];
 
