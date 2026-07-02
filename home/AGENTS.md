@@ -34,10 +34,8 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 ## Code Review
 
 - Default to `/code-review` on diffs (plus `/simplify`, `/verify`); apply the fixes.
-- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy, wide blast radius) are not merge-ready until an **ultracode** review has run. Flow: regular `/code-review` first → fix → **one** ultracode pass → fix → reverify with a regular `/code-review` only. Ultracode runs at most once per change — never loop it.
-- Ultracode is a local dynamic workflow that fans out reviewer subagents to adversarially cross-check each other (`xhigh` effort + workflow orchestration), so it catches more than a single pass. It runs locally and counts toward plan usage (needs Claude Code v2.1.154+, a paid plan, and workflows enabled in `/config`).
-- Don't escalate to ultracode silently — it spawns a workflow that needs an approval prompt, so tell me you're running it. If a plan/task pinned a specific `/code-review` effort, confirm before overriding it with ultracode.
-- Opt in one of two ways: per review, prefix the request with the `ultracode` keyword (e.g. `ultracode: review the current branch diff for correctness, concurrency/locking, and security boundaries`); or for the whole session set `/effort ultracode`, run the review, then revert with `/effort high` for routine work.
+- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy) additionally get **one** deep multi-agent pass (`/code-review ultra`): regular `/code-review` → fix → ultra pass → fix → reverify with a regular `/code-review`. Never loop the ultra pass.
+- Don't escalate to the ultra pass silently — tell me first, and if a plan/task pinned a specific `/code-review` effort, confirm before overriding it.
 
 ## Language Conventions
 
