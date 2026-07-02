@@ -17,7 +17,7 @@
     "antigravity-cli"
     "antigravity-ide"
     "claude"
-    "claude-code"
+    "claude-code@latest"
     "iina"
     "transmission"
   ];
