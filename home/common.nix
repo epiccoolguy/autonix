@@ -255,6 +255,11 @@
               "/result" = true;
             };
             "security.workspace.trust.untrustedFiles" = "open";
+            # What `claude /terminal-setup` would set (keybindings.json is a read-only
+            # nix symlink, so it must live here): no GPU rendering (garbled-text fix)
+            # and calmer wheel scrolling for Claude Code's fullscreen TUI.
+            "terminal.integrated.gpuAcceleration" = "off";
+            "terminal.integrated.mouseWheelScrollSensitivity" = 3;
             "terminal.integrated.suggest.enabled" = false;
             "typescript.enablePromptUseWorkspaceTsdk" = true;
             "typescript.tsserver.log" = "off";
@@ -326,6 +331,14 @@
             {
               key = "ctrl+shift+tab";
               command = "workbench.action.focusPreviousGroup";
+            }
+            # Shift+Enter = newline in Claude Code, as `claude /terminal-setup`
+            # would install it (ESC+CR; nix has no \x escape, hence fromJSON).
+            {
+              key = "shift+enter";
+              command = "workbench.action.terminal.sendSequence";
+              args.text = builtins.fromJSON ''"\u001b\r"'';
+              when = "terminalFocus";
             }
           ];
 
