@@ -59,7 +59,8 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 ## Git & GitHub
 
 - Worktrees: for a new feature or any change that may run alongside other agents, work in a dedicated `git worktree` rather than the shared checkout, so parallel agents don't collide
-- Feature delivery: on a feature branch, when work is complete and verified, autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. Never merge a PR unless I explicitly request it. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
+- Feature delivery: on a feature branch, when work is complete and verified, autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. You may merge a green, verified PR autonomously as long as production (prd) is not impacted. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
+- Deploys: the GitOps flow through dev/tst/acc (PRs to master, merges, re-pinning `overlays/acc`, `vX.Y.Z` tags) is pre-approved. Anything touching prd — `overlays/prd`, prd-suffixed apps/namespaces, prd promotions — always waits for my explicit review
 - Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
 - Don't add agent attributions: no `Co-Authored-By: Claude` trailer in commit messages and no "Generated with Claude Code" footer in PR bodies
 - Split unrelated changes into separate logical commits; don't bundle them
