@@ -11,6 +11,8 @@
       "Bash(git fetch:*)",
       "Bash(git stash list:*)",
       "Bash(git worktree:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
       "Bash(ls:*)",
       "Bash(tree:*)",
       "Bash(find:*)",
@@ -42,8 +44,25 @@
       "Bash(gh pr view:*)",
       "Bash(gh pr list:*)",
       "Bash(gh pr diff:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue edit:*)",
+      "Bash(gh issue comment:*)",
+      "Bash(gh issue close:*)",
       "Bash(gh run view:*)",
       "Bash(gh run list:*)",
+      "mcp__github__issue_write",
+      "mcp__github__add_issue_comment",
+      "mcp__github__sub_issue_write",
+      "mcp__github__create_branch",
+      "mcp__github__create_pull_request",
+      "mcp__github__update_pull_request",
+      "mcp__github__update_pull_request_branch",
+      "mcp__github__merge_pull_request",
       "Bash(kubectl get:*)",
       "Bash(kubectl describe:*)",
       "Bash(kubectl logs:*)",
@@ -64,6 +83,21 @@
       "Bash(argocd app history:*)",
       "Bash(argocd app resources:*)",
       "Bash(argocd app manifests:*)"
+    ],
+    "ask": [
+      "Edit(**/overlays/prd/**)",
+      "Write(**/overlays/prd/**)"
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "GitHub collaboration: authoring or updating issues, creating or updating pull requests, and merging pull requests that do not impact production (gh CLI or GitHub MCP tools)",
+      "GitOps deploy flow for dev/tst/acc environments: pushing feature branches, opening PRs against master, merging to master, re-pinning overlays/acc image digests, creating vX.Y.Z release tags"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
   },
   "env": {
