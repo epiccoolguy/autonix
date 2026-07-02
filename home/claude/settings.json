@@ -125,6 +125,7 @@
   },
   "effortLevel": "high",
   "theme": "auto",
+  "agentPushNotifEnabled": true,
   "autoMode": {
     "allow": [
       "$defaults",
@@ -135,5 +136,6 @@
       "$defaults",
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
-  }
+  },
+  "switchModelsOnFlag": false
 }
