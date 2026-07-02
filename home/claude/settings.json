@@ -103,7 +103,7 @@
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "claude-sonnet-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
