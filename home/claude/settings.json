@@ -78,7 +78,6 @@
     "claude-md-management@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true
   },
   "effortLevel": "high",
