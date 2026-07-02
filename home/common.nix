@@ -45,6 +45,7 @@
     nixfmt
     nixfmt-tree
     nodejs_24
+    openstackclient
     pnpm
     podman
     pyright
