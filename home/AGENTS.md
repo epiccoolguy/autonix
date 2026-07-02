@@ -34,8 +34,8 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 ## Code Review
 
 - Default to `/code-review` on diffs (plus `/simplify`, `/verify`); apply the fixes.
-- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy) additionally get **one** deep multi-agent pass (`/code-review ultra`): regular `/code-review` → fix → ultra pass → fix → reverify with a regular `/code-review`. Never loop the ultra pass.
-- Don't escalate to the ultra pass silently — tell me first, and if a plan/task pinned a specific `/code-review` effort, confirm before overriding it.
+- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy) additionally get **one** local ultracode pass — prefix the review request with the `ultracode` keyword (local multi-agent workflow; not the cloud `/code-review ultra`): regular `/code-review` → fix → ultracode pass → fix → reverify with a regular `/code-review`. Never loop the ultracode pass.
+- Don't escalate to ultracode silently — it spawns a workflow that needs an approval prompt, so tell me first; if a plan/task pinned a specific `/code-review` effort, confirm before overriding it.
 
 ## Language Conventions
 
