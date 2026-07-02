@@ -1,6 +1,8 @@
 {
+  "env": {
+    "KUBECONFIG": "/Users/miguel/.kube/claude.config"
+  },
   "permissions": {
-    "defaultMode": "auto",
     "allow": [
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -87,7 +89,8 @@
     "ask": [
       "Edit(**/overlays/prd/**)",
       "Write(**/overlays/prd/**)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "autoMode": {
     "allow": [
@@ -100,29 +103,7 @@
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
   },
-  "env": {
-    "KUBECONFIG": "/Users/miguel/.kube/claude.config"
-  },
-  "model": "opus",
-  "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "hookify@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true
-  },
-  "effortLevel": "high",
-  "theme": "auto",
-  "enableWorkflows": true,
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "refreshInterval": 60
-  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -135,5 +116,24 @@
         ]
       }
     ]
-  }
+  },
+  "enableWorkflows": true,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 60
+  },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "theme": "auto"
 }
