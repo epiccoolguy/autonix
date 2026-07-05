@@ -66,9 +66,3 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 - Split unrelated changes into separate logical commits; don't bundle them
 - PRs: keep history linear — when merging, use `gh pr merge --ff` if the branch is a direct child of the base, else `gh pr merge --rebase`. Never `--merge` (the `gh` default; creates a 2-parent merge commit) and never `--squash`
 - For remote operations (PRs, issues, reviews, code search), prefer the GitHub MCP server when available; otherwise use the `gh` CLI. If a stale `GITHUB_TOKEN` env var breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`
-
-## Antigravity Customization
-
-- **MCP Configuration:** Never mutate the active MCP settings at `~/.gemini/config/mcp_config.json` or through the UI directly. Instead, add or update the MCP server definition in the repository's base template at `home/antigravity/mcp_config.json`, then run a system switch to regenerate the config.
-- **Settings & Permissions:** Runtime settings or permission allowlist changes are saved to `~/.gemini/antigravity-cli/settings.json` and are synced automatically back to the repository at `home/antigravity/settings.json` via a PreToolUse hook. Verify these changes are unstaged in Git and commit them as needed.
-

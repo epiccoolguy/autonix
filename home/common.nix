@@ -398,8 +398,8 @@
     ".claude/RTK.md".source = ./claude/RTK.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
-    ".gemini/GEMINI.md".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".gemini/GEMINI.md".text =
+      builtins.readFile ./AGENTS.md + "\n" + builtins.readFile ./antigravity/GEMINI.md;
     ".copilot/copilot-instructions.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
 
