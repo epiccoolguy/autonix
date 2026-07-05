@@ -407,6 +407,15 @@
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
     ".claude/statusline.sh".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/statusline.sh";
+
+    ".gemini/antigravity-cli/settings.json" = {
+      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/antigravity/settings.json";
+      force = true;
+    };
+    ".gemini/config/hooks.json" = {
+      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/antigravity/hooks.json";
+      force = true;
+    };
   };
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
@@ -465,5 +474,34 @@
         $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
       done
     fi
+  '';
+
+  home.activation.antigravityMcp = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+        env_file="$HOME/.env"
+        gemini_config_dir="$HOME/.gemini/config"
+        mkdir -p "$gemini_config_dir"
+        
+        template="/etc/nix-darwin/home/antigravity/mcp_config.json"
+        if [ -f "$template" ]; then
+          pat=""
+          if [ -f "$env_file" ]; then
+            pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
+          fi
+          
+          if [ -n "$pat" ]; then
+            ${pkgs.python3}/bin/python3 -c "
+    import json
+    with open('$template') as f:
+        d = json.load(f)
+    if 'github' in d.get('mcpServers', {}):
+        d['mcpServers']['github']['headers'] = {'Authorization': 'Bearer $pat'}
+    with open('$gemini_config_dir/mcp_config.json', 'w') as f:
+        json.dump(d, f, indent=2)
+    "
+          else
+            cp "$template" "$gemini_config_dir/mcp_config.json"
+          fi
+        fi
   '';
 }
