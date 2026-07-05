@@ -40,6 +40,7 @@
     kubelogin
     kubernetes-helm
     maven
+    mtr
     neovim
     nixd
     nixfmt
