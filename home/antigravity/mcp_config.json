@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "github": {
+      "serverUrl": "https://api.githubcopilot.com/mcp"
+    },
+    "kubernetes": {
+      "command": "pnpx",
+      "args": [
+        "kubernetes-mcp-server@latest",
+        "--read-only",
+        "--disable-multi-cluster",
+        "--kubeconfig",
+        "/Users/miguel/.kube/claude.config"
+      ]
+    }
+  }
+}
