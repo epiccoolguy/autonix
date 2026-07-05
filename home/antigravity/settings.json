@@ -43,9 +43,14 @@
       "command(argocd app diff *)",
       "command(argocd app history *)",
       "command(argocd app resources *)",
-      "command(argocd app manifests *)"
+      "command(argocd app manifests *)",
+      "command(diff)",
+      "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2\u003e/dev/null || true')"
     ],
-    "ask": ["write_file(**/overlays/prd/**)", "read_file(**/overlays/prd/**)"]
+    "ask": [
+      "write_file(**/overlays/prd/**)",
+      "read_file(**/overlays/prd/**)"
+    ]
   },
   "trustedWorkspaces": [
     "/etc/nix-darwin",
