@@ -45,7 +45,10 @@
       "command(argocd app resources *)",
       "command(argocd app manifests *)",
       "command(diff)",
-      "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2\u003e/dev/null || true')"
+      "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2\u003e/dev/null || true')",
+      "command(git add)",
+      "command(git commit)",
+      "command(git diff)"
     ],
     "ask": [
       "write_file(**/overlays/prd/**)",
