@@ -1,17 +1,28 @@
 {
-  "PreToolUse": [
-    {
-      "matcher": "run_command",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "rtk hook gemini"
-        },
-        {
-          "type": "command",
-          "command": "sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2>/dev/null || true'"
-        }
-      ]
-    }
-  ]
+  "token-killer": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook gemini"
+          }
+        ]
+      }
+    ]
+  },
+  "settings-sync": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2>/dev/null || true'"
+          }
+        ]
+      }
+    ]
+  }
 }
