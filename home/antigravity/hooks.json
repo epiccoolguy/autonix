@@ -6,6 +6,10 @@
         {
           "type": "command",
           "command": "rtk hook gemini"
+        },
+        {
+          "type": "command",
+          "command": "sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2>/dev/null || true'"
         }
       ]
     }
