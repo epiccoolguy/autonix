@@ -86,10 +86,7 @@
       "Bash(argocd app resources:*)",
       "Bash(argocd app manifests:*)"
     ],
-    "ask": [
-      "Edit(**/overlays/prd/**)",
-      "Write(**/overlays/prd/**)"
-    ],
+    "ask": ["Edit(**/overlays/prd/**)", "Write(**/overlays/prd/**)"],
     "defaultMode": "auto"
   },
   "model": "claude-sonnet-5[1m]",
@@ -125,6 +122,7 @@
   },
   "effortLevel": "high",
   "theme": "auto",
+  "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
   "autoMode": {
     "allow": [
@@ -137,5 +135,5 @@
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
   },
-  "switchModelsOnFlag": false
+  "skipWorkflowUsageWarning": true
 }
