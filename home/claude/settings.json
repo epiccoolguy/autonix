@@ -89,7 +89,7 @@
     "ask": ["Edit(**/overlays/prd/**)", "Write(**/overlays/prd/**)"],
     "defaultMode": "auto"
   },
-  "model": "claude-sonnet-5[1m]",
+  "model": "opusplan[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -121,6 +121,7 @@
     "claude-code-setup@claude-plugins-official": true
   },
   "effortLevel": "high",
+  "skipWorkflowUsageWarning": false,
   "theme": "auto",
   "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
@@ -134,6 +135,5 @@
       "$defaults",
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review"
     ]
-  },
-  "skipWorkflowUsageWarning": true
+  }
 }
