@@ -58,6 +58,8 @@
       "command(nixfmt-tree)",
       "command(nixfmt)",
       "command(npm *)",
+      "command(npm *)",
+      "command(npm)",
       "command(openssl *)",
       "command(openssl)",
       "command(perl *)",
@@ -75,13 +77,14 @@
       "command(rtk)",
       "command(sed *)",
       "command(sed)",
-      "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2>/dev/null || true')",
+      "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2\u003e/dev/null || true')",
       "command(sleep *)",
       "command(sleep)",
       "command(sort *)",
       "command(sort)",
       "command(tail *)",
       "command(tail)",
+      "command(timeout)",
       "command(tree *)",
       "command(tree)",
       "command(tsc *)",
@@ -89,13 +92,12 @@
       "command(wc)",
       "command(which *)",
       "command(which)",
+      "command(xargs)",
       "mcp(github/*)",
-      "mcp(kubernetes/*)"
+      "mcp(kubernetes/*)",
+      "mcp(kubernetes/pods_list)"
     ],
-    "ask": [
-      "write_file(**/overlays/prd/**)",
-      "read_file(**/overlays/prd/**)"
-    ]
+    "ask": ["write_file(**/overlays/prd/**)", "read_file(**/overlays/prd/**)"]
   },
   "trustedWorkspaces": [
     "/etc/nix-darwin",
