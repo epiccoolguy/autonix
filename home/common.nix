@@ -444,8 +444,8 @@
   # `argocd app ...` CLI (allowlisted in settings.json) over an ad-hoc port-forward --
   # no MCP server for it, since argocd-server isn't (and shouldn't be) publicly exposed.
   #
-  # Authenticates as the least-privilege `claude-ops` ServiceAccount via the scoped
-  # kubeconfig at ~/.kube/claude.config (default context claude-mlzw-a), NOT the admin
+  # Authenticates as the least-privilege `agent-ops` ServiceAccount via the scoped
+  # kubeconfig at ~/.kube/agent.config (default context agent-mlzw-a), NOT the admin
   # context. --disable-multi-cluster pins it to that file's current-context. The file
   # carries a live SA token and is deliberately NOT nix-managed -- we only reference the
   # path here; rebuild it per docs/agent-cluster-access.md if the token is rotated.
@@ -453,8 +453,8 @@
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      # Cluster-level reads as claude-ops via the scoped kubeconfig (current context).
-      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/claude.config\"]}"
+      # Cluster-level reads as agent-ops via the scoped kubeconfig (current context).
+      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/agent.config\"]}"
       $DRY_RUN_CMD "$claude_bin" mcp remove kubernetes --scope user 2>/dev/null || true
       $DRY_RUN_CMD "$claude_bin" mcp add-json kubernetes "$k8s_json" --scope user
     fi
