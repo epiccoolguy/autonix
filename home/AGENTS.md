@@ -1,79 +1,65 @@
 # Global Agent Instructions
 
-## About Me
+## About Me & Environment
 
-I'm a software engineer working primarily with Go, TypeScript, and Nix. My machines are managed with nix-darwin and home-manager (repo at `/etc/nix-darwin`).
+I'm a software engineer working primarily in Go, TypeScript, and Nix. My machines are managed with nix-darwin and home-manager (repo at `/etc/nix-darwin`). Shell: zsh. Editor: VS Code. VCS: git with GitHub (`gh` CLI). Container runtime: podman (aliased as `docker`). Packages via nix; brew inside the flake only for GUI apps or tools missing from nixpkgs. A PreToolUse hook transparently proxies common dev commands through `rtk` for token savings — no action needed.
 
-These global agent instructions are nix-managed — edit the source at `/etc/nix-darwin/home/AGENTS.md` and run `switch` to apply. The deployed canonical is `~/AGENTS.md`; tool configs reference it: `~/.claude/CLAUDE.md` imports it, and `~/.gemini/GEMINI.md` (Gemini CLI + Antigravity), `~/.codex/AGENTS.md` (Codex), and `~/.copilot/copilot-instructions.md` (Copilot CLI) symlink to it. Don't edit the deployed files directly.
+This file is nix-managed: edit the source at `/etc/nix-darwin/home/AGENTS.md` and run `switch`. The deployed canonical is `~/AGENTS.md`: `~/.claude/CLAUDE.md` imports it, `~/.codex/AGENTS.md` (Codex) and `~/.copilot/copilot-instructions.md` (Copilot CLI) symlink to it, and `~/.gemini/GEMINI.md` (Gemini CLI + Antigravity) is generated from it. Never edit the deployed copies.
 
-## General Preferences
+## Style
 
-- Prefer concise, direct responses — skip preamble and summaries
-- Default to no code comments unless the WHY is non-obvious
-- Don't add error handling for scenarios that can't happen
-- Don't introduce abstractions beyond what the task requires
+- Concise, direct responses — no preamble, no restating the task, no summaries or sign-offs.
+- No code comments unless the WHY is non-obvious.
+- No error handling for scenarios that can't happen; no abstractions beyond what the task requires.
+- Match a file/repo's existing conventions over generic best practices.
 
-## Working Style
+## Working
 
-- Verify before claiming done: run static checks (`bash -n`, `go vet`, `go mod tidy`), then tests, and report real output
-- If tests fail or a step was skipped, say so plainly — don't paper over it
-- Match existing conventions in a file/repo over generic best practices
-- When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory
+- Verify before claiming done: static checks (`bash -n`, `go vet`, `go mod tidy`), then tests; report real output. If a test fails or a step was skipped, say so plainly — don't paper over it.
+- Lean on the built-in skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
+- When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory.
+- Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps.
+- Locate symbols with LSP navigation (plugins are wired for the main languages) rather than blind grep.
+- Keep memory and instruction files terse — they are paid as input tokens on every turn.
 
 ## Feature Workflow
 
-- **Plan**: start feature work in plan mode; author the plan with Fable or Opus at high effort.
-- **Implement**: execute the approved plan in auto-accept mode with Sonnet at high effort.
-- **Review**: after implementation, follow the sequence in Code Review.
+1. **Plan**: feature work always starts in plan mode, as does any other non-trivial or multi-file change (non-feature work may skip planning only when the path is obvious); author the plan with Fable or Opus at high effort (the default model `opusplan[1m]` gives Opus in plan mode).
+2. **Implement**: execute the approved plan in auto mode with Sonnet at high effort (`opusplan` switches to Sonnet automatically outside plan mode).
+3. **Review**: run the post-implementation sequence in Code Review.
 
-## Agent Efficiency
-
-Keep context lean and tool calls cheap — these levers are built in, use them by default:
-
-- Delegate broad searches, log-trawling, and multi-file audits to a subagent; surface only the conclusion, not the raw dumps, into the main thread.
-- Use plan mode for non-trivial or multi-file changes (feature work always plans — see Feature Workflow); act directly only when the path is obvious.
-- Prefer LSP navigation (go-to-definition, find-references) over blind grep to locate symbols — gopls, typescript-language-server, and pyright are installed and wired as LSP plugins.
-- Lean on the built-in review/cleanup skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
-- Keep memory and instruction files terse: they are paid as input tokens on every turn.
-- Prefer concise, telegraphic output; skip restating the task and sign-offs (see General Preferences).
+When a step names a model the session isn't on, run it via a subagent pinned to that model, or ask me to `/model` first.
 
 ## Code Review
 
-- For ad-hoc diffs outside the implementation flow, a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
-- After implementation, always run this sequence:
-  1. Suggest an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`); it needs my explicit approval. When approved, run **one** pass with Sonnet at high effort.
-  2. If I decline, instead run a regular `/code-review` with Opus at max effort.
+- Ad-hoc diffs outside the implementation flow: a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
+- Post-implementation sequence:
+  1. Propose an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`); it needs my explicit approval. Approved → **one** pass with Sonnet at high effort.
+  2. Declined → regular `/code-review` with Opus at max effort.
   3. Either way, fix the findings with Sonnet at high effort.
   4. Reverify with a regular `/code-review` with Opus at high effort.
-- Steps that name a model the session isn't on: run them via a subagent pinned to that model, or ask me to `/model` first.
-- A plan/task-pinned `/code-review` effort overrides the efforts above; confirm with me before deviating from it.
+- A plan/task-pinned `/code-review` effort overrides these; confirm with me before deviating.
 
-## Language Conventions
+## Languages
 
-- Go: `gofmt`/`goimports`; table-driven tests; wrap errors with `%w`
-- TypeScript: prefer `type` over `interface` unless extending; avoid `any`
-- Nix: format with `nixfmt <file>` (per-file) or `nixfmt-tree` (whole repo); bare `nixfmt .` is deprecated
+- Go: `gofmt`/`goimports`; table-driven tests; wrap errors with `%w`.
+- TypeScript: prefer `type` over `interface` unless extending; avoid `any`.
+- Nix: format with `nixfmt <file>` (per-file) or `nixfmt-tree` (whole repo); bare `nixfmt .` is deprecated.
 
 ## Secrets
 
-- Never commit secrets or print them in logs/output
-- Read tokens from the environment or `~/.env`, never hardcode
-
-## Tools & Environment
-
-- Shell: zsh
-- Editor: VS Code
-- VCS: git with GitHub (`gh` CLI available)
-- Container runtime: podman (aliased as `docker`)
-- Package manager: nix (prefer nix packages; brew inside nix flake for tools not in nixpkgs or with a graphical interface)
+- Never commit secrets or print them in logs/output; read tokens from the environment or `~/.env`, never hardcode.
 
 ## Git & GitHub
 
-- Worktrees: for a new feature or any change that may run alongside other agents, work in a dedicated `git worktree` rather than the shared checkout, so parallel agents don't collide
-- Feature delivery: on a feature branch, when work is complete and verified (Code Review sequence passed), autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. You may merge a green, verified PR autonomously as long as production (prd) is not impacted. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
-- Deploys: the GitOps flow through dev/tst/acc (PRs to master, merges, re-pinning `overlays/acc`, `vX.Y.Z` tags) is pre-approved. Anything touching prd — `overlays/prd`, prd-suffixed apps/namespaces, prd promotions — always waits for my explicit review
-- Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
-- Don't add agent attributions: no `Co-Authored-By: Claude` trailer in commit messages and no "Generated with Claude Code" footer in PR bodies
-- Split unrelated changes into separate logical commits; don't bundle them
-- PRs: keep history linear — when merging, use `gh pr merge --ff` if the branch is a direct child of the base, else `gh pr merge --rebase`. Never `--merge` (the `gh` default; creates a 2-parent merge commit) and never `--squash`
-- For remote operations (PRs, issues, reviews, code search), prefer the GitHub MCP server when available; otherwise use the `gh` CLI. If a stale `GITHUB_TOKEN` env var breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`
+- Conventional Commits (`type(scope): imperative mood, concise subject`); split unrelated changes into separate logical commits; no agent attribution (no `Co-Authored-By: Claude` trailer, no "Generated with Claude Code" footer).
+- New features or anything that may run alongside other agents: work in a dedicated `git worktree` so parallel agents don't collide.
+- Feature branches: once work is complete and verified (Code Review sequence passed), autonomously commit, push, and open or update the PR — don't leave finished work uncommitted. You may merge a green, verified PR if prd is untouched. On `master`/the default branch, commit/push only when I ask.
+- Keep history linear: `gh pr merge --ff` if the branch is a direct child of the base, else `--rebase`; never `--merge` (the `gh` default; creates a 2-parent merge commit) and never `--squash`.
+- Remote operations (PRs, issues, reviews, code search): prefer the GitHub MCP server when available, else the `gh` CLI. If a stale `GITHUB_TOKEN` breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`.
+
+## Deploys & Cluster Access
+
+- The GitOps flow through dev/tst/acc is pre-approved: PRs to master, merges, re-pinning `overlays/acc`, `vX.Y.Z` tags. Anything touching prd — `overlays/prd`, prd-suffixed apps/namespaces, prd promotions — always waits for my explicit review.
+- `kubectl` and the (read-only) Kubernetes MCP run as the least-privilege `agent-ops` ServiceAccount via the scoped kubeconfig `~/.kube/agent.config` (preset as `KUBECONFIG`): cluster-wide read minus Secrets and most pod logs (logs only in non-prod namespaces), write only in `zandbak-dev`/`zandbak-tst` — enforced server-side by RBAC + Pod Security Admission. Never override `KUBECONFIG`/`--kubeconfig` toward an admin config (`admin.config`, `config-mlzw`) — break-glass admin access is mine alone.
+- `argocd` CLI: read-only `app` subcommands only (get/list/diff/history/resources/manifests); cluster mutations go through the GitOps flow, never `argocd app sync`/`rollback`/`delete`.
