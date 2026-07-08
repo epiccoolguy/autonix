@@ -20,12 +20,18 @@ These global agent instructions are nix-managed — edit the source at `/etc/nix
 - Match existing conventions in a file/repo over generic best practices
 - When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory
 
+## Feature Workflow
+
+- **Plan**: start feature work in plan mode; author the plan with Fable or Opus at high effort.
+- **Implement**: execute the approved plan in auto-accept mode with Sonnet at high effort.
+- **Review**: after implementation, follow the sequence in Code Review.
+
 ## Agent Efficiency
 
 Keep context lean and tool calls cheap — these levers are built in, use them by default:
 
 - Delegate broad searches, log-trawling, and multi-file audits to a subagent; surface only the conclusion, not the raw dumps, into the main thread.
-- Use plan mode for non-trivial or multi-file changes; act directly only when the path is obvious.
+- Use plan mode for non-trivial or multi-file changes (feature work always plans — see Feature Workflow); act directly only when the path is obvious.
 - Prefer LSP navigation (go-to-definition, find-references) over blind grep to locate symbols — gopls, typescript-language-server, and pyright are installed and wired as LSP plugins.
 - Lean on the built-in review/cleanup skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
 - Keep memory and instruction files terse: they are paid as input tokens on every turn.
@@ -33,9 +39,14 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 
 ## Code Review
 
-- Default to `/code-review` on diffs (plus `/simplify`, `/verify`); apply the fixes.
-- High-risk changes (security, auth, concurrency/locking, data migrations, money, infra/deploy) additionally get **one** local ultracode pass — prefix the review request with the `ultracode` keyword (local multi-agent workflow; not the cloud `/code-review ultra`): regular `/code-review` → fix → ultracode pass → fix → reverify with a regular `/code-review`. Never loop the ultracode pass.
-- Don't escalate to ultracode silently — it spawns a workflow that needs an approval prompt, so tell me first; if a plan/task pinned a specific `/code-review` effort, confirm before overriding it.
+- For ad-hoc diffs outside the implementation flow, a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
+- After implementation, always run this sequence:
+  1. Suggest an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`); it needs my explicit approval. When approved, run **one** pass with Sonnet at high effort.
+  2. If I decline, instead run a regular `/code-review` with Opus at max effort.
+  3. Either way, fix the findings with Sonnet at high effort.
+  4. Reverify with a regular `/code-review` with Opus at high effort.
+- Steps that name a model the session isn't on: run them via a subagent pinned to that model, or ask me to `/model` first.
+- A plan/task-pinned `/code-review` effort overrides the efforts above; confirm with me before deviating from it.
 
 ## Language Conventions
 
@@ -59,7 +70,7 @@ Keep context lean and tool calls cheap — these levers are built in, use them b
 ## Git & GitHub
 
 - Worktrees: for a new feature or any change that may run alongside other agents, work in a dedicated `git worktree` rather than the shared checkout, so parallel agents don't collide
-- Feature delivery: on a feature branch, when work is complete and verified, autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. You may merge a green, verified PR autonomously as long as production (prd) is not impacted. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
+- Feature delivery: on a feature branch, when work is complete and verified (Code Review sequence passed), autonomously commit, push, and open or update its pull request — don't leave finished work uncommitted. You may merge a green, verified PR autonomously as long as production (prd) is not impacted. This does not apply to changes on `master`/the default branch (commit/push those only when I ask)
 - Deploys: the GitOps flow through dev/tst/acc (PRs to master, merges, re-pinning `overlays/acc`, `vX.Y.Z` tags) is pre-approved. Anything touching prd — `overlays/prd`, prd-suffixed apps/namespaces, prd promotions — always waits for my explicit review
 - Commit messages: follow Conventional Commits (`type(scope): imperative mood, concise subject line`)
 - Don't add agent attributions: no `Co-Authored-By: Claude` trailer in commit messages and no "Generated with Claude Code" footer in PR bodies
