@@ -58,7 +58,6 @@
       "command(nixfmt-tree)",
       "command(nixfmt)",
       "command(npm *)",
-      "command(npm *)",
       "command(npm)",
       "command(openssl *)",
       "command(openssl)",
@@ -94,8 +93,7 @@
       "command(which)",
       "command(xargs)",
       "mcp(github/*)",
-      "mcp(kubernetes/*)",
-      "mcp(kubernetes/pods_list)"
+      "mcp(kubernetes/*)"
     ],
     "ask": ["write_file(**/overlays/prd/**)", "read_file(**/overlays/prd/**)"]
   },
