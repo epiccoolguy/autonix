@@ -79,7 +79,7 @@
       "Edit(**/overlays/prd/**)",
       "Write(**/overlays/prd/**)"
     ],
-    "defaultMode": "auto"
+    "defaultMode": "plan"
   },
   "model": "opusplan",
   "hooks": {
