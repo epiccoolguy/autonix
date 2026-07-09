@@ -81,7 +81,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opusplan[1m]",
+  "model": "opusplan",
   "hooks": {
     "PreToolUse": [
       {
