@@ -15,6 +15,7 @@
     (azure-cli.withExtensions [
       azure-cli.extensions.azure-devops
     ])
+    bashInteractive
     bruno
     cargo
     clippy
@@ -481,14 +482,14 @@
         env_file="$HOME/.env"
         gemini_config_dir="$HOME/.gemini/config"
         mkdir -p "$gemini_config_dir"
-        
+
         template="/etc/nix-darwin/home/antigravity/mcp_config.json"
         if [ -f "$template" ]; then
           pat=""
           if [ -f "$env_file" ]; then
             pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
           fi
-          
+
           if [ -n "$pat" ]; then
             ${pkgs.python3}/bin/python3 -c "
     import json
