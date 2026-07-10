@@ -2,7 +2,7 @@
 
 ## About Me & Environment
 
-I'm a software engineer working primarily in Go, TypeScript, and Nix. My machines are managed with nix-darwin and home-manager (repo at `/etc/nix-darwin`). Shell: zsh. Editor: VS Code. VCS: git with GitHub (`gh` CLI). Container runtime: podman (aliased as `docker`). Packages via nix; brew inside the flake only for GUI apps or tools missing from nixpkgs. A PreToolUse hook transparently proxies common dev commands through `rtk` for token savings — no action needed.
+I'm a software engineer working primarily in Go, TypeScript, and Nix. My machines are managed with nix-darwin and home-manager (repo at `/etc/nix-darwin`). Shell: zsh. Editor: VS Code. VCS: git with GitHub (`gh` CLI). Container runtime: podman (aliased as `docker`). Packages via nix; brew inside the flake only for GUI apps or tools missing from nixpkgs. Core Unix tools (coreutils, findutils, sed, awk, grep, diffutils, less, rsync, bash) are GNU/nixpkgs versions ahead of Apple's BSD/ancient defaults in `PATH` — assume GNU flag semantics (e.g. `sed -i` needs no empty-string arg), not BSD. A PreToolUse hook transparently proxies common dev commands through `rtk` for token savings — no action needed.
 
 This file is nix-managed: edit the source at `/etc/nix-darwin/home/AGENTS.md` and run `switch`. The deployed canonical is `~/AGENTS.md`: `~/.claude/CLAUDE.md` imports it, `~/.codex/AGENTS.md` (Codex) and `~/.copilot/copilot-instructions.md` (Copilot CLI) symlink to it, and `~/.gemini/GEMINI.md` (Gemini CLI + Antigravity) is generated from it. Never edit the deployed copies.
 

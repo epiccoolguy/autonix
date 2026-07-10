@@ -23,10 +23,12 @@
     curl
     delve
     deno
+    diffutils
     findutils
     gawk
     gh
     github-copilot-cli
+    gnugrep
     gnumake
     gnused
     golangci-lint
@@ -40,6 +42,7 @@
     kubectl
     kubelogin
     kubernetes-helm
+    less
     maven
     mtr
     neovim
@@ -53,6 +56,7 @@
     pyright
     python3
     ripgrep
+    rsync
     rtk
     rust-analyzer
     rustc
