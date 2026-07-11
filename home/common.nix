@@ -10,6 +10,7 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    argo-workflows
     argocd
     awscli2
     (azure-cli.withExtensions [
