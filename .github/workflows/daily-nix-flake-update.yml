@@ -125,7 +125,7 @@ jobs:
           if-no-files-found: error
 
   create_pr:
-    name: Open pull request
+    name: Open and merge pull request
     needs:
       - update
       - validate
@@ -152,7 +152,7 @@ jobs:
           name: nix-warnings
           path: .
 
-      - name: Commit, push and open pull request
+      - name: Commit, push, open and merge pull request
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: bot/daily-nix-flake-update
