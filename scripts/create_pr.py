@@ -14,7 +14,7 @@ from typing import Any
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Commit flake.lock to a bot branch and create or update a pull request."
+        description="Commit flake.lock to a bot branch, create or update a pull request, and merge it."
     )
     parser.add_argument(
         "--branch",
@@ -187,6 +187,8 @@ def main() -> int:
                 "--title", args.pr_title,
                 "--body", body,
             ])
+
+        run(["gh", "pr", "merge", branch, "--rebase", "--delete-branch"])
     except subprocess.CalledProcessError as e:
         print(f"error: gh operation failed with exit code {e.returncode}", file=sys.stderr)
         return e.returncode
