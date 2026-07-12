@@ -26,7 +26,7 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 
 ## Feature Workflow
 
-1. **Plan**: feature work always starts in plan mode, as does any other non-trivial or multi-file change (non-feature work may skip planning only when the path is obvious); author the plan with Fable or Opus at high effort (the default model `opusplan[1m]` gives Opus in plan mode).
+1. **Plan**: feature work always starts in plan mode, as does any other non-trivial or multi-file change (non-feature work may skip planning only when the path is obvious); author the plan with Fable or Opus at high effort (the default model `opusplan[1m]` gives Opus in plan mode). Never use ultraplan (cloud plan-refinement on Claude Code on the web): don't run `/ultraplan`, don't trigger the `ultraplan` keyword, and don't suggest "refine with Ultraplan on Claude Code on the web" at plan approval — plan locally only.
 2. **Implement**: execute the approved plan in auto mode with Sonnet at high effort (`opusplan` switches to Sonnet automatically outside plan mode).
 3. **Review**: run the post-implementation sequence in Code Review.
 4. **Hand off & close out**: if implementation leaves follow-up work (deferred fixes, out-of-scope findings, tech debt) — and the repo doesn't define its own handoff convention — emit a self-contained handoff prompt for a fresh session: the task, the specific files/symbols, and only the context a clean session needs to start, instead of carrying it forward. Then close out this session: if it ran in a `git worktree`, remove it (`ExitWorktree` remove, or `git worktree remove` once the branch is pushed) and mark its shared-ledger entry done. Don't leave a stale worktree or an idle session lingering after handoff.
