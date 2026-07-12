@@ -179,19 +179,17 @@
       ];
     };
 
+    # The nn-pypi corporate index lives in AS33AI.nix, not here -- it's
+    # corporate-only infra (artifactory.insim.biz doesn't resolve off the
+    # corporate VPN), and defaulting it here broke `uvx mcp-grafana` for the
+    # personal miguel profile: that tool needs to resolve exactly when on the
+    # homelab network, which is precisely when the corporate index is
+    # unreachable. Personal/test profiles get uv's plain public-PyPI default.
     uv = {
       enable = true;
       settings = {
         python-downloads = "never";
         python-preference = "only-system";
-        index = [
-          {
-            name = "nn-pypi";
-            publish-url = "https://artifactory.insim.biz/artifactory/api/pypi/nn-pypi";
-            url = "https://artifactory.insim.biz/artifactory/api/pypi/nn-pypi/simple";
-            default = true;
-          }
-        ];
       };
     };
 
