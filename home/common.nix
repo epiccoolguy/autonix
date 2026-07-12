@@ -473,9 +473,9 @@
   # package: matches the always-latest precedent already set by k8sMcp's
   # `pnpx kubernetes-mcp-server@latest` (and the `claude-code@latest` brew
   # cask in darwin/miguel.nix) rather than nix-pinning a fast-moving MCP tool.
-  # --default-index forces public PyPI regardless of `programs.uv`'s
-  # `nn-pypi` corporate default index above (mcp-grafana is a public package,
-  # not on that internal mirror).
+  # Resolves via whatever index `programs.uv` is configured with above
+  # (`nn-pypi`) -- no per-invocation index override, so this relies on that
+  # index mirroring/proxying public PyPI for mcp-grafana to resolve.
   #
   # Read-only in TWO layers: the Grafana service account itself is Viewer
   # role (server-side), and --disable-write additionally blocks
@@ -493,7 +493,7 @@
     claude_bin="$(command -v claude || true)"
     token_file="$HOME/.config/mcp/grafana-agent-ops-token"
     if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
-      grafana_json="{\"type\":\"stdio\",\"command\":\"uvx\",\"args\":[\"--default-index\",\"https://pypi.org/simple\",\"mcp-grafana\",\"-t\",\"stdio\",\"--disable-write\"],\"env\":{\"GRAFANA_URL\":\"https://grafana.mlzw.dev\",\"GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE\":\"$token_file\"}}"
+      grafana_json="{\"type\":\"stdio\",\"command\":\"uvx\",\"args\":[\"mcp-grafana\",\"-t\",\"stdio\",\"--disable-write\"],\"env\":{\"GRAFANA_URL\":\"https://grafana.mlzw.dev\",\"GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE\":\"$token_file\"}}"
       $DRY_RUN_CMD "$claude_bin" mcp remove grafana --scope user 2>/dev/null || true
       $DRY_RUN_CMD "$claude_bin" mcp add-json grafana "$grafana_json" --scope user
     fi
