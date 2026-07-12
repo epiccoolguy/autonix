@@ -96,6 +96,9 @@
     ]
   },
   "enableWorkflows": true,
+  "worktree": {
+    "baseRef": "fresh"
+  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
