@@ -24,6 +24,18 @@ in
     credential."https://gitlab.insim.biz".useHttpPath = false;
   };
 
+  # Corporate Artifactory PyPI mirror -- corporate-only (moved out of
+  # common.nix, which broke uvx package resolution for personal-profile tools
+  # off the corporate VPN). Only the AS33AI profile needs it.
+  programs.uv.settings.index = [
+    {
+      name = "nn-pypi";
+      publish-url = "https://artifactory.insim.biz/artifactory/api/pypi/nn-pypi";
+      url = "https://artifactory.insim.biz/artifactory/api/pypi/nn-pypi/simple";
+      default = true;
+    }
+  ];
+
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
     github.copilot-chat
     sonarsource.sonarlint-vscode
