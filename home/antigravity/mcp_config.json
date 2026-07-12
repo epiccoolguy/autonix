@@ -10,7 +10,7 @@
         "--read-only",
         "--disable-multi-cluster",
         "--kubeconfig",
-        "/Users/miguel/.kube/agent.config"
+        "/Users/miguel/.kube/agent.mlzw.config"
       ]
     }
   }

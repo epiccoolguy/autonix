@@ -1,6 +1,6 @@
 {
   "env": {
-    "KUBECONFIG": "/Users/miguel/.kube/agent.config"
+    "KUBECONFIG": "/Users/miguel/.kube/agent.mlzw.config"
   },
   "permissions": {
     "allow": [
@@ -129,7 +129,7 @@
     "soft_deny": [
       "$defaults",
       "Any action that deploys to or modifies a production (prd) environment: editing or re-pinning overlays/prd, targeting prd-suffixed apps/namespaces/contexts, or promoting a release to prd — production changes always go to the user for final review",
-      "Pointing kubectl, the Kubernetes MCP, or argocd at credentials other than the scoped agent kubeconfig (~/.kube/agent.config): any --kubeconfig flag or KUBECONFIG override toward admin.config/config-mlzw or other admin credentials — break-glass admin access always goes to the user"
+      "Pointing kubectl, the Kubernetes MCP, or argocd at credentials other than the scoped agent kubeconfig (~/.kube/agent.mlzw.config): any --kubeconfig flag or KUBECONFIG override toward admin.mlzw.config or other admin credentials — break-glass admin access always goes to the user"
     ]
   }
 }
