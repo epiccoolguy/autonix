@@ -466,6 +466,39 @@
     fi
   '';
 
+  # Read-only Grafana MCP server (official grafana/mcp-grafana) for the
+  # automatic-computing-machine cluster's LGTM stack -- PromQL/LogQL/Tempo
+  # query access during incident diagnosis, registered the same imperative way
+  # as githubMcp/k8sMcp (brew claude, no nix wrapper). `uvx`, not a nixpkgs
+  # package: matches the always-latest precedent already set by k8sMcp's
+  # `pnpx kubernetes-mcp-server@latest` (and the `claude-code@latest` brew
+  # cask in darwin/miguel.nix) rather than nix-pinning a fast-moving MCP tool.
+  # --default-index forces public PyPI regardless of `programs.uv`'s
+  # `nn-pypi` corporate default index above (mcp-grafana is a public package,
+  # not on that internal mirror).
+  #
+  # Read-only in TWO layers: the Grafana service account itself is Viewer
+  # role (server-side), and --disable-write additionally blocks
+  # dashboard/alert/datasource/annotation/snapshot writes client-side. This is
+  # deliberate, not just defense-in-depth: this cluster's Grafana is
+  # provisioned end-to-end from git (dashboards/datasources/alerts), so a
+  # direct write via MCP would be drift invisible to git -- the agent reads,
+  # every Grafana change ships as a git change. GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE
+  # carries a live token and is deliberately NOT nix-managed -- we only
+  # reference the path here; mint/rotate it with
+  # scripts/build-grafana-agent-token.sh (see
+  # docs/agent-cluster-access.md § Telemetry read access in the cluster repo).
+  home.activation.grafanaMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    claude_bin="$(command -v claude || true)"
+    token_file="$HOME/.config/mcp/grafana-agent-ops-token"
+    if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
+      grafana_json="{\"type\":\"stdio\",\"command\":\"uvx\",\"args\":[\"--default-index\",\"https://pypi.org/simple\",\"mcp-grafana\",\"-t\",\"stdio\",\"--disable-write\"],\"env\":{\"GRAFANA_URL\":\"https://grafana.mlzw.dev\",\"GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE\":\"$token_file\"}}"
+      $DRY_RUN_CMD "$claude_bin" mcp remove grafana --scope user 2>/dev/null || true
+      $DRY_RUN_CMD "$claude_bin" mcp add-json grafana "$grafana_json" --scope user
+    fi
+  '';
+
   # Claude Code plugins must be *installed* (downloaded into ~/.claude/plugins) in addition
   # to being enabled via settings.json's enabledPlugins. Installation state lives in mutable
   # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them

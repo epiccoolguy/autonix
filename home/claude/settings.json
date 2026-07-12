@@ -67,6 +67,7 @@
       "mcp__github__merge_pull_request",
       "Bash(kubectl:*)",
       "mcp__kubernetes",
+      "mcp__grafana",
       "Bash(argocd app get:*)",
       "Bash(argocd app list:*)",
       "Bash(argocd app diff:*)",
