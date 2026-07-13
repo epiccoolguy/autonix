@@ -43,14 +43,6 @@ in
 
   # Cmd+Shift+I opens a Copilot CLI session in the editor.
   programs.vscode.profiles.default.keybindings = [
-    {
-      key = "shift+cmd+i";
-      command = "-workbench.action.chat.open";
-    }
-    {
-      key = "shift+cmd+i";
-      command = "workbench.action.chat.openNewSessionEditor.copilotcli";
-    }
   ];
 
   programs.vscode.profiles.default.userSettings = {
