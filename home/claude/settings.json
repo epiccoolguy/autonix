@@ -96,10 +96,10 @@
       }
     ]
   },
-  "enableWorkflows": true,
   "worktree": {
     "baseRef": "fresh"
   },
+  "enableWorkflows": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -116,7 +116,7 @@
     "security-guidance@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "skipWorkflowUsageWarning": false,
   "theme": "auto",
   "switchModelsOnFlag": false,

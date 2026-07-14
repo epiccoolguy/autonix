@@ -20,7 +20,7 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 - Verify before claiming done: static checks (`bash -n`, `go vet`, `go mod tidy`), then tests; report real output. If a test fails or a step was skipped, say so plainly — don't paper over it.
 - Lean on the built-in skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
 - When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory.
-- Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps.
+- Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps. Pin read-only search/audit subagents to a cheaper model (Haiku, or Sonnet if the search needs light judgment) — reserve Opus/high-effort subagents for genuine reasoning (planning, verification, adversarial review).
 - Locate symbols with LSP navigation (plugins are wired for the main languages) rather than blind grep.
 - Keep memory and instruction files terse — they are paid as input tokens on every turn.
 
@@ -37,10 +37,9 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 
 - Ad-hoc diffs outside the implementation flow: a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
 - Post-implementation sequence:
-  1. Propose an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`); it needs my explicit approval. Approved → **one** pass with Sonnet at high effort.
-  2. Declined → regular `/code-review` with Opus at max effort.
-  3. Either way, fix the findings with Sonnet at high effort.
-  4. Reverify with a regular `/code-review` with Opus at high effort.
+  1. Default to a regular `/code-review` with Opus at max effort. Only propose an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`) for large or high-risk diffs; it needs my explicit approval. Approved → **one** pass with Sonnet at high effort.
+  2. Fix the findings with Sonnet at high effort.
+  3. Reverify with a regular `/code-review` with Opus at high effort.
 - A plan/task-pinned `/code-review` effort overrides these; confirm with me before deviating.
 
 ## Languages
@@ -63,7 +62,7 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 
 ## Parallel Work
 
-- Before fanning out parallel sessions, decompose and partition by non-overlapping file/module ownership; classify each task as independent or dependent on another's output.
+- Before fanning out parallel sessions, decompose and partition by non-overlapping file/module ownership; classify each task as independent or dependent on another's output. All sessions share one rate limit — fan out only when tasks are genuinely independent *and* time-critical, otherwise sequence.
 - Always base a new worktree/branch on freshly-fetched `origin/<default-branch>`, never local HEAD — `git fetch origin && git worktree add -b feat/x <path> origin/master`. Local `master` goes stale the moment another agent pushes, so branching off it silently forks from an old base and forces avoidable rebases/conflicts at merge.
 - Independent, non-overlapping tasks → one `git worktree` per session (see Git & GitHub).
 - Dependent or file-overlapping tasks → never run as uncoordinated parallel sessions: sequence them, or run them under a single Opus orchestrator that dispatches Sonnet subagents (Workflow fan-out) and owns merge ordering.
