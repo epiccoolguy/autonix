@@ -10,6 +10,7 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    ansible
     argo-workflows
     argocd
     awscli2
