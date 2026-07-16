@@ -11,6 +11,7 @@
   home.homeDirectory = "/Users/miguel";
 
   home.packages = with pkgs; [
+    wireguard-tools
   ];
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
