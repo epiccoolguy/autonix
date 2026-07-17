@@ -36,10 +36,11 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 ## Code Review
 
 - Ad-hoc diffs outside the implementation flow: a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
-- Post-implementation sequence:
-  1. Default to a regular `/code-review` with Opus at max effort. Only propose an ultracode review (the `ultracode` keyword — local multi-agent dynamic workflow, not the cloud `/code-review ultra`) for large or high-risk diffs; it needs my explicit approval. Approved → **one** pass with Sonnet at high effort.
-  2. Fix the findings with Sonnet at high effort.
-  3. Reverify with a regular `/code-review` with Opus at high effort.
+- Post-implementation sequence (the `code-reviewer` subagent is pinned to Opus at max effort — dispatch it for every regular review/reverify pass instead of running `/code-review` inline, so review never silently inherits the builder's Sonnet session; the one exception is the ultracode-approved pass in step 1, which must run in this thread since only I can approve it):
+  1. Assess the diff. Large or high-risk → propose `ultracode`; needs my explicit approval. Approved → **one** pass with Sonnet at high effort in this thread, then go to step 3. Declined, or diff is normal → step 2.
+  2. Dispatch the `code-reviewer` subagent for a regular `/code-review` at max effort.
+  3. Fix the findings with Sonnet at high effort.
+  4. Reverify: dispatch the `code-reviewer` subagent again (also max effort, same as step 2 — there's no separate "high effort" reverify tier now that both passes go through the same pinned subagent).
 - A plan/task-pinned `/code-review` effort overrides these; confirm with me before deviating.
 
 ## Languages
