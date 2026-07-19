@@ -446,9 +446,8 @@
   # Read-only Kubernetes MCP server for the automatic-computing-machine k3s/Argo CD
   # cluster, for incident diagnosis. Registered the same imperative way as githubMcp
   # (brew claude, no nix wrapper). Runs with --read-only, so it cannot mutate; real
-  # changes stay on the GitOps path (PR -> Argo). Argo CD itself is read only via the
-  # `argocd app ...` CLI (allowlisted in settings.json) over an ad-hoc port-forward --
-  # no MCP server for it, since argocd-server isn't (and shouldn't be) publicly exposed.
+  # changes stay on the GitOps path (PR -> Argo). Argo CD has its own MCP server
+  # (argocdMcp below) plus the `argocd` CLI (allowlisted in settings.json).
   #
   # Authenticates as the least-privilege `agent-ops` ServiceAccount via the scoped
   # kubeconfig at ~/.kube/agent.mlzw.config (default context agent-mlzw-a), NOT the admin
@@ -496,6 +495,28 @@
       grafana_json="{\"type\":\"stdio\",\"command\":\"uvx\",\"args\":[\"mcp-grafana\",\"-t\",\"stdio\",\"--disable-write\"],\"env\":{\"GRAFANA_URL\":\"https://grafana.mlzw.dev\",\"GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE\":\"$token_file\"}}"
       $DRY_RUN_CMD "$claude_bin" mcp remove grafana --scope user 2>/dev/null || true
       $DRY_RUN_CMD "$claude_bin" mcp add-json grafana "$grafana_json" --scope user
+    fi
+  '';
+
+  # Official Argo CD MCP server (argoproj-labs/mcp-for-argocd, npm `argocd-mcp`)
+  # for the automatic-computing-machine cluster's Argo CD at argocd.mlzw.dev,
+  # registered the same imperative way as githubMcp/k8sMcp/grafanaMcp (brew
+  # claude, no nix wrapper). `pnpx ...@latest` matches the k8sMcp precedent.
+  # NOT read-only (no MCP_READ_ONLY): mutating operations (sync/rollback/etc.)
+  # are deliberately allowed. The token is embedded into ~/.claude.json at
+  # activation time (same as githubMcp's PAT); the source file carries a live
+  # Argo CD API token and is deliberately NOT nix-managed -- mint one with
+  # `argocd account generate-token` and write it to
+  # ~/.config/mcp/argocd-agent-token to enable registration.
+  home.activation.argocdMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    claude_bin="$(command -v claude || true)"
+    token_file="$HOME/.config/mcp/argocd-agent-token"
+    if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
+      argocd_token="$(cat "$token_file")"
+      argocd_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"argocd-mcp@latest\",\"stdio\"],\"env\":{\"ARGOCD_BASE_URL\":\"https://argocd.mlzw.dev\",\"ARGOCD_API_TOKEN\":\"$argocd_token\"}}"
+      $DRY_RUN_CMD "$claude_bin" mcp remove argocd --scope user 2>/dev/null || true
+      $DRY_RUN_CMD "$claude_bin" mcp add-json argocd "$argocd_json" --scope user
     fi
   '';
 
