@@ -70,6 +70,7 @@
     ],
     "ask": [
       "Bash(kubectl*--kubeconfig*)",
+      "Bash(argocd*prd*)",
       "Bash(gh repo delete:*)",
       "Bash(gh secret:*)",
       "Bash(gh auth:*)",

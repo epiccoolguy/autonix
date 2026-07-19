@@ -514,9 +514,11 @@
     token_file="$HOME/.config/mcp/argocd-agent-token"
     if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
       argocd_token="$(cat "$token_file")"
-      argocd_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"argocd-mcp@latest\",\"stdio\"],\"env\":{\"ARGOCD_BASE_URL\":\"https://argocd.mlzw.dev\",\"ARGOCD_API_TOKEN\":\"$argocd_token\"}}"
-      $DRY_RUN_CMD "$claude_bin" mcp remove argocd --scope user 2>/dev/null || true
-      $DRY_RUN_CMD "$claude_bin" mcp add-json argocd "$argocd_json" --scope user
+      if [ -n "$argocd_token" ]; then
+        argocd_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"argocd-mcp@latest\",\"stdio\"],\"env\":{\"ARGOCD_BASE_URL\":\"https://argocd.mlzw.dev\",\"ARGOCD_API_TOKEN\":\"$argocd_token\"}}"
+        $DRY_RUN_CMD "$claude_bin" mcp remove argocd --scope user 2>/dev/null || true
+        $DRY_RUN_CMD "$claude_bin" mcp add-json argocd "$argocd_json" --scope user
+      fi
     fi
   '';
 
