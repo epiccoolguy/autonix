@@ -120,7 +120,30 @@
   "theme": "auto",
   "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "fallbackModel": ["opus", "sonnet"],
+  "advisorModel": "opus",
+  "alwaysThinkingEnabled": true,
+  "cleanupPeriodDays": 90,
+  "askUserQuestionTimeout": "10m",
+  "disableClaudeAiConnectors": true,
+  "autoUpdatesChannel": "stable",
+  "feedbackSurveyRate": 0,
+  "awaySummaryEnabled": true,
   "autoMode": {
+    "environment": [
+      "$defaults",
+      "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
+      "Source control: github.com/epiccoolguy and all repos under it",
+      "Trusted internal domains: *.mlzw.dev",
+      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the scoped kubeconfig ~/.kube/agent.mlzw.config",
+      "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster",
+      "Protected IaC scopes: overlays/prd in GitOps repos and any promotion of a release to prd"
+    ],
     "allow": [
       "$defaults",
       "GitHub collaboration: authoring or updating issues, creating or updating pull requests, and merging pull requests that do not impact production (gh CLI or GitHub MCP tools)",
