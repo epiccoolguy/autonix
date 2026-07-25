@@ -526,13 +526,13 @@
   # to being enabled via settings.json's enabledPlugins. Installation state lives in mutable
   # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
   # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
-  # themselves (gopls, typescript-language-server, pyright, rust-analyzer) come from
+  # themselves (gopls, typescript-language-server, pyright) come from
   # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json.
   home.activation.claudePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup; do
+      for plugin in gopls-lsp typescript-lsp pyright-lsp hookify security-guidance; do
         $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
       done
     fi
