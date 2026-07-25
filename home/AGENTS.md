@@ -18,7 +18,7 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 ## Working
 
 - Verify before claiming done: static checks (`bash -n`, `go vet`, `go mod tidy`), then tests; report real output. If a test fails or a step was skipped, say so plainly — don't paper over it.
-- Lean on the built-in skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
+- Lean on the built-in skills on diffs instead of re-deriving them by hand. I can invoke `/simplify` myself; `/code-review` and `/verify` are `disable-model-invocation` — only you can type those, so ask rather than reimplementing them.
 - When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory.
 - Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps. See Models & Effort for what to pin them to.
 - Locate symbols with LSP navigation (plugins are wired for the main languages) rather than blind grep.
@@ -27,11 +27,10 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 ## Models & Effort
 
 - Session default: `claude-opus-5[1m]` at `high` effort (`~/.claude/settings.json`). Opus everywhere — planning, implementation, and fixes all run on it, so a workflow step only names a model or effort when it *deviates* from this. `fallbackModel` silently degrades Opus→Sonnet under rate limits; if output quality drops unexpectedly, check the statusline before re-litigating the work.
-- Model is tunable per dispatch, effort is not: the `Agent` tool takes `model` (`sonnet`/`opus`/`haiku`/`fable`) but has no effort parameter, so an ad-hoc subagent always inherits the session's `high`. To run a role at a different effort it needs a definition in `~/.claude/agents/` with `effort:` (`low`/`medium`/`high`/`xhigh`/`max`, or an integer) — as `code-reviewer` does with `max`. Workflow fan-out sets effort per call via `agent(..., {effort})`.
+- Model is tunable per dispatch, effort is not: the `Agent` tool takes `model` (`sonnet`/`opus`/`haiku`/`fable`) but has no effort parameter, so an ad-hoc subagent always inherits the session's `high`. To run a role at a different effort it needs a definition in `~/.claude/agents/` with `effort:` (`low`/`medium`/`high`/`xhigh`/`max`, or an integer) — as `auditor` does with `medium`. Workflow fan-out sets effort per call via `agent(..., {effort})`, and a user-typed `/code-review max` sets it for that turn.
 - Locating files, symbols, and call sites goes to the built-in `Explore` with `model: haiku` — Anthropic maintains its prompt, and it skips loading this file (`omitClaudeMd`), which a custom search agent cannot. Its effort can't be lowered from the session's; that's the trade for not owning the prompt.
 - The defined roster, for work no built-in covers — prefer these to an ad-hoc `general-purpose` dispatch, since only a definition can lower effort as well as model:
   - `auditor` (Sonnet, `medium`) — multi-file audits, log-trawling, "does this hold everywhere".
-  - `code-reviewer` (Opus, `max`) — post-implementation review; see Code Review. Thin wrapper over the built-in `code-review` skill, so the review logic stays Anthropic-maintained.
 - Everything else stays in-thread on the session default. Reserve Opus subagents for genuine reasoning — planning, verification, adversarial review — and pass `model:` on an ad-hoc dispatch only when no defined role fits. Other deviations: ultracode fan-out (`xhigh`), `advisorModel` (Opus).
 - When a step names a model the session isn't on, run it via a subagent pinned to that model, or ask me to `/model` first.
 
@@ -49,12 +48,13 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 
 ## Code Review
 
-- Ad-hoc diffs outside the implementation flow: a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
-- Post-implementation sequence (the `code-reviewer` subagent is pinned to Opus at max effort — dispatch it for every regular review/reverify pass instead of running `/code-review` inline, so review always runs at `max` rather than inheriting the session's `high`, and reads the diff in a clean context; the one exception is the ultracode-approved pass in step 1, which must run in this thread since only I can approve it):
+- `/code-review` is `disable-model-invocation`: only you can type it, and no subagent can wrap it. Its argument sets reasoning effort for that turn, so a user-typed `/code-review max` already gives max effort *and* Anthropic's maintained review logic — a subagent would only add a clean context, in exchange for a review prompt that drifts. Never reimplement it as a prompt of my own.
+- Ad-hoc diffs outside the implementation flow: ask you to run `/code-review`, then apply the fixes. `/simplify` I run myself; `/verify` is also yours to type.
+- Post-implementation sequence:
   1. Assess the diff. Large or high-risk → propose `ultracode`; needs my explicit approval. Ultracode is the **local** workflow orchestration (`xhigh` effort, fans out reviewer subagents that adversarially cross-check each other) — never the separately-billed cloud `/code-review ultra`. Approved → run it in this thread, then go to step 3. Declined, or diff is normal → step 2.
-  2. Dispatch the `code-reviewer` subagent for a regular `/code-review` at max effort.
+  2. Ask you to run `/code-review max`, and wait for the findings rather than pre-empting them.
   3. Fix the findings in this thread.
-  4. Reverify: dispatch the `code-reviewer` subagent again (also max effort, same as step 2 — there's no separate "high effort" reverify tier now that both passes go through the same pinned subagent).
+  4. Reverify: ask you to run `/code-review max` again.
 - A plan/task-pinned `/code-review` effort overrides these; confirm with me before deviating.
 
 ## Languages

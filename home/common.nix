@@ -408,7 +408,6 @@
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/RTK.md".source = ./claude/RTK.md;
     ".claude/agents/auditor.md".source = ./claude/agents/auditor.md;
-    ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
     ".gemini/GEMINI.md".text =
