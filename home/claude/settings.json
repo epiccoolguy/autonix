@@ -1,6 +1,12 @@
 {
+  "cleanupPeriodDays": 90,
   "env": {
     "KUBECONFIG": "/Users/miguel/.kube/agent.mlzw.config"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   },
   "permissions": {
     "allow": [
@@ -86,7 +92,12 @@
     ],
     "defaultMode": "plan"
   },
-  "model": "opusplan",
+  "model": "opus[1m]",
+  "fallbackModel": [
+    "opus",
+    "sonnet"
+  ],
+  "disableClaudeAiConnectors": true,
   "hooks": {
     "PreToolUse": [
       {
@@ -119,35 +130,18 @@
     "security-guidance@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true
   },
+  "feedbackSurveyRate": 0,
+  "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
+  "advisorModel": "opus",
+  "awaySummaryEnabled": true,
+  "askUserQuestionTimeout": "10m",
+  "autoUpdatesChannel": "stable",
   "skipWorkflowUsageWarning": false,
   "theme": "auto",
   "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
-  },
-  "fallbackModel": ["opus", "sonnet"],
-  "advisorModel": "opus",
-  "alwaysThinkingEnabled": true,
-  "cleanupPeriodDays": 90,
-  "askUserQuestionTimeout": "10m",
-  "disableClaudeAiConnectors": true,
-  "autoUpdatesChannel": "stable",
-  "feedbackSurveyRate": 0,
-  "awaySummaryEnabled": true,
   "autoMode": {
-    "environment": [
-      "$defaults",
-      "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
-      "Source control: github.com/epiccoolguy and all repos under it",
-      "Trusted internal domains: *.mlzw.dev",
-      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the scoped kubeconfig ~/.kube/agent.mlzw.config",
-      "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster",
-      "Protected IaC scopes: overlays/prd in GitOps repos and any promotion of a release to prd"
-    ],
     "allow": [
       "$defaults",
       "GitHub collaboration: authoring or updating issues, creating or updating pull requests, and merging pull requests that do not impact production (gh CLI or GitHub MCP tools)",
@@ -157,6 +151,15 @@
       "$defaults",
       "Any action that changes production (prd) desired state or content: editing or re-pinning overlays/prd, promoting a release to prd, or any content-write (create/patch/apply) against prd-suffixed apps/namespaces — these always go to the user for final review. Bounded prd ops (pod delete, scale, argocd sync/action) are RBAC-permitted since #754 but still pause via the ask-rules; prd reads and log reads are fine",
       "Pointing kubectl, the Kubernetes MCP, or argocd at credentials other than the scoped agent kubeconfig (~/.kube/agent.mlzw.config): any --kubeconfig flag or KUBECONFIG override toward admin.mlzw.config or other admin credentials — break-glass admin access always goes to the user"
+    ],
+    "environment": [
+      "$defaults",
+      "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
+      "Source control: github.com/epiccoolguy and all repos under it",
+      "Trusted internal domains: *.mlzw.dev",
+      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the scoped kubeconfig ~/.kube/agent.mlzw.config",
+      "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster",
+      "Protected IaC scopes: overlays/prd in GitOps repos and any promotion of a release to prd"
     ]
   }
 }
