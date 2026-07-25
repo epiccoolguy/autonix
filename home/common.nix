@@ -217,6 +217,10 @@
       settings = {
         credential.helper = "manager";
         credential.useHttpPath = true;
+        # The daily flake-update workflow merges with `--delete-branch`, so
+        # remote branches vanish while local remote-tracking refs linger and
+        # misreport branches as still pushed. Prune on every fetch.
+        fetch.prune = true;
         init.defaultBranch = "master";
         push.autoSetupRemote = true;
         user = {
