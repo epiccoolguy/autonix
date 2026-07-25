@@ -174,10 +174,12 @@
     fzf = {
       enable = true;
       defaultCommand = "fd --hidden --exclude .git";
-      fileWidgetCommand = "fd --hidden --exclude .git --type file";
-      fileWidgetOptions = [
-        "--preview='bat --color=always {}'"
-      ];
+      fileWidget = {
+        command = "fd --hidden --exclude .git --type file";
+        options = [
+          "--preview='bat --color=always {}'"
+        ];
+      };
     };
 
     # The nn-pypi corporate index lives in AS33AI.nix, not here -- it's
