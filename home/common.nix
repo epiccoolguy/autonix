@@ -56,7 +56,7 @@
     pnpm
     podman
     pyright
-    python3
+    (python3.withPackages (ps: with ps; [ pyyaml ]))
     ripgrep
     rsync
     rtk
