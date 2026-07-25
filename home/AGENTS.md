@@ -28,8 +28,11 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 
 - Session default: `claude-opus-5[1m]` at `high` effort (`~/.claude/settings.json`). Opus everywhere — planning, implementation, and fixes all run on it, so a workflow step only names a model or effort when it *deviates* from this. `fallbackModel` silently degrades Opus→Sonnet under rate limits; if output quality drops unexpectedly, check the statusline before re-litigating the work.
 - Model is tunable per dispatch, effort is not: the `Agent` tool takes `model` (`sonnet`/`opus`/`haiku`/`fable`) but has no effort parameter, so an ad-hoc subagent always inherits the session's `high`. To run a role at a different effort it needs a definition in `~/.claude/agents/` with `effort:` (`low`/`medium`/`high`/`xhigh`/`max`, or an integer) — as `code-reviewer` does with `max`. Workflow fan-out sets effort per call via `agent(..., {effort})`.
-- Cheap work still gets a cheap model even without a definition: pass `model: haiku` on read-only search and symbol location, `model: sonnet` when the sweep needs light judgment. Reserve Opus subagents for genuine reasoning — planning, verification, adversarial review.
-- Deviations that exist today: `code-reviewer` (Opus, `max`), ultracode fan-out (`xhigh`), `advisorModel` (Opus).
+- Locating files, symbols, and call sites goes to the built-in `Explore` with `model: haiku` — Anthropic maintains its prompt, and it skips loading this file (`omitClaudeMd`), which a custom search agent cannot. Its effort can't be lowered from the session's; that's the trade for not owning the prompt.
+- The defined roster, for work no built-in covers — prefer these to an ad-hoc `general-purpose` dispatch, since only a definition can lower effort as well as model:
+  - `auditor` (Sonnet, `medium`) — multi-file audits, log-trawling, "does this hold everywhere".
+  - `code-reviewer` (Opus, `max`) — post-implementation review; see Code Review. Thin wrapper over the built-in `code-review` skill, so the review logic stays Anthropic-maintained.
+- Everything else stays in-thread on the session default. Reserve Opus subagents for genuine reasoning — planning, verification, adversarial review — and pass `model:` on an ad-hoc dispatch only when no defined role fits. Other deviations: ultracode fan-out (`xhigh`), `advisorModel` (Opus).
 - When a step names a model the session isn't on, run it via a subagent pinned to that model, or ask me to `/model` first.
 
 ## Feature Workflow
