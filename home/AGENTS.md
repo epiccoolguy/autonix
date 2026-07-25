@@ -56,8 +56,9 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 ## Git & GitHub
 
 - Conventional Commits (`type(scope): imperative mood, concise subject`); split unrelated changes into separate logical commits; no agent attribution (no `Co-Authored-By: Claude` trailer, no "Generated with Claude Code" footer).
+- Commit and push each logical change as you finish it, on any branch including `master`/the default branch — never accumulate work into one massive commit or PR. Larger features: open a feature branch and merge each stage into it individually; for sub-items, branch off the feature branch and merge each back individually. Keep the stages clearly separated and documented in commit messages and PR descriptions, so each is reviewable on its own.
 - New features or anything that may run alongside other agents: work in a dedicated `git worktree` so parallel agents don't collide (see Parallel Work).
-- Feature branches: once work is complete and verified (Code Review sequence passed), autonomously commit, push, and open or update the PR — don't leave finished work uncommitted. You may merge a green, verified PR if prd is untouched. On `master`/the default branch, commit/push only when I ask.
+- Feature branches: once work is complete and verified (Code Review sequence passed), autonomously commit, push, and open or update the PR — don't leave finished work uncommitted. You may merge a green, verified PR if prd is untouched.
 - Keep history linear: `gh pr merge --rebase` (there is no `--ff` flag); never `--merge` (the `gh` default; creates a 2-parent merge commit) and never `--squash`.
 - Remote operations (PRs, issues, reviews, code search): prefer the GitHub MCP server when available, else the `gh` CLI. If a stale `GITHUB_TOKEN` breaks `gh` auth, fall back with `env -u GITHUB_TOKEN gh ...`.
 
