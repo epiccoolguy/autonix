@@ -21,4 +21,13 @@
     "iina"
     "transmission"
   ];
+
+  # Force-install the Claude in Chrome extension (used by `claude --chrome`).
+  # The native messaging host manifest and default-enable toggle are managed
+  # by Claude Code itself on first `claude --chrome` run, not declaratively.
+  system.defaults.CustomUserPreferences."com.google.Chrome" = {
+    ExtensionInstallForcelist = [
+      "fcoeoabgfenejglbffodgkkbkcdhcgfn;https://clients2.google.com/service/update2/crx"
+    ];
+  };
 }
