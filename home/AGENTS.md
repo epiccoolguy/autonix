@@ -20,14 +20,22 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
 - Verify before claiming done: static checks (`bash -n`, `go vet`, `go mod tidy`), then tests; report real output. If a test fails or a step was skipped, say so plainly — don't paper over it.
 - Lean on the built-in skills on diffs (`/code-review`, `/simplify`, `/verify`) instead of re-deriving them by hand.
 - When configuring a versioned tool or library, fetch docs for that exact version rather than relying on memory.
-- Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps. Pin read-only search/audit subagents to a cheaper model (Haiku, or Sonnet if the search needs light judgment) — reserve Opus/high-effort subagents for genuine reasoning (planning, verification, adversarial review).
+- Delegate broad searches, log-trawling, and multi-file audits to subagents; surface conclusions into the main thread, not raw dumps. See Models & Effort for what to pin them to.
 - Locate symbols with LSP navigation (plugins are wired for the main languages) rather than blind grep.
 - Keep memory and instruction files terse — they are paid as input tokens on every turn.
 
+## Models & Effort
+
+- Session default: `claude-opus-5[1m]` at `high` effort (`~/.claude/settings.json`). Opus everywhere — planning, implementation, and fixes all run on it, so a workflow step only names a model or effort when it *deviates* from this. `fallbackModel` silently degrades Opus→Sonnet under rate limits; if output quality drops unexpectedly, check the statusline before re-litigating the work.
+- Model is tunable per dispatch, effort is not: the `Agent` tool takes `model` (`sonnet`/`opus`/`haiku`/`fable`) but has no effort parameter, so an ad-hoc subagent always inherits the session's `high`. To run a role at a different effort it needs a definition in `~/.claude/agents/` with `effort:` (`low`/`medium`/`high`/`xhigh`/`max`, or an integer) — as `code-reviewer` does with `max`. Workflow fan-out sets effort per call via `agent(..., {effort})`.
+- Cheap work still gets a cheap model even without a definition: pass `model: haiku` on read-only search and symbol location, `model: sonnet` when the sweep needs light judgment. Reserve Opus subagents for genuine reasoning — planning, verification, adversarial review.
+- Deviations that exist today: `code-reviewer` (Opus, `max`), ultracode fan-out (`xhigh`), `advisorModel` (Opus).
+- When a step names a model the session isn't on, run it via a subagent pinned to that model, or ask me to `/model` first.
+
 ## Feature Workflow
 
-1. **Plan**: feature work always starts in plan mode, as does any other non-trivial or multi-file change (non-feature work may skip planning only when the path is obvious); author the plan with Fable or Opus at high effort (the default model `opusplan[1m]` gives Opus in plan mode). Never use ultraplan (cloud plan-refinement on Claude Code on the web): don't run `/ultraplan`, don't trigger the `ultraplan` keyword, and don't suggest "refine with Ultraplan on Claude Code on the web" at plan approval — plan locally only.
-2. **Implement**: execute the approved plan in auto mode with Sonnet at high effort (`opusplan` switches to Sonnet automatically outside plan mode).
+1. **Plan**: feature work always starts in plan mode, as does any other non-trivial or multi-file change (non-feature work may skip planning only when the path is obvious); author the plan with Opus, or switch to Fable if I ask for it. Never use ultraplan (cloud plan-refinement on Claude Code on the web): don't run `/ultraplan`, don't trigger the `ultraplan` keyword, and don't suggest "refine with Ultraplan on Claude Code on the web" at plan approval — plan locally only.
+2. **Implement**: execute the approved plan in auto mode on the session default. Hand bulk mechanical edits to a Sonnet subagent when the work is large and low-judgment; keep everything else in-thread.
 3. **Review**: run the post-implementation sequence in Code Review.
 4. **Hand off & close out**: do this unprompted at the end of every session — never ask whether to clean up, never wait to be asked for a handoff.
    - **Hand off at stage boundaries, never mid-stage.** Handoff cost tracks how much load-bearing state lives in the transcript rather than in git, so once work is committed, pushed, and documented it is nearly free. Trigger one when the follow-up has a different working set, needs its own branch/worktree, is an out-of-scope review finding, is blocked on slow external input, or when you catch yourself re-deriving established facts. First confirm the follow-up isn't already done — see the content-not-SHA rule below.
@@ -36,15 +44,13 @@ These are global defaults. A repository's own `AGENTS.md`/`CLAUDE.md` takes prec
    - **Clean up**: if the session ran in a `git worktree`, remove it (`ExitWorktree` remove, or `git worktree remove`) and mark its shared-ledger entry done. Same for any other worktree or branch whose content already sits on the default branch — remove it rather than reporting it as a cleanup candidate. Pause for my confirmation only when it holds content that is not on the default branch, since removing that loses work. Say what you cleaned up; don't ask permission for the rest.
    - **Judge "already landed" by content, never by SHA.** `gh pr merge --rebase` rewrites SHAs, so `git branch --merged` and `master..branch` ancestry both lie — a branch reads as unmerged while its content is in master. Diff the files its own commits touched (`git diff --quiet master <branch> -- <files>`); empty means landed. Before calling a feature missing, grep for the implementation, not just its expected call site — including any script a workflow shells out to. `%(upstream)` survives remote deletion, so confirm a branch is really pushed with `git ls-remote`. Remote-tracking refs never hold local work; `git remote prune` is always safe.
 
-When a step names a model the session isn't on, run it via a subagent pinned to that model, or ask me to `/model` first.
-
 ## Code Review
 
 - Ad-hoc diffs outside the implementation flow: a plain `/code-review` (plus `/simplify`, `/verify`) suffices; apply the fixes.
-- Post-implementation sequence (the `code-reviewer` subagent is pinned to Opus at max effort — dispatch it for every regular review/reverify pass instead of running `/code-review` inline, so review never silently inherits the builder's Sonnet session; the one exception is the ultracode-approved pass in step 1, which must run in this thread since only I can approve it):
+- Post-implementation sequence (the `code-reviewer` subagent is pinned to Opus at max effort — dispatch it for every regular review/reverify pass instead of running `/code-review` inline, so review always runs at `max` rather than inheriting the session's `high`, and reads the diff in a clean context; the one exception is the ultracode-approved pass in step 1, which must run in this thread since only I can approve it):
   1. Assess the diff. Large or high-risk → propose `ultracode`; needs my explicit approval. Ultracode is the **local** workflow orchestration (`xhigh` effort, fans out reviewer subagents that adversarially cross-check each other) — never the separately-billed cloud `/code-review ultra`. Approved → run it in this thread, then go to step 3. Declined, or diff is normal → step 2.
   2. Dispatch the `code-reviewer` subagent for a regular `/code-review` at max effort.
-  3. Fix the findings with Sonnet at high effort.
+  3. Fix the findings in this thread.
   4. Reverify: dispatch the `code-reviewer` subagent again (also max effort, same as step 2 — there's no separate "high effort" reverify tier now that both passes go through the same pinned subagent).
 - A plan/task-pinned `/code-review` effort overrides these; confirm with me before deviating.
 
@@ -72,7 +78,7 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 - Before fanning out parallel sessions, decompose and partition by non-overlapping file/module ownership; classify each task as independent or dependent on another's output. All sessions share one rate limit — fan out only when tasks are genuinely independent *and* time-critical, otherwise sequence.
 - Always base a new worktree/branch on freshly-fetched `origin/<default-branch>`, never local HEAD — `git fetch origin && git worktree add -b feat/x <path> origin/master`. Local `master` goes stale the moment another agent pushes, so branching off it silently forks from an old base and forces avoidable rebases/conflicts at merge.
 - Independent, non-overlapping tasks → one `git worktree` per session (see Git & GitHub).
-- Dependent or file-overlapping tasks → never run as uncoordinated parallel sessions: sequence them, or run them under a single Opus orchestrator that dispatches Sonnet subagents (Workflow fan-out) and owns merge ordering.
+- Dependent or file-overlapping tasks → never run as uncoordinated parallel sessions: sequence them, or run them under a single orchestrator thread that dispatches subagents (Workflow fan-out) and owns merge ordering.
 - Shell-mode (`! cmd`) commands run in the session's cwd, so from a worktree every relative path and bare `git` resolves inside that worktree — while tools that resolve a fixed root ignore the worktree entirely (`switch`/`darwin-rebuild` without `--flake` always builds `/etc/nix-darwin`, the main checkout). Before handing me a shell-mode command from a worktree session, pull the main checkout (`git -C <main-checkout> pull`) so it carries the merged commits, and write commands with absolute paths or `git -C <path>` rather than relying on cwd. Otherwise a deploy silently uses stale config and the change just merged looks like a no-op.
 - Register every in-flight parallel task in the shared ledger at `$(git rev-parse --git-common-dir)/agent-ledger.md` (shared across all worktrees of the repo, never committed): branch, files/areas touched, status. Read it before starting; if a task would touch files another session owns, don't parallelize — sequence or merge the work.
 
