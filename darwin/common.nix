@@ -26,7 +26,6 @@
       "ghostty"
       "git-credential-manager"
       "google-chrome"
-      "icon-composer"
       "visual-studio-code"
       "windows-app"
     ];

@@ -16,5 +16,4 @@ Add new apps to `common` unless they're corporate-banned (→ `miguel`) or corpo
 ## Maintenance
 
 - Flake inputs update daily via the `daily-nix-flake-update` GitHub workflow; update manually with `nix flake update`.
-- Homebrew taps are pinned by the `homebrew-cask`/`homebrew-core` flake inputs, so `brew update` and `brew upgrade <cask>` never see newer versions. Upgrade a cask (e.g. `claude-code@latest`) with `nix flake update homebrew-cask && switch`.
 - `flake.nix` maps hostnames (`Miguels-MacBook-Air`, `MPCE-MBP-HKDC2N1VJ4`, …) to configs — change it carefully.

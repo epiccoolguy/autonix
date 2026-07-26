@@ -56,7 +56,7 @@
     pnpm
     podman
     pyright
-    (python3.withPackages (ps: with ps; [ pyyaml ]))
+    python3
     ripgrep
     rsync
     rtk
@@ -174,12 +174,10 @@
     fzf = {
       enable = true;
       defaultCommand = "fd --hidden --exclude .git";
-      fileWidget = {
-        command = "fd --hidden --exclude .git --type file";
-        options = [
-          "--preview='bat --color=always {}'"
-        ];
-      };
+      fileWidgetCommand = "fd --hidden --exclude .git --type file";
+      fileWidgetOptions = [
+        "--preview='bat --color=always {}'"
+      ];
     };
 
     # The nn-pypi corporate index lives in AS33AI.nix, not here -- it's
@@ -217,10 +215,6 @@
       settings = {
         credential.helper = "manager";
         credential.useHttpPath = true;
-        # The daily flake-update workflow merges with `--delete-branch`, so
-        # remote branches vanish while local remote-tracking refs linger and
-        # misreport branches as still pushed. Prune on every fetch.
-        fetch.prune = true;
         init.defaultBranch = "master";
         push.autoSetupRemote = true;
         user = {
@@ -407,7 +401,7 @@
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/RTK.md".source = ./claude/RTK.md;
-    ".claude/agents/auditor.md".source = ./claude/agents/auditor.md;
+    ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
     ".gemini/GEMINI.md".text =
@@ -532,13 +526,13 @@
   # to being enabled via settings.json's enabledPlugins. Installation state lives in mutable
   # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
   # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
-  # themselves (gopls, typescript-language-server, pyright) come from
+  # themselves (gopls, typescript-language-server, pyright, rust-analyzer) come from
   # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json.
   home.activation.claudePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      for plugin in gopls-lsp typescript-lsp pyright-lsp hookify security-guidance; do
+      for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup; do
         $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
       done
     fi
