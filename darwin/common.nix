@@ -24,6 +24,7 @@
       "powershell"
     ];
     casks = [
+      "balenaetcher"
       "drawio"
       "ghostty"
       "git-credential-manager"
