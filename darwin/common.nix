@@ -6,6 +6,8 @@
 }:
 {
   nix.settings.experimental-features = "nix-command flakes";
+  nix.settings.keep-outputs = true;
+  nix.settings.keep-derivations = true;
 
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   system.stateVersion = 6;

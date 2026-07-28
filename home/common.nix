@@ -198,6 +198,11 @@
 
     zoxide.enable = true;
     fd.enable = true;
+
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
     bat.enable = true;
     jq.enable = true;
     go.enable = true;
@@ -213,7 +218,10 @@
 
     git = {
       enable = true;
-      ignores = [ ".DS_Store" ];
+      ignores = [
+        ".DS_Store"
+        ".direnv/"
+      ];
       settings = {
         credential.helper = "manager";
         credential.useHttpPath = true;

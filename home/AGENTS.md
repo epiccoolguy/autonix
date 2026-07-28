@@ -49,6 +49,14 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 - TypeScript: prefer `type` over `interface` unless extending; avoid `any`.
 - Nix: format with `nixfmt <file>` (per-file) or `nixfmt-tree` (whole repo); bare `nixfmt .` is deprecated.
 
+## Dev Environments
+
+- Repos I own get a repo-root devShell pinning the project toolchain — versions stay coupled to the project and nothing leaks into unrelated shells. If the repo already has a `flake.nix`, add/extend `devShells.default` in it; if it has `shell.nix`/`default.nix`, extend that; only create a new `flake.nix` when neither exists. Repos I don't control (forks, shared work repos): ask first.
+- Never edit `/etc/nix-darwin` to make a project tool available; propose promoting to the global profile only for genuinely cross-repo, version-independent tools, and only with my approval.
+- Always invoke project tools as `nix develop --command <tool> …` (or `direnv exec . <tool>`). Agent shells are non-interactive and don't persist, so direnv's `cd` hook never applies to you — the `.envrc` (`use flake`) is for my interactive shell, and `direnv allow` is mine to run.
+- Commit `flake.nix`, `flake.lock`, and `.envrc`; `.direnv/` is covered by my global gitignore.
+- Verify a new devShell with `nix flake check` plus one real tool run through it; if nixpkgs is behind the version the project targets, say so rather than silently accepting the drift.
+
 ## Secrets
 
 - Never commit secrets or print them in logs/output; read tokens from the environment or `~/.env`, never hardcode.
@@ -63,7 +71,7 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 
 ## Parallel Work
 
-- Before fanning out parallel sessions, decompose and partition by non-overlapping file/module ownership; classify each task as independent or dependent on another's output. All sessions share one rate limit — fan out only when tasks are genuinely independent *and* time-critical, otherwise sequence.
+- Before fanning out parallel sessions, decompose and partition by non-overlapping file/module ownership; classify each task as independent or dependent on another's output. All sessions share one rate limit — fan out only when tasks are genuinely independent _and_ time-critical, otherwise sequence.
 - Always base a new worktree/branch on freshly-fetched `origin/<default-branch>`, never local HEAD — `git fetch origin && git worktree add -b feat/x <path> origin/master`. Local `master` goes stale the moment another agent pushes, so branching off it silently forks from an old base and forces avoidable rebases/conflicts at merge.
 - Independent, non-overlapping tasks → one `git worktree` per session (see Git & GitHub).
 - Dependent or file-overlapping tasks → never run as uncoordinated parallel sessions: sequence them, or run them under a single Opus orchestrator that dispatches Sonnet subagents (Workflow fan-out) and owns merge ordering.
@@ -73,4 +81,4 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 
 - The GitOps flow through dev/tst/acc is pre-approved: PRs to master, merges, re-pinning `overlays/acc`, `vX.Y.Z` tags. Anything touching prd — `overlays/prd`, prd-suffixed apps/namespaces, prd promotions — always waits for my explicit review.
 - `kubectl` and the (read-only) Kubernetes MCP run as the least-privilege `agent-ops` ServiceAccount via the scoped kubeconfig `~/.kube/agent.mlzw.config` (preset as `KUBECONFIG`): cluster-wide read minus Secrets, logs in all workload-hosting namespaces including prd, full write in `zandbak-dev`/`zandbak-tst`, bounded pod-delete/scale (`agent-ops-workload-ops` — no content writes) everywhere else including `zandbak-prd` (#754 — every prd op is apiserver-audited; ask-rules pause prd-touching mutations for my confirmation). prd Secrets, `exec`, and content writes outside dev/tst stay Forbidden — enforced server-side by RBAC + Pod Security Admission. GitOps is the only path that changes desired state; the ops verbs just converge/disrupt toward the committed spec. Never override `KUBECONFIG`/`--kubeconfig` toward the admin config (`admin.mlzw.config`) — break-glass admin access is mine alone.
-- `argocd` (CLI and MCP server): `get` everywhere, `sync` + resource actions on all apps including prd (#754 — plain sync converges to committed master only; `update`/`override` are withheld by design as the master-only enforcement). prd-touching argocd commands pause for my confirmation (settings ask-rule); prd *content* changes and promotions (line above) always wait for my explicit review.
+- `argocd` (CLI and MCP server): `get` everywhere, `sync` + resource actions on all apps including prd (#754 — plain sync converges to committed master only; `update`/`override` are withheld by design as the master-only enforcement). prd-touching argocd commands pause for my confirmation (settings ask-rule); prd _content_ changes and promotions (line above) always wait for my explicit review.
