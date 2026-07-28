@@ -51,7 +51,7 @@ When a step names a model the session isn't on, run it via a subagent pinned to 
 
 ## Dev Environments
 
-- Repos I own get a repo-root devShell pinning the project toolchain — versions stay coupled to the project and nothing leaks into unrelated shells. If the repo already has a `flake.nix`, add/extend `devShells.default` in it; if it has `shell.nix`/`default.nix`, extend that; only create a new `flake.nix` when neither exists. Repos I don't control (forks, shared work repos): ask first.
+- Repos under `github.com/epiccoolguy` get a repo-root devShell pinning the project toolchain — versions stay coupled to the project and nothing leaks into unrelated shells. If the repo already has a `flake.nix`, add/extend `devShells.default` in it; if it has `shell.nix`/`default.nix`, extend that; only create a new `flake.nix` when neither exists. Any other repo — work, forks, shared repos: ask first.
 - Never edit `/etc/nix-darwin` to make a project tool available; propose promoting to the global profile only for genuinely cross-repo, version-independent tools, and only with my approval.
 - Always invoke project tools as `nix develop --command <tool> …` (or `direnv exec . <tool>`). Agent shells are non-interactive and don't persist, so direnv's `cd` hook never applies to you — the `.envrc` (`use flake`) is for my interactive shell, and `direnv allow` is mine to run.
 - Commit `flake.nix`, `flake.lock`, and `.envrc`; `.direnv/` is covered by my global gitignore.
