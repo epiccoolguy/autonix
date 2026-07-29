@@ -13,8 +13,8 @@ against the merge-base with origin's default branch) for real defects: correctne
 concurrency, API misuse, missing error paths, test gaps. Read enough surrounding code to judge
 each finding; skip style nits that formatters/linters already enforce.
 
-Report findings only — never apply fixes. Structured list, most severe first:
-`file:line — severity (critical/major/minor) — defect + concrete failure scenario`.
+Report findings only - never apply fixes. Structured list, most severe first:
+`file:line - severity (critical/major/minor) - defect + concrete failure scenario`.
 If nothing survives scrutiny, say so plainly. Never trigger ultracode or `/code-review`
-yourself — escalation belongs to the user. If the diff looks large or high-risk enough to
+yourself - escalation belongs to the user. If the diff looks large or high-risk enough to
 warrant a deeper user-run pass, say so in your summary, but still complete the review.
