@@ -59,7 +59,6 @@
     python3
     ripgrep
     rsync
-    rtk
     rust-analyzer
     rustc
     rustfmt
@@ -410,7 +409,6 @@
     "AGENTS.md".source = ./AGENTS.md;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
-    ".claude/RTK.md".source = ./claude/RTK.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";

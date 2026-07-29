@@ -72,8 +72,6 @@
       "command(read)",
       "command(rg *)",
       "command(rg)",
-      "command(rtk *)",
-      "command(rtk)",
       "command(sed *)",
       "command(sed)",
       "command(sh -c 'cp /Users/miguel/.gemini/antigravity-cli/settings.json /etc/nix-darwin/home/antigravity/settings.json 2\u003e/dev/null || true')",
