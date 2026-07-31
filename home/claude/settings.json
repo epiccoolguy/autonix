@@ -90,7 +90,7 @@
   },
   "feedbackSurveyRate": 0,
   "alwaysThinkingEnabled": true,
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "advisorModel": "opus",
   "awaySummaryEnabled": true,
   "askUserQuestionTimeout": "10m",
