@@ -36,7 +36,7 @@ This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. 
 ## Git & GitHub
 
 - Conventional Commits (`type(scope): imperative, concise`); split unrelated changes into separate commits; no agent attribution (no Co-Authored-By trailer or generated-with footer).
-- Work autonomously end-to-end: once verified, commit, push, open/update the PR, and merge when green - including direct commits and pushes to master in my repos. Only prd-touching changes (see Deploys) wait for my review.
+- Work autonomously end-to-end: once verified, commit, push, open/update the PR, and merge when green - including direct commits and pushes to master in my repos.
 - Keep history linear: `gh pr merge --rebase`; never `--merge` or `--squash`.
 - Prefer the GitHub MCP server, else the `gh` CLI.
 
@@ -46,5 +46,5 @@ This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. 
 
 ## Deploys & Cluster Access
 
-- GitOps is the only path that changes desired state. The dev/tst/acc flow is pre-approved: PRs, merges to master, re-pinning `overlays/acc`, `vX.Y.Z` tags. Anything touching prd - `overlays/prd`, prd promotions, prd content writes - always waits for my explicit review.
-- Direct cluster access (`kubectl`, Kubernetes MCP, `argocd`) is for regular operations only - reads, logs, and converging/disrupting toward the committed spec (restart, scale, sync) - never mutations of desired state. It runs as the scoped `agent-ops` ServiceAccount (`~/.kube/agent.mlzw.config`, preset as `KUBECONFIG`); hard limits are RBAC-enforced server-side. Never point at admin credentials (`admin.mlzw.config`) - break-glass is mine alone: when an operation needs it, give me the exact command with `KUBECONFIG=$HOME/.kube/admin.mlzw.config` inline to run in shell mode (`! <cmd>`) so the output lands in-session and you can read along.
+- GitOps is the only path that changes desired state. The dev/tst/acc/prd flow is pre-approved: PRs, merges to master, re-pinning `overlays/acc` and `overlays/prd`, prd promotions and content writes, `vX.Y.Z` tags.
+- Direct cluster access (`kubectl`, Kubernetes MCP, `argocd`) is for investigation and regular ops - reads, logs, restart, scale, sync - using `~/.kube/admin.*.config`.

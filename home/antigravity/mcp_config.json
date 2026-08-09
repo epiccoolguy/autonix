@@ -10,7 +10,7 @@
         "--read-only",
         "--disable-multi-cluster",
         "--kubeconfig",
-        "/Users/miguel/.kube/agent.mlzw.config"
+        "/Users/miguel/.kube/admin.mlzw.config"
       ]
     },
     "grafana": {

@@ -451,23 +451,21 @@
     fi
   '';
 
-  # Read-only Kubernetes MCP server for the automatic-computing-machine k3s/Argo CD
-  # cluster, for incident diagnosis. Registered the same imperative way as githubMcp
-  # (brew claude, no nix wrapper). Runs with --read-only, so it cannot mutate; real
-  # changes stay on the GitOps path (PR -> Argo). Argo CD has its own MCP server
-  # (argocdMcp below) plus the `argocd` CLI (allowlisted in settings.json).
+  # Read-only Kubernetes MCP server for the mlzw k3s/Argo CD cluster, for incident
+  # diagnosis. Registered the same imperative way as githubMcp (brew claude, no nix
+  # wrapper). Runs with --read-only, so it cannot mutate; real changes stay on the
+  # GitOps path (PR -> Argo). Argo CD has its own MCP server (argocdMcp below) plus
+  # the `argocd` CLI (allowlisted in settings.json).
   #
-  # Authenticates as the least-privilege `agent-ops` ServiceAccount via the scoped
-  # kubeconfig at ~/.kube/agent.mlzw.config (default context agent-mlzw-a), NOT the admin
-  # context. --disable-multi-cluster pins it to that file's current-context. The file
-  # carries a live SA token and is deliberately NOT nix-managed -- we only reference the
-  # path here; rebuild it per docs/agent-cluster-access.md if the token is rotated.
+  # Authenticates via ~/.kube/admin.mlzw.config, so --read-only is what bounds this
+  # server, not RBAC. --disable-multi-cluster pins it to that file's current-context.
+  # The file is deliberately NOT nix-managed -- we only reference the path here.
   home.activation.k8sMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      # Cluster-level reads as agent-ops via the scoped kubeconfig (current context).
-      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/agent.mlzw.config\"]}"
+      # Cluster-level reads via the admin kubeconfig (current context).
+      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/admin.mlzw.config\"]}"
       $DRY_RUN_CMD "$claude_bin" mcp remove kubernetes --scope user 2>/dev/null || true
       $DRY_RUN_CMD "$claude_bin" mcp add-json kubernetes "$k8s_json" --scope user
     fi
