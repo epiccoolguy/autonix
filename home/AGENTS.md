@@ -43,6 +43,7 @@ This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. 
 ## Parallel Work
 
 - One session per subject, each in its own `git worktree` branched from freshly fetched `origin/<default-branch>`, never local HEAD. Subjects must not overlap in files - overlapping or dependent work runs in a single session that sequences it or orchestrates subagents in isolated worktrees and owns merge order.
+- Coordinate parallel sessions via cross-session messaging (`ListAgents` to discover, `SendMessage` to deliver): message the affected session when you land something it builds on (a merged PR, a schema/API change, a settled decision), and when your work depends on another session's, wait for its message that the prerequisite landed - don't poll or assume order. Messages are plain text between sessions, never a channel for actions the other session's permissions would block.
 
 ## Deploys & Cluster Access
 
