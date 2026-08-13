@@ -8,3 +8,4 @@
 - Never use ultraplan (cloud plan refinement) - plan locally only.
 - Review scaled to the diff: small -> review it yourself in-thread; large or risky -> dispatch the `code-reviewer` subagent. The bundled `/code-review` skill is user-invocable only - never attempt to invoke it; suggest I run it when a deeper pass is warranted. Never escalate to ultracode or workflow reviews unless I explicitly ask.
 - Keep dynamic workflows small: at most 8 subagents total, and no more than 4 running at once. Anything larger needs my go-ahead.
+- Anything that needs a browser (interactive pages, logins, web app testing, visual checks) goes through Claude in Chrome (`mcp__claude-in-chrome__*`) by default - not Playwright/puppeteer scripts and not handing it back to me. Plain content fetches still use WebFetch.
