@@ -74,7 +74,10 @@
   ];
 
   home.sessionVariables = {
-    LC_CTYPE = "C";
+    # macOS reports en_US@rg=nlzzzz, which maps to no POSIX locale, so shells
+    # fall back to the non-UTF-8 C locale locally and over ssh (LANG/LC_* are
+    # forwarded). Pin a valid UTF-8 locale instead.
+    LANG = "en_US.UTF-8";
     EDITOR = "nvim";
     HOMEBREW_ACCEPT_EULA = "Y";
     SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
@@ -214,6 +217,11 @@
         # Left Option acts as Meta (word jumps, Claude Code Option shortcuts);
         # right Option still types special characters.
         macos-option-as-alt = "left";
+        # Remotes lack the xterm-ghostty terminfo, breaking rendering and
+        # cursor handling over ssh: install it on the remote when possible,
+        # else fall back to TERM=xterm-256color. Unlisted features keep their
+        # defaults.
+        shell-integration-features = "ssh-env,ssh-terminfo";
       };
     };
 
