@@ -206,6 +206,17 @@
     jq.enable = true;
     go.enable = true;
 
+    ghostty = {
+      enable = true;
+      # The app comes from the homebrew cask; nixpkgs ghostty is broken on darwin.
+      package = null;
+      settings = {
+        # Left Option acts as Meta (word jumps, Claude Code Option shortcuts);
+        # right Option still types special characters.
+        macos-option-as-alt = "left";
+      };
+    };
+
     ssh = {
       enable = true;
       enableDefaultConfig = false;
