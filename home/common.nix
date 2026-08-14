@@ -222,6 +222,10 @@
         # else fall back to TERM=xterm-256color. Unlisted features keep their
         # defaults.
         shell-integration-features = "ssh-env,ssh-terminfo";
+        # Ghostty's default shift+enter sends a bare CR, so Claude Code submits
+        # instead of inserting a newline; send ESC+CR (option+enter's sequence)
+        # so it inserts one.
+        keybind = [ "shift+enter=text:\\x1b\\r" ];
       };
     };
 
