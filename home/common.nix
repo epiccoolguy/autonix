@@ -129,7 +129,7 @@
             zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
             export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
-            export KUBECONFIG="''${HOME}/.kube/config:''${HOME}/.kube/admin.mlzw.config"
+            export KUBECONFIG="''${HOME}/.kube/config:''${HOME}/.kube/agent.mlzw.config"
           '';
           zshFunctions = lib.mkOrder 1000 ''
             # git-clone wrapper: derive local path from URL
@@ -491,15 +491,17 @@
   # GitOps path (PR -> Argo). Argo CD has its own MCP server (argocdMcp below) plus
   # the `argocd` CLI (allowlisted in settings.json).
   #
-  # Authenticates via ~/.kube/admin.mlzw.config, so --read-only is what bounds this
-  # server, not RBAC. --disable-multi-cluster pins it to that file's current-context.
-  # The file is deliberately NOT nix-managed -- we only reference the path here.
+  # Authenticates via ~/.kube/agent.mlzw.config, a revocable agent-ops token minted
+  # by mlzw-cluster's scripts/build-agent-kubeconfig.sh; --read-only bounds this
+  # server on top of that. --disable-multi-cluster pins it to the file's
+  # current-context. The file is deliberately NOT nix-managed -- we only reference
+  # the path here.
   home.activation.k8sMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      # Cluster-level reads via the admin kubeconfig (current context).
-      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/admin.mlzw.config\"]}"
+      # Cluster-level reads via the agent kubeconfig (current context).
+      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/agent.mlzw.config\"]}"
       $DRY_RUN_CMD "$claude_bin" mcp remove kubernetes --scope user 2>/dev/null || true
       $DRY_RUN_CMD "$claude_bin" mcp add-json kubernetes "$k8s_json" --scope user
     fi

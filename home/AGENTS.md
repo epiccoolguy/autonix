@@ -48,4 +48,4 @@ This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. 
 ## Deploys & Cluster Access
 
 - GitOps is the only path that changes desired state. The dev/tst/acc/prd flow is pre-approved: PRs, merges to master, re-pinning `overlays/acc` and `overlays/prd`, prd promotions and content writes, `vX.Y.Z` tags.
-- Direct cluster access (`kubectl`, Kubernetes MCP, `argocd`) is for investigation and regular ops - reads, logs, restart, scale, sync - using `~/.kube/admin.*.config`.
+- Direct cluster access (`kubectl`, Kubernetes MCP, `argocd`) is for investigation and regular ops - reads, logs, restart, scale, sync - using `~/.kube/agent.mlzw.config` (revocable token; re-mint with mlzw-cluster's `scripts/build-agent-kubeconfig.sh` when expired).
