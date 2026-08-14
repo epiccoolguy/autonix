@@ -225,7 +225,12 @@
         # Ghostty's default shift+enter sends a bare CR, so Claude Code submits
         # instead of inserting a newline; send ESC+CR (option+enter's sequence)
         # so it inserts one.
-        keybind = [ "shift+enter=text:\\x1b\\r" ];
+        keybind = [
+          "shift+enter=text:\\x1b\\r"
+          # Browser-style tab switching.
+          "opt+cmd+left=previous_tab"
+          "opt+cmd+right=next_tab"
+        ];
       };
     };
 
