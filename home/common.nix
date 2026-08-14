@@ -294,6 +294,7 @@
               "/result" = true;
             };
             "security.workspace.trust.untrustedFiles" = "open";
+            "terminal.external.osxExec" = "Ghostty.app";
             # What `claude /terminal-setup` would set (keybindings.json is a read-only
             # nix symlink, so it must live here): no GPU rendering (garbled-text fix)
             # and calmer wheel scrolling for Claude Code's fullscreen TUI.
@@ -454,6 +455,16 @@
       force = true;
     };
   };
+
+  # macOS has no "default terminal" setting; the closest is claiming the
+  # LaunchServices types Terminal.app owns by default: double-clicked .command
+  # and .tool scripts and bare unix executables. Ghostty declares no ssh://
+  # URL scheme, so those links are out of reach. duti writes are idempotent.
+  home.activation.defaultTerminal = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    for type in .command .tool public.unix-executable; do
+      $DRY_RUN_CMD ${pkgs.duti}/bin/duti -s com.mitchellh.ghostty "$type" all
+    done
+  '';
 
   # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
   # (programs.claude-code.package = null). That option works by wrapping the nix-managed binary
