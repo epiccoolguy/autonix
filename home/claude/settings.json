@@ -43,6 +43,7 @@
       "mcp__kubernetes",
       "mcp__grafana",
       "mcp__argocd",
+      "mcp__claude-in-chrome",
       "WebFetch",
       "WebSearch"
     ],
