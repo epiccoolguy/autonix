@@ -38,6 +38,7 @@
       "Bash(kubectl:*)",
       "Bash(argocd:*)",
       "Bash(direnv:*)",
+      "Bash(op item get:*)",
       "mcp__github",
       "mcp__kubernetes",
       "mcp__grafana",
