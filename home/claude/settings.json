@@ -1,7 +1,7 @@
 {
   "cleanupPeriodDays": 90,
   "env": {
-    "KUBECONFIG": "/Users/miguel/.kube/admin.mlzw.config"
+    "KUBECONFIG": "/Users/miguel/.kube/agent.mlzw.config"
   },
   "attribution": {
     "commit": "",
@@ -107,7 +107,7 @@
       "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
       "Source control: github.com/epiccoolguy and all repos under it",
       "Trusted internal domains: *.mlzw.dev",
-      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via ~/.kube/admin.mlzw.config",
+      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the revocable agent kubeconfig ~/.kube/agent.mlzw.config",
       "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster"
     ]
   }
