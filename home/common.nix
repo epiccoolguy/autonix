@@ -579,7 +579,7 @@
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup; do
+      for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup superpowers; do
         $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
       done
     fi

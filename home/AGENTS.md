@@ -20,6 +20,8 @@ This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. 
 
 - Plan non-trivial or multi-file changes before implementing.
 - After implementing: review the diff, fix findings, reverify the fixes.
+- The `superpowers` skills are installed in Claude Code; the rules in this file win on conflict. Use `superpowers:systematic-debugging` for any bug or unexpected behavior, `superpowers:test-driven-development` when implementing a feature or fix, `superpowers:verification-before-completion` before claiming done, `superpowers:receiving-code-review` when acting on review feedback, and `superpowers:writing-plans` / `superpowers:executing-plans` for multi-step work I asked to be planned - save plans in `docs/plans/`, not `docs/superpowers/plans/`.
+- Skip the superpowers skills that re-litigate settled defaults: `superpowers:brainstorming` (I plan inline), `superpowers:requesting-code-review` (review is scaled to the diff), `superpowers:finishing-a-development-branch` (I merge autonomously), and `superpowers:using-git-worktrees` / `superpowers:subagent-driven-development` / `superpowers:dispatching-parallel-agents` (see Parallel Work above, plus the subagent caps in the Claude Code section of `~/.claude/CLAUDE.md`).
 
 ## Dev Environments
 
