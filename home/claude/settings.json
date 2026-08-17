@@ -50,10 +50,7 @@
     "ask": [
       "Bash(gh repo delete:*)",
       "Bash(gh secret:*)",
-      "Bash(gh auth:*)",
-      "mcp__github__delete_file",
-      "mcp__github__push_files",
-      "mcp__github__create_or_update_file"
+      "Bash(gh auth:*)"
     ],
     "defaultMode": "auto"
   },
