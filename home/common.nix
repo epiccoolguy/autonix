@@ -29,7 +29,6 @@
     findutils
     gawk
     gh
-    github-copilot-cli
     gnugrep
     gnumake
     gnused
