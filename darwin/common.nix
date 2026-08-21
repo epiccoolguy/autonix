@@ -62,6 +62,10 @@
       show-recents = false;
       mru-spaces = false;
       expose-group-apps = true;
+      wvous-tl-corner = 1; # Disable hot corners
+      wvous-tr-corner = 1;
+      wvous-bl-corner = 1;
+      wvous-br-corner = 1;
     };
 
     finder = {
