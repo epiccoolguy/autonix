@@ -12,8 +12,9 @@
   homebrew.brews = [
   ];
   homebrew.casks = [
-    "soapui"
     "citrix-workspace"
+    "copilot-cli"
+    "soapui"
   ];
 
   nix.extraOptions = ''
