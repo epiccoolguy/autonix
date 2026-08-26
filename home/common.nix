@@ -19,6 +19,7 @@
     ])
     bashInteractive
     bruno
+    bruno-cli
     cargo
     clippy
     coreutils
