@@ -79,8 +79,14 @@ in
   home.activation.buildJavaTrustStore = lib.hm.dag.entryAfter [ "exportKeychainCerts" ] ''
     set -euo pipefail
     echo "Importing macOS keychain certificates into Java trust store..." >&2
-    cp ${pkgs.jdk}/lib/security/cacerts ${lib.escapeShellArg trustStorePath}
-    chmod 0644 ${lib.escapeShellArg trustStorePath}
+    jdkCacertsSrc=${pkgs.jdk}/lib/security/cacerts
+    jdkMarkerPath=${lib.escapeShellArg trustStorePath}.jdk-src
+    # Reseed from the JDK's bundled cacerts whenever pkgs.jdk changes (new store path), not just on first run.
+    if [ ! -f ${lib.escapeShellArg trustStorePath} ] || [ "$(cat "$jdkMarkerPath" 2>/dev/null)" != "$jdkCacertsSrc" ]; then
+      cp "$jdkCacertsSrc" ${lib.escapeShellArg trustStorePath}
+      chmod 0644 ${lib.escapeShellArg trustStorePath}
+      echo "$jdkCacertsSrc" > "$jdkMarkerPath"
+    fi
     imported=0
     workdir=$(mktemp -d)
     trap 'rm -rf "$workdir"' EXIT
