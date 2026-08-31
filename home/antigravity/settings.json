@@ -1,6 +1,6 @@
 {
   "allowNonWorkspaceAccess": true,
-  "model": "Gemini 3.5 Flash (High)",
+  "model": "Gemini 3.7 Flash (Medium)",
   "permissions": {
     "allow": [
       "command(argocd *)",
@@ -91,9 +91,13 @@
       "command(which)",
       "command(xargs)",
       "mcp(github/*)",
-      "mcp(kubernetes/*)"
+      "mcp(kubernetes/*)",
+      "command(darwin-rebuild)"
     ],
-    "ask": ["write_file(**/overlays/prd/**)", "read_file(**/overlays/prd/**)"]
+    "ask": [
+      "write_file(**/overlays/prd/**)",
+      "read_file(**/overlays/prd/**)"
+    ]
   },
   "trustedWorkspaces": [
     "/etc/nix-darwin",

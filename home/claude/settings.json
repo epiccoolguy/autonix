@@ -83,14 +83,27 @@
   "feedbackSurveyRate": 0,
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "high"
+    }
+  },
   "advisorModel": "opus",
   "awaySummaryEnabled": true,
   "askUserQuestionTimeout": "10m",
+  "dialogExpiry": "10m",
   "autoUpdatesChannel": "stable",
   "skipWorkflowUsageWarning": false,
   "theme": "auto",
+  "editorMode": "normal",
+  "verbose": false,
+  "preferredNotifChannel": "ghostty",
   "switchModelsOnFlag": false,
+  "remoteControlAtStartup": true,
+  "crossSessionInbound": "accept",
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
+  "useAutoModeDuringPlan": true,
   "autoMode": {
     "allow": [
       "$defaults",
