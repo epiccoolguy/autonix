@@ -13,7 +13,9 @@ Every app and setting must go in the correct profile:
 
 Add new apps to `common` unless they're corporate-banned (-> `miguel`) or corporate-only (-> `AS33AI`). Never put work VPNs or monitoring tools in `miguel`.
 
-## Maintenance
+## Commands
 
-- Flake inputs update daily via the `daily-nix-flake-update` GitHub workflow; update manually with `nix flake update`.
-- `flake.nix` maps hostnames (`Miguels-MacBook-Air`, `MPCE-MBP-HKDC2N1VJ4`, ...) to configs - change it carefully.
+- Check: `darwin-rebuild build --flake .` (builds this machine's config without applying).
+- Apply: `sudo darwin-rebuild switch --flake .` - needs sudo, so hand it to me.
+- Format: `nixfmt-tree`.
+- Don't run `nix flake update` unprompted; a daily workflow bumps inputs.
