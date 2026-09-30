@@ -13,6 +13,7 @@ A repo's own `AGENTS.md`/`CLAUDE.md` overrides these defaults on conflict.
 - Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
 - Never change cluster state directly - GitOps only.
 - No agent attribution in commits or PRs.
+- Plans for my review (plan mode, inline plans): extremely concise - sacrifice grammar for concision. End each with a list of unresolved questions, if any.
 
 ## Read before the matching work
 
