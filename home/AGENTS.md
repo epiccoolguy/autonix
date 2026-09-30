@@ -8,6 +8,7 @@ A repo's own `AGENTS.md`/`CLAUDE.md` overrides these defaults on conflict.
 
 - Concise, direct responses; match the repo's existing conventions over generic best practices.
 - No code comments unless the WHY is non-obvious; no error handling for impossible scenarios; no abstractions beyond the task.
+- Prefer deep modules: small public interface, tests against the interface; confirm new or changed interfaces with me.
 - Plain printable ASCII in responses, code, commits, and docs: `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
 - Before claiming done: review the diff, run static checks then tests, fix findings and reverify. Report real output - if something failed or was skipped, say so plainly.
 - Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
