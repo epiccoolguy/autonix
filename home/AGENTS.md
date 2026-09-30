@@ -1,53 +1,23 @@
 # Global Agent Instructions
 
-## Environment
+Software engineer (Go, TypeScript, Nix) on macOS machines managed by nix-darwin + home-manager (repo `/etc/nix-darwin`). Packages via nix; brew only for GUI apps or tools missing from nixpkgs. Core Unix tools are GNU (nixpkgs) ahead of Apple's BSD tools in `PATH` - assume GNU flag semantics. `docker` is podman.
 
-Software engineer; Go, TypeScript, Nix. Machines managed with nix-darwin + home-manager (repo `/etc/nix-darwin`). zsh, VS Code, git + GitHub (`gh`), podman (aliased `docker`). Packages via nix; brew only for GUI apps or tools missing from nixpkgs. Core Unix tools are GNU/nixpkgs versions ahead of Apple's BSD defaults in `PATH` - assume GNU flag semantics.
+A repo's own `AGENTS.md`/`CLAUDE.md` overrides these defaults on conflict.
 
-This file is nix-managed: edit `/etc/nix-darwin/home/AGENTS.md`, then `switch`. Deployed canonical is `~/AGENTS.md` (imported/symlinked/generated into the Claude, Codex, Copilot, and Gemini configs) - never edit deployed copies. A repo's own `AGENTS.md`/`CLAUDE.md` overrides these defaults on conflict.
+## Always
 
-## Style
-
-- Concise, direct responses; match a repo's existing conventions over generic best practices.
+- Concise, direct responses; match the repo's existing conventions over generic best practices.
 - No code comments unless the WHY is non-obvious; no error handling for impossible scenarios; no abstractions beyond the task.
-- Verify before claiming done: static checks, then tests; report real output - if something failed or was skipped, say so plainly.
-- When configuring a versioned tool or library, fetch docs for that exact version.
-- Format Nix with `nixfmt <file>` or `nixfmt-tree` (repo-wide); bare `nixfmt .` is deprecated.
-- Keep memory and instruction files terse - they are paid as input tokens every turn.
-- Plain printable ASCII wherever possible in responses, code, commits, and docs: use `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
+- Plain printable ASCII in responses, code, commits, and docs: `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
+- Before claiming done: review the diff, run static checks then tests, fix findings and reverify. Report real output - if something failed or was skipped, say so plainly.
+- Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
+- Never change cluster state directly - GitOps only.
+- No agent attribution in commits or PRs.
 
-## Workflow
+## Read before the matching work
 
-- Plan non-trivial or multi-file changes before implementing.
-- After implementing: review the diff, fix findings, reverify the fixes.
-- The `superpowers` skills are installed in Claude Code; the rules in this file win on conflict. Use `superpowers:systematic-debugging` for any bug or unexpected behavior, `superpowers:test-driven-development` when implementing a feature or fix, `superpowers:verification-before-completion` before claiming done, `superpowers:receiving-code-review` when acting on review feedback, and `superpowers:writing-plans` / `superpowers:executing-plans` for multi-step work I asked to be planned - save plans in `docs/plans/`, not `docs/superpowers/plans/`.
-- Skip the superpowers skills that re-litigate settled defaults: `superpowers:brainstorming` (I plan inline), `superpowers:requesting-code-review` (review is scaled to the diff), `superpowers:finishing-a-development-branch` (I merge autonomously), and `superpowers:using-git-worktrees` / `superpowers:subagent-driven-development` / `superpowers:dispatching-parallel-agents` (see Parallel Work above, plus the subagent caps in the Claude Code section of `~/.claude/CLAUDE.md`).
-
-## Dev Environments
-
-- Repos under `github.com/epiccoolguy` get a repo-root devShell pinning the toolchain - extend an existing `flake.nix`/`shell.nix` before creating one. Any other repo: ask first.
-- Never edit `/etc/nix-darwin` to make a project tool available; propose global promotion only for cross-repo, version-independent tools, with my approval.
-- Invoke project tools per-command as `nix develop --command <tool>` or `direnv exec . <tool>` - agent shells are fresh non-interactive processes, so direnv hooks never apply. You may `direnv allow` an `.envrc` you wrote yourself; ask before allowing a pre-existing one.
-- Commit `flake.nix`, `flake.lock`, `.envrc`. Verify a new devShell with `nix flake check` plus one real tool run; flag nixpkgs version drift rather than silently accepting it.
-
-## Secrets
-
-- Don't store unencrypted secrets; never print them. Read tokens from the environment or `~/.env`.
-- 1Password (`op`) is the secret escrow in both directions: pull secrets just-in-time into env vars within one command (e.g. `eval $(op signin) && export KEY="$(op document get '<item>')" && ...`), and store new or generated secrets there (`op item create` / `op document create`) rather than on disk.
-
-## Git & GitHub
-
-- Conventional Commits (`type(scope): imperative, concise`); split unrelated changes into separate commits; no agent attribution (no Co-Authored-By trailer or generated-with footer).
-- Work autonomously end-to-end: once verified, commit, push, open/update the PR, and merge when green - including direct commits and pushes to master in my repos.
-- Keep history linear: `gh pr merge --rebase`; never `--merge` or `--squash`.
-- Prefer the GitHub MCP server, else the `gh` CLI.
-
-## Parallel Work
-
-- One session per subject, each in its own `git worktree` branched from freshly fetched `origin/<default-branch>`, never local HEAD. Subjects must not overlap in files - overlapping or dependent work runs in a single session that sequences it or orchestrates subagents in isolated worktrees and owns merge order.
-- Coordinate parallel sessions via cross-session messaging (`ListAgents` to discover, `SendMessage` to deliver): message the affected session when you land something it builds on (a merged PR, a schema/API change, a settled decision), and when your work depends on another session's, wait for its message that the prerequisite landed - don't poll or assume order. Messages are plain text between sessions, never a channel for actions the other session's permissions would block.
-
-## Deploys & Cluster Access
-
-- GitOps is the only path that changes desired state. The dev/tst/acc/prd flow is pre-approved: PRs, merges to master, re-pinning `overlays/acc` and `overlays/prd`, prd promotions and content writes, `vX.Y.Z` tags.
-- Direct cluster access (`kubectl`, Kubernetes MCP, `argocd`) is for investigation and regular ops - reads, logs, restart, scale, sync - using `~/.kube/agent.mlzw.config` (revocable token; re-mint with mlzw-cluster's `scripts/build-agent-kubeconfig.sh` when expired).
+- Commits, branches, worktrees, PRs, merges: `~/.config/agents/git.md`
+- Running alongside other sessions, or depending on another session's work: `~/.config/agents/parallel-sessions.md`
+- Toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
+- Kubernetes, ArgoCD, deploys, promotions, release tags: `~/.config/agents/deploys.md`
+- Editing agent instruction files (this one included) or agent memory: `~/.config/agents/instruction-files.md`

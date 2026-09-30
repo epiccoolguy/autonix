@@ -436,6 +436,8 @@
   home.file = {
     # Canonical global rules for agents
     "AGENTS.md".source = ./AGENTS.md;
+    # Progressive-disclosure detail files linked from AGENTS.md
+    ".config/agents".source = ./agents;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
