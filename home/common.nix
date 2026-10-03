@@ -248,6 +248,8 @@
       ignores = [
         ".DS_Store"
         ".direnv/"
+        ".claude/worktrees/"
+        ".gemini/worktrees/"
       ];
       settings = {
         credential.helper = "manager";

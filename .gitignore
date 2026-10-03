@@ -4,3 +4,4 @@ __pycache__/
 /result
 .claude/settings.local.json
 .claude/worktrees/
+.gemini/worktrees/
