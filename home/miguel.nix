@@ -16,7 +16,7 @@
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
     anthropic.claude-code
-    google.gemini-cli-vscode-ide-companion
+    openai.chatgpt
   ];
 
   # No personal Copilot subscription: disable VS Code's built-in AI/Copilot UI.
