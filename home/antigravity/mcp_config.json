@@ -10,8 +10,18 @@
         "--read-only",
         "--disable-multi-cluster",
         "--kubeconfig",
-        "/Users/miguel/.kube/admin.mlzw.config"
+        "/Users/miguel/.kube/agent.mlzw.config"
       ]
+    },
+    "argocd": {
+      "command": "pnpx",
+      "args": [
+        "argocd-mcp@latest",
+        "stdio"
+      ],
+      "env": {
+        "ARGOCD_BASE_URL": "https://argocd.mlzw.dev"
+      }
     },
     "grafana": {
       "command": "uvx",

@@ -433,8 +433,10 @@
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
     ".codex/AGENTS.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
-    ".gemini/GEMINI.md".text =
+    ".gemini/config/GEMINI.md".text =
       builtins.readFile ./AGENTS.md + "\n" + builtins.readFile ./antigravity/GEMINI.md;
+    ".gemini/GEMINI.md".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.gemini/config/GEMINI.md";
     ".copilot/copilot-instructions.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
 
@@ -582,6 +584,7 @@
   home.activation.antigravityMcp = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
         env_file="$HOME/.env"
+        argocd_token_file="$HOME/.config/mcp/argocd-agent-token"
         gemini_config_dir="$HOME/.gemini/config"
         mkdir -p "$gemini_config_dir"
 
@@ -591,20 +594,29 @@
           if [ -f "$env_file" ]; then
             pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
           fi
+          argocd_token=""
+          if [ -f "$argocd_token_file" ]; then
+            argocd_token="$(cat "$argocd_token_file")"
+          fi
 
-          if [ -n "$pat" ]; then
-            ${pkgs.python3}/bin/python3 -c "
+          GITHUB_PAT="$pat" ARGOCD_TOKEN="$argocd_token" ${pkgs.python3}/bin/python3 -c "
+    import os
     import json
+
     with open('$template') as f:
         d = json.load(f)
-    if 'github' in d.get('mcpServers', {}):
-        d['mcpServers']['github']['headers'] = {'Authorization': 'Bearer $pat'}
+
+    pat = os.environ.get('GITHUB_PAT')
+    if pat and 'github' in d.get('mcpServers', {}):
+        d['mcpServers']['github']['headers'] = {'Authorization': f'Bearer {pat}'}
+
+    argocd_token = os.environ.get('ARGOCD_TOKEN')
+    if argocd_token and 'argocd' in d.get('mcpServers', {}):
+        d['mcpServers']['argocd'].setdefault('env', {})['ARGOCD_API_TOKEN'] = argocd_token
+
     with open('$gemini_config_dir/mcp_config.json', 'w') as f:
         json.dump(d, f, indent=2)
     "
-          else
-            cp "$template" "$gemini_config_dir/mcp_config.json"
-          fi
         fi
   '';
 }
