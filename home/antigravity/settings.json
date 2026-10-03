@@ -1,6 +1,6 @@
 {
   "allowNonWorkspaceAccess": true,
-  "model": "Gemini 3.8 Flash (Medium)",
+  "model": "Gemini 3.8 Flash (Low)",
   "permissions": {
     "allow": [
       "command(argocd *)",
