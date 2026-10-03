@@ -433,14 +433,12 @@
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
-    ".codex/AGENTS.md".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".codex/AGENTS.md".source = ./AGENTS.md;
     ".gemini/config/GEMINI.md".text =
       builtins.readFile ./AGENTS.md + "\n" + builtins.readFile ./antigravity/GEMINI.md;
     ".gemini/GEMINI.md".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.gemini/config/GEMINI.md";
-    ".copilot/copilot-instructions.md".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/AGENTS.md";
+    ".copilot/copilot-instructions.md".source = ./AGENTS.md;
 
     ".claude/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";

@@ -2,15 +2,15 @@
 
 Software engineer (Go, TypeScript, Nix) on macOS machines managed by nix-darwin + home-manager (repo `/etc/nix-darwin`). Packages via nix; brew only for GUI apps or tools missing from nixpkgs. Core Unix tools are GNU (nixpkgs) ahead of Apple's BSD tools in `PATH` - assume GNU flag semantics. `docker` is podman.
 
-A repo's own `AGENTS.md`/`CLAUDE.md` overrides these defaults on conflict.
+Use `AGENTS.md` for shared repository instructions; keep agent-specific rules in that agent's instruction file. Repository instructions loaded by the agent override these defaults on conflict. Codex does not discover `CLAUDE.md` by default.
 
 ## Always
 
 - Concise, direct responses; match the repo's existing conventions over generic best practices.
 - No code comments unless the WHY is non-obvious; no error handling for impossible scenarios; no abstractions beyond the task.
-- Prefer deep modules: small public interface, tests against the interface; confirm new or changed interfaces with me.
+- Prefer deep modules: small public interface, tests against the interface; confirm externally consumed interface changes or breaking changes with me.
 - Plain printable ASCII in responses, code, commits, and docs: `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
-- Before claiming done: review the diff, run static checks then tests, fix findings and reverify. Report real output - if something failed or was skipped, say so plainly.
+- Before claiming done: review the diff, run static checks then tests appropriate to the change, fix findings and reverify affected checks. Report real output - if something failed or was skipped, say so plainly.
 - Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
 - Never change cluster state directly - GitOps only.
 - Plans for my review (plan mode, inline plans): extremely concise - sacrifice grammar for concision. End each with numbered concrete steps, then a list of unresolved questions, if any.
