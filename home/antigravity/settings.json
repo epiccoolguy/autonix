@@ -92,7 +92,8 @@
       "command(xargs)",
       "mcp(github/*)",
       "mcp(kubernetes/*)",
-      "command(darwin-rebuild)"
+      "command(darwin-rebuild)",
+      "command(gh)"
     ],
     "ask": [
       "write_file(**/overlays/prd/**)",
