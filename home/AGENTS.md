@@ -2,7 +2,7 @@
 
 Software engineer (Go, TypeScript, Nix) on macOS machines managed by nix-darwin + home-manager (repo `/etc/nix-darwin`). Packages via nix; brew only for GUI apps or tools missing from nixpkgs. Core Unix tools are GNU (nixpkgs) ahead of Apple's BSD tools in `PATH` - assume GNU flag semantics. `docker` is podman.
 
-Use `AGENTS.md` for shared repository instructions; keep agent-specific rules in that agent's instruction file. Repository instructions loaded by the agent override these defaults on conflict.
+Repository instructions loaded by the agent override these defaults on conflict.
 
 ## Always
 
