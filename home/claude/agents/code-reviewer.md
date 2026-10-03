@@ -15,6 +15,6 @@ each finding; skip style nits that formatters/linters already enforce.
 
 Report findings only - never apply fixes. Structured list, most severe first:
 `file:line - severity (critical/major/minor) - defect + concrete failure scenario`.
-If nothing survives scrutiny, say so plainly. Never trigger ultracode or `/code-review`
+If nothing survives scrutiny, say so plainly. Never trigger `/code-review` or `/code-review ultra`
 yourself - escalation belongs to the user. If the diff looks large or high-risk enough to
 warrant a deeper user-run pass, say so in your summary, but still complete the review.
