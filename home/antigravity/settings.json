@@ -94,7 +94,8 @@
       "mcp(kubernetes/*)",
       "command(darwin-rebuild)",
       "command(gh)",
-      "command(mkdir)"
+      "command(mkdir)",
+      "command(ps)"
     ],
     "ask": [
       "write_file(**/overlays/prd/**)",
