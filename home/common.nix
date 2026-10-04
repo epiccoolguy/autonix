@@ -480,10 +480,12 @@
 
   # Global Node.js behind pnpm's `node` shim, pinned to the nixpkgs nodejs_24
   # version so it matches the nix node that non-shell contexts still use.
-  # Activation has no session vars, so pass pnpm's dirs explicitly. Offline
+  # Activation has no session vars, so pass pnpm's dirs explicitly; global
+  # installs refuse to run unless the global bin dir is on PATH. Offline
   # switches only warn.
   home.activation.pnpmNode = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     run env \
+      PATH="${config.xdg.dataHome}/pnpm/bin:$PATH" \
       PNPM_HOME="${config.xdg.dataHome}/pnpm" \
       XDG_CONFIG_HOME="${config.xdg.configHome}" \
       XDG_DATA_HOME="${config.xdg.dataHome}" \
