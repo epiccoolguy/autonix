@@ -11,7 +11,8 @@ tools: Read, Grep, Glob, Bash
 Review the current working diff (`git diff` and `git diff --staged`; if clean, the branch diff
 against the merge-base with origin's default branch) for real defects: correctness, security,
 concurrency, API misuse, missing error paths, test gaps. Read enough surrounding code to judge
-each finding; skip style nits that formatters/linters already enforce.
+each finding; skip style nits that formatters/linters already enforce. Also flag violations of
+`~/.agents/skills/simple-code/SKILL.md` (and the reference file for the diff's language) as minor.
 
 Report findings only - never apply fixes. Structured list, most severe first:
 `file:line - severity (critical/major/minor) - defect + concrete failure scenario`.

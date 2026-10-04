@@ -472,6 +472,10 @@
     "AGENTS.md".source = ./AGENTS.md;
     # Progressive-disclosure detail files linked from AGENTS.md
     ".config/agents".source = ./agents;
+    # Shared skills: ~/.claude/skills (Claude, Copilot) and ~/.agents/skills (Codex, Gemini).
+    # Link per skill - ~/.claude/skills also holds claude.ai's synced/ folder.
+    ".claude/skills/simple-code".source = ./skills/simple-code;
+    ".agents/skills/simple-code".source = ./skills/simple-code;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
