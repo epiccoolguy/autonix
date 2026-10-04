@@ -90,21 +90,16 @@ fn label(job: &Job) -> &str {
 
 For a public, externally extensible provider system, a narrow trait may be the correct boundary. Typestate may be worthwhile if a forbidden lifecycle transition must be rejected at compile time.
 
-## Prefer direct Zig to speculative comptime machinery
+## Prefer direct Python functions to abstract pipeline frameworks
 
-Avoid a generic Processor(T, Predicate) framework for filtering one kind of value:
+Avoid an abstract `DataTransformerPipeline` or `FilterStrategy` framework for filtering items:
 
-```zig
-fn countPositive(values: []const i32) usize {
-    var count: usize = 0;
-    for (values) |value| {
-        if (value > 0) count += 1;
-    }
-    return count;
-}
+```python
+def active_user_emails(users: list[User]) -> list[str]:
+    return [u.email for u in users if u.is_active and u.email]
 ```
 
-A type-independent container, serializer, or algorithm may justify comptime genericity immediately. Do not hand-duplicate an existing native collection to avoid using generics.
+Use a dedicated pipeline class or generator stream when processing unbounded data streams or when individual stages require distinct configuration, state, or error recovery.
 
 ## Preserve boundaries that earn their cost
 
