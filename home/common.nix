@@ -95,6 +95,8 @@
     zsh = {
       enable = true;
       enableCompletion = true;
+      # Keep dotfiles in ~ (pre-26.05 default); an XDG dotDir needs ZDOTDIR set before ~/.zshenv is read.
+      dotDir = config.home.homeDirectory;
 
       syntaxHighlighting = {
         enable = true;
