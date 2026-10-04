@@ -134,7 +134,10 @@
 
             zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-            export DOCKER_HOST="unix://$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}')"
+            if sock=$(podman machine inspect --format '{{ .ConnectionInfo.PodmanSocket.Path }}' 2>/dev/null); then
+              export DOCKER_HOST="unix://$sock"
+            fi
+            unset sock
             export KUBECONFIG="''${HOME}/.kube/config:''${HOME}/.kube/agent.mlzw.config"
           '';
           zshFunctions = lib.mkOrder 1000 ''
