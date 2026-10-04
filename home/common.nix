@@ -101,9 +101,10 @@
   home.shell.enableShellIntegration = true;
 
   programs = {
-    # Agents spawn `bash -l` with an inherited PATH; macOS /etc/profile then runs
-    # path_helper, which moves the system dirs ahead of nix so BSD sed/grep/find
-    # shadow the GNU ones. Move them back behind the inherited entries.
+    # In login bash with an inherited PATH (e.g. an agent spawning `bash -l`),
+    # macOS /etc/profile runs path_helper, which moves the system dirs ahead of
+    # nix so BSD sed/grep/find shadow the GNU ones. Move them back behind the
+    # inherited entries.
     bash = {
       enable = true;
       profileExtra = ''
