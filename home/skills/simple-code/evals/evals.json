@@ -4,70 +4,70 @@
     {
       "id": 1,
       "name": "ts-ship-notify",
-      "prompt": "When an order is marked as shipped, email the customer that it's on its way. Use the existing mailer.",
-      "expected_output": "A small change to markShipped (or its caller) that sends the email through the existing sendEmail function, with the effect visible in the signature or call site and a deliberate choice about email failure.",
+      "prompt": "When an order is marked as shipped, email the customer that it's on its way. Use the existing mailer. We'll probably add SMS and push notifications later.",
+      "expected_output": "A small change to markShipped (or its caller) that sends the email through the existing sendEmail function, with the effect visible in the signature or call site and a stated decision about email failure. No notification abstraction for channels that don't exist yet.",
       "files": ["evals/files/ts-ship-notify/orders.ts", "evals/files/ts-ship-notify/mailer.ts"],
       "expectations": [
-        "Sends the email by calling sendEmail directly or through a function-typed parameter; no new class, interface, or type named *Service, *Notifier, *Manager, or *Factory with a single implementation",
-        "Introduces no event bus, observer, queue, or plugin mechanism",
+        "Sends the email by calling sendEmail directly or through a function-typed parameter; no new class, interface, or type named *Service, *Notifier, *Channel, *Manager, or *Factory",
+        "Introduces no event bus, observer, queue, channel registry, or plugin mechanism for the future SMS/push channels",
         "Does not send the email when the order was already shipped (the existing early return still short-circuits)",
-        "States or implements a deliberate behavior for email failure (propagate, or catch and handle with context); no empty catch and no unawaited promise",
+        "The final message or code states what happens to the order state when sendEmail rejects after updateStatus succeeded (e.g. 'order stays shipped, error propagates, no retry'); a bare await without that statement fails",
         "Adds no new dependency and changes no files besides orders.ts, its caller, and tests"
       ]
     },
     {
       "id": 2,
       "name": "go-receipt-test",
-      "prompt": "Add a unit test for SendReceipt that doesn't hit the network, including the case where sending fails.",
+      "prompt": "Add a unit test for SendReceipt that doesn't hit the network, including the case where sending fails. We'll want to test code that uses the other provider calls later too.",
       "expected_output": "SendReceipt accepts a narrow consumer-side interface (one Send method) or a send function instead of *provider.Client, and a test uses a small fake to cover success and failure.",
       "files": ["evals/files/go-receipt-test/go.mod", "evals/files/go-receipt-test/provider/client.go", "evals/files/go-receipt-test/receipts/receipts.go"],
       "expectations": [
         "Declares the interface in package receipts (the consumer), not in package provider",
-        "The interface has only the Send method; it does not mirror ListBounces, DeleteDomain, or Stats",
+        "The interface has only the Send method; it does not mirror ListBounces, DeleteDomain, or Stats despite the hint about later tests",
         "The production *provider.Client still satisfies the new parameter type without changes to package provider",
-        "The test asserts the failure case with errors.Is (or equivalent) on the wrapped error, preserving the existing %w wrapping",
+        "The failure test checks the error with errors.Is or errors.As against a sentinel or typed error returned by the fake; comparing only err.Error() or strings fails",
         "Adds no mocking framework or other new module dependency"
       ]
     },
     {
       "id": 3,
       "name": "py-discounts",
-      "prompt": "Support discount codes in pricing: a code is either a percentage off or a fixed amount off the subtotal. Unknown or expired codes must be rejected, and the total can't go below zero.",
-      "expected_output": "Two discount kinds modeled as plain data (dataclasses in a union, or an Enum with a value) handled by one function, with a narrow exception for invalid codes and Decimal arithmetic.",
+      "prompt": "Support discount codes in pricing: a code is either a percentage off or a fixed amount off the subtotal. Unknown or expired codes must be rejected, and the total can't go below zero. Marketing will likely ask for more discount types later.",
+      "expected_output": "Two discount kinds modeled as plain data handled by one function, with a narrow exception for invalid codes, validation that total() can't bypass, and Decimal arithmetic with stated rounding.",
       "files": ["evals/files/py-discounts/pricing.py"],
       "expectations": [
-        "Models the two kinds as a union of dataclasses or an Enum-tagged record handled with match/if; no abstract base class, Strategy hierarchy, or registry of discount classes",
-        "Rejects unknown or expired codes by raising a narrow, named exception (not ValueError alone, not returning None or zero)",
-        "Keeps money in Decimal and clamps the total at zero",
-        "Keeps the new code in pricing.py (no new utils or discounts package)",
-        "Adds no new dependency"
+        "Models the two kinds as a union of dataclasses, or a record tagged by an Enum or Literal[...] with exactly one value field, handled with match/if; a record with two optional amount fields fails, as does an abstract base class, Strategy hierarchy, or registry of discount classes",
+        "Rejects unknown or expired codes by raising a narrow, named exception (a subclass of ValueError is fine; bare ValueError, returning None, or returning zero fails)",
+        "total() itself rejects unknown or expired codes, or the API makes it impossible to apply an unvalidated code",
+        "Keeps money in Decimal, clamps the total at zero, and quantizes percentage results to cents or states the rounding choice",
+        "Keeps the new code in pricing.py (no new utils or discounts package) and adds no new dependency"
       ]
     },
     {
       "id": 4,
       "name": "rust-cancel",
-      "prompt": "Add a Cancelled state with an optional reason, and a cancel function that refuses to cancel jobs that have already finished.",
-      "expected_output": "A new Job::Cancelled { reason: Option<String> } variant, every match updated explicitly, and cancel returning a Result with a typed error for finished jobs.",
+      "prompt": "Add a Cancelled state with an optional reason, and a cancel function that refuses to cancel jobs that have already finished. More states will follow.",
+      "expected_output": "A new Job::Cancelled { reason: Option<String> } variant, every match updated explicitly, and cancel taking the reason and returning a Result with a dedicated error type, without consuming the job on refusal.",
       "files": ["evals/files/rust-cancel/jobs.rs"],
       "expectations": [
         "Adds a Cancelled variant to the existing enum rather than introducing a State trait or trait objects",
         "Updates label and is_finished by listing the new variant explicitly; no `_` wildcard arm is added",
-        "cancel returns Result (or Option with a documented meaning) for finished jobs; no panic!, unwrap, or expect on that path",
-        "Treats Cancelled itself as finished in is_finished, or explains the choice",
-        "Adds no new crate dependency"
+        "cancel accepts the optional reason and returns Result with a dedicated error type (enum or struct); &str/String errors, panic!, unwrap, or expect fail",
+        "cancel does not consume the job on refusal (takes &Job or &mut Job, or returns the job inside the error)",
+        "Treats Cancelled as finished in is_finished, or states the choice, and adds no new crate dependency"
       ]
     },
     {
       "id": 5,
       "name": "ts-class-convention",
-      "prompt": "Add a way to void an invoice. Paid invoices can't be voided.",
-      "expected_output": "A void method on the existing InvoicesService that follows the repo's class-and-DI convention and its existing error classes.",
+      "prompt": "Add a way to void an invoice. Paid invoices can't be voided. We'll be adding more status transition rules soon.",
+      "expected_output": "A void method on the existing InvoicesService that follows the repo's class-and-DI convention and its existing error classes, with the single rule written directly.",
       "files": ["evals/files/ts-class-convention/invoices.service.ts", "evals/files/ts-class-convention/invoices.repository.ts", "evals/files/ts-class-convention/errors.ts"],
       "expectations": [
         "Adds a method to the existing InvoicesService using the injected repository; does not convert the service to free functions or remove the decorators and constructor injection",
         "Uses the existing NotFoundError for a missing invoice and ConflictError (or another existing error class) for a paid invoice, rather than inventing a result-union convention",
         "Does not refactor or rename unrelated code (send, the repository, the Invoice type)",
-        "Adds no new abstraction layer such as a state machine class or policy object for this single rule"
+        "Writes the paid-invoice rule directly; adds no transition table, state machine, policy object, or rule registry for the future rules"
       ]
     }
   ]
