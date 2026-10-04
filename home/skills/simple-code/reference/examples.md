@@ -1,10 +1,20 @@
 # Design Examples
 
+## Contents
+- Pattern alternatives table
+- TypeScript: behavior variation; valid states
+- Python: direct collection processing; an invariant can justify a class
+- Go: a real effect can justify a narrow interface
+- Rust: closed alternatives
+- Preserve boundaries that earn their cost
+
+## Pattern alternatives
+
 These are alternatives to consider, not automatic rewrites. First identify the behavior a pattern is providing, then choose the smallest idiomatic construct preserving it.
 
 | Pattern | Often sufficient | Keep more structure when |
 | --- | --- | --- |
-| Strategy | Function/callback/closure | Behavior has shared state, lifecycle, several related capabilities, or a required framework contract. |
+| Strategy | Function/callback/closure | Behavior has shared state, lifecycle, several related capabilities, or a required framework interface. |
 | Command | Direct function for execution; tagged data for deferred work | Commands require persistence, serialization, undo, audit, retry, or scheduling. Closures are not serializable commands. |
 | State | Enum/tagged union plus handling | Transitions need substantial behavior, an open set of implementations, or compile-time lifecycle constraints. A union alone does not enforce transitions. |
 | Visitor | Pattern matching over closed variants | External types/operations must be extended independently, or an AST/library already supplies a visitor protocol. |
@@ -15,7 +25,7 @@ These are alternatives to consider, not automatic rewrites. First identify the b
 | Dependency injection | Explicit arguments/constructors, wired at startup | An established framework's container manages real scope/lifecycle needs. Avoid adding a parallel wiring system. |
 | Observer | Existing event/subscription/channel mechanism | Delivery, buffering, cleanup, ordering, or backpressure requires a stronger protocol. A direct call is enough for one synchronous reaction. |
 | Adapter | Small boundary function/type | Multiple operations or protocol translation require cohesive state and invariants. A tiny adapter can still be essential. |
-| Template Method | Explicit orchestration composed with functions/capabilities | A required framework or stable subclass contract supplies useful lifecycle behavior. |
+| Template Method | Explicit orchestration composed with functions/capabilities | A required framework or stable subclass API supplies useful lifecycle behavior. |
 
 Each example uses the same shape: what to avoid, the idiomatic alternative, and when to keep more structure.
 
@@ -37,7 +47,7 @@ class PercentDiscount implements DiscountStrategy {
 }
 ```
 
-**Prefer** a callback when it communicates the whole contract:
+**Prefer** a callback when it expresses the whole capability:
 
 ```typescript
 function total(
@@ -118,7 +128,7 @@ type receiptSender interface {
 
 This isolates network failure in deterministic tests even with one production sender. A function parameter may suffice for one independent operation.
 
-**Keep more structure when** the package deliberately offers a polymorphic contract to several implementations, like `io.Writer`.
+**Keep more structure when** the package deliberately offers a polymorphic interface to several implementations, like `io.Writer`.
 
 ## Rust: closed alternatives
 
