@@ -485,6 +485,10 @@
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.gemini/config/GEMINI.md";
     ".copilot/copilot-instructions.md".source = ./AGENTS.md;
 
+    ".codex/config.toml" = {
+      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/codex/config.toml";
+      force = true;
+    };
     ".claude/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
     ".claude/statusline.sh".source =
