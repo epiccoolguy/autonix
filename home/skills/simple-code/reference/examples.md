@@ -17,19 +17,15 @@ These are alternatives to consider, not automatic rewrites. First identify the b
 | Adapter | Small boundary function/type | Multiple operations or protocol translation require cohesive state and invariants. A tiny adapter can still be essential. |
 | Template Method | Explicit orchestration composed with functions/capabilities | A required framework or stable subclass contract supplies useful lifecycle behavior. |
 
+Each example uses the same shape: what to avoid, the idiomatic alternative, and when to keep more structure.
+
 ## TypeScript: behavior variation
 
-For one stateless choice, avoid scaffolding such as:
+**Avoid** Strategy scaffolding for one stateless choice:
 
 ```typescript
 interface DiscountStrategy {
   discount(subtotal: number): number;
-}
-
-class NoDiscount implements DiscountStrategy {
-  discount(_subtotal: number): number {
-    return 0;
-  }
 }
 
 class PercentDiscount implements DiscountStrategy {
@@ -41,7 +37,7 @@ class PercentDiscount implements DiscountStrategy {
 }
 ```
 
-Prefer a callback when it communicates the whole contract:
+**Prefer** a callback when it communicates the whole contract:
 
 ```typescript
 function total(
@@ -53,11 +49,13 @@ function total(
 }
 ```
 
-If there is no actual behavioral variation, remove the callback too and call the required calculation directly. If pricing needs maintained state or several related operations, a cohesive object may communicate the contract better.
+**Keep more structure when** pricing maintains state or several related operations. With no actual variation, drop the callback and call the calculation directly.
 
 ## TypeScript: valid states
 
-Avoid a record with loading, failed, optional data, and optional error that allows contradictory combinations. Represent only supported combinations:
+**Avoid** a record with `loading`, optional `data`, and optional `error` that allows contradictory combinations.
+
+**Prefer** one variant per supported state:
 
 ```typescript
 type Load<T> =
@@ -66,44 +64,26 @@ type Load<T> =
   | { kind: "failed"; error: Error };
 ```
 
-Here the generic relates a meaningful payload to reusable state semantics; it need not wait for two instantiations. Use a concrete payload when this is specific to one feature. At external boundaries, parse and validate before assigning this type.
-
-## Rust: closed alternatives
-
-Avoid Box<dyn State> plus separate implementations merely to encode a fixed three-way decision:
-
-```rust
-enum Job {
-    Queued,
-    Running { worker: u32 },
-    Failed { reason: String },
-}
-
-fn label(job: &Job) -> &str {
-    match job {
-        Job::Queued => "queued",
-        Job::Running { .. } => "running",
-        Job::Failed { .. } => "failed",
-    }
-}
-```
-
-For a public, externally extensible provider system, a narrow trait may be the correct boundary. Typestate may be worthwhile if a forbidden lifecycle transition must be rejected at compile time.
+**Keep more structure when** the fields really are independent, e.g. cached data shown during a refresh. The generic here carries reusable state semantics; use a concrete payload if only one feature needs it. Parse external input before assigning this type.
 
 ## Python: direct collection processing
 
-Avoid a pipeline or strategy framework for filtering a finite collection when a comprehension expresses the operation:
+**Avoid** a pipeline or strategy framework for filtering a finite collection.
+
+**Prefer** a comprehension (`User` is the existing domain type):
 
 ```python
 def active_user_emails(users: list[User]) -> list[str]:
     return [user.email for user in users if user.is_active and user.email]
 ```
 
-User is the existing domain type in this fragment. For unbounded input, use a generator or streaming API with clear resource lifetime. Stateful stages, backpressure, or separate recovery policies can justify a dedicated pipeline; streaming alone does not require a new framework.
+**Keep more structure when** stages hold state, need backpressure, or have separate recovery policies. For unbounded input, use a generator with clear resource lifetime; streaming alone doesn't need a framework.
 
 ## Python: an invariant can justify a class
 
-Avoid factories, validators, and interfaces around one interval when a dataclass can own its ordering invariant:
+**Avoid** factories, validators, and interfaces around one interval.
+
+**Prefer** a dataclass that owns its ordering invariant:
 
 ```python
 from dataclasses import dataclass
@@ -122,11 +102,13 @@ class Window:
         return self.start <= value < self.end
 ```
 
-The methods enforce and express a concrete concept. Type hints still require runtime validation at untrusted input boundaries.
+**Keep more structure when** construction needs coordination across several inputs or sources. Type hints still need runtime validation at untrusted boundaries.
 
 ## Go: a real effect can justify a narrow interface
 
-For a consumer that sends receipts over a network, ask only for the capability it needs:
+**Avoid** an interface mirroring the provider's full API.
+
+**Prefer** a consumer-side interface with only the capability it needs:
 
 ```go
 type receiptSender interface {
@@ -134,7 +116,33 @@ type receiptSender interface {
 }
 ```
 
-This can isolate network failure in deterministic tests even with one production sender. It does not justify mirroring the provider's full API. A function parameter may suffice for one independent operation.
+This isolates network failure in deterministic tests even with one production sender. A function parameter may suffice for one independent operation.
+
+**Keep more structure when** the package deliberately offers a polymorphic contract to several implementations, like `io.Writer`.
+
+## Rust: closed alternatives
+
+**Avoid** `Box<dyn State>` plus separate implementations to encode a fixed three-way decision.
+
+**Prefer** an enum and `match`:
+
+```rust
+enum Job {
+    Queued,
+    Running { worker: u32 },
+    Failed { reason: String },
+}
+
+fn label(job: &Job) -> &str {
+    match job {
+        Job::Queued => "queued",
+        Job::Running { .. } => "running",
+        Job::Failed { .. } => "failed",
+    }
+}
+```
+
+**Keep more structure when** outside crates must add implementations (a narrow trait), or a forbidden lifecycle transition must fail at compile time (typestate).
 
 ## Preserve boundaries that earn their cost
 
