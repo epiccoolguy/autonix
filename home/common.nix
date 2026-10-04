@@ -85,9 +85,15 @@
     EDITOR = "nvim";
     HOMEBREW_ACCEPT_EULA = "Y";
     SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
+    PNPM_HOME = "${config.xdg.dataHome}/pnpm";
   };
 
-  home.sessionPath = [ "$HOME/.local/bin" ];
+  # pnpm's bin dir precedes nix's so its project-aware `node` shim wins: it runs
+  # the Node.js a project pins (devEngines.runtime), else the global one below.
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "${config.xdg.dataHome}/pnpm/bin"
+  ];
 
   home.shell.enableShellIntegration = true;
 
@@ -470,6 +476,21 @@
   xdg.configFile."pnpm/config.yaml".text = ''
     virtualStoreType: global
     trustPolicy: no-downgrade
+  '';
+
+  # Global Node.js behind pnpm's `node` shim, pinned to the nixpkgs nodejs_24
+  # version so it matches the nix node that non-shell contexts still use.
+  # Activation has no session vars, so pass pnpm's dirs explicitly. Offline
+  # switches only warn.
+  home.activation.pnpmNode = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    run env \
+      PNPM_HOME="${config.xdg.dataHome}/pnpm" \
+      XDG_CONFIG_HOME="${config.xdg.configHome}" \
+      XDG_DATA_HOME="${config.xdg.dataHome}" \
+      XDG_STATE_HOME="${config.xdg.stateHome}" \
+      XDG_CACHE_HOME="${config.xdg.cacheHome}" \
+      ${pkgs.pnpm}/bin/pnpm runtime set node ${pkgs.nodejs_24.version} -g </dev/null \
+      || warnEcho "pnpm: could not install global Node.js ${pkgs.nodejs_24.version}"
   '';
 
   # macOS has no "default terminal" setting; the closest is claiming the
