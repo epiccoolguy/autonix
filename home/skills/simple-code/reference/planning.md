@@ -1,43 +1,36 @@
-# Planning
+# Simple Design
 
-A plan is required before code when the change touches more than one file, adds a type, or adds or changes a public API. Otherwise just write the code.
+Use the least powerful language-native construct that clearly and correctly expresses the design. Judge total complexity for readers, callers, tests, and operations, not line count or abstraction count. A small interface hiding substantial complexity is valuable; several forwarding layers are not.
 
-## Pre-coding check
+These are defaults, not bans on classes, interfaces, functional code, duplication, patterns, or frameworks. Existing contracts, safety, ownership, performance requirements, and intentional architecture can justify more structure. Stay within the task; do not rewrite unrelated architecture.
 
-Answer in order; each "no" is a design to remove before writing.
+## Before implementation
 
-1. Can this live in one file (the caller's file or one new module)?
-2. Can each operation be a plain function taking plain data?
-3. Is every interface, generic parameter, option, or wrapper used by two concrete paths in this change? If not, delete it and write the concrete code.
+- Read the affected behavior, callers, tests, and applicable repo instructions. Identify the required behavior, invariants, effects, and compatibility constraints before selecting a structure.
+- Start with the simplest concrete solution. Identify actual complexity and boundaries: validation, authorization, ownership, transactions, protocols, lifetimes, concurrency, or independent consumers. Reuse an existing abstraction when its meaning fits, not merely its shape.
+- Compare added machinery with what it removes. Consider the concepts, files, dependency directions, execution paths, and runtime mechanisms needed to understand or change one behavior. If these grow out of proportion to the requirement, reconsider the design before coding.
+- In a substantial plan, briefly state the direct solution and the concrete reason for each significant new boundary or abstraction. A few sentences within the existing numbered plan suffice. For routine changes, reason internally and proceed; do not add design documents, approval gates, or architecture checklists.
 
-## Template
+## During implementation
 
-Keep it under ~30 lines. Use the existing format for plans: numbered concrete steps, then open questions.
+- Implement the direct solution within required boundaries first. Add structure as concrete complexity emerges; do not generate unused scaffolding, plugin hooks, configuration, alternate implementations, or generalized frameworks.
+- Default to plain data, functions, cohesive modules, native collections and iteration, and native error handling. Prefer the standard library and existing dependencies when they fit; new dependencies need a concrete benefit that accounts for maintenance cost. Use methods, classes, interfaces, traits, and wrappers when they make ownership, invariants, behavior, lifecycle, or required polymorphism clearer.
+- Prefer readable statements and direct calls. Use loops, expressions, iterators, closures, or composition according to clarity and language idiom. Do not hide sequential effects inside clever pipelines or split one readable operation into tiny forwarding functions.
+- Keep helpers, constants, schemas, and types with their consumer, with the narrowest useful visibility. Move them when independent consumers share the same concept, a real boundary warrants it, or the module becomes harder to navigate. Prefer cohesive feature organization to global technical buckets when the repo permits; do not introduce generic utils/common/shared/types dumping grounds or reorganize a repo for symmetry.
+- Start concrete. Extract the smallest common concept after evidence from use, repeated change, or established domain semantics. Similar-looking code with different reasons to change need not share an abstraction. Repetition is evidence, not a required quota.
+- Every abstraction should hide, constrain, coordinate, or compress meaningful complexity. Forwarding services, one-method wrappers, one-implementation interfaces, single-type factories/generics, base classes with one subclass, CRUD repositories, identity mappers, and one-plugin systems warrant scrutiny, not automatic deletion. A named pattern is not a justification.
+- Shape contracts around the capabilities consumers need, not an implementation's whole API. Place them near consumers when the language and dependency rules support it. Prefer existing standard contracts. A small seam around real I/O can support deterministic tests even with one production implementation; mirroring every class solely for mocks does not justify an interface layer.
+- Make important dependencies explicit through parameters, constructors, or a small cohesive dependency value wired at an entry point. Avoid hidden mutable globals, service locators, and unnecessary DI containers. Keep network, database, filesystem, and process effects recognizable. Separate pure computation from I/O when this clarifies behavior; do not create ceremonial domain/application/infrastructure layers.
+- Use enums/unions, explicit optionality, narrow types, and useful immutability to remove invalid combinations. Use newtypes/brands and controlled construction when they enforce a meaningful invariant. Validate untrusted data at real boundaries. Do not replace runtime validation with casts, or relocate simple logic into difficult type machinery.
+- Use language features to implement the needed behavior before assembling textbook pattern machinery. Preserve required serialization, undo, extensibility, lifecycle, ordering, cancellation, and ownership semantics. Consult [examples and exceptions](examples.md) when the idiomatic form or an abstraction's payoff is unclear.
 
-```
-Goal: <one line>
+## Before declaring completion
 
-Types:
-  <the data definitions, in the target language>
+Inspect every new or expanded file, module, type, interface/trait, class, function, generic, layer, configuration option, and dependency in the diff.
 
-Signatures:
-  <function signatures, in the target language>
+- Can it be deleted, inlined, made concrete, made private, or colocated with its only consumer without losing useful meaning or increasing reader effort?
+- What complexity does this abstraction hide, constrain, coordinate, or compress? Does this wrapper enforce an invariant, this contract represent a real capability or boundary, and this layer do useful work?
+- Are genericity, visibility, extension points, configuration, and dependencies needed for current requirements? Did any unrequested behavior or scaffolding enter the change?
+- Could direct code make the behavior easier to follow? Preserve security, validation, resource ownership, error semantics, transactions, concurrency, compatibility, and meaningful boundaries.
 
-Failure modes:
-  - <failure> -> <how it is represented (error value, variant, exception)> -> <who handles it>
-
-Steps:
-  1. ...
-
-Open questions:
-  - ...
-```
-
-## Rules
-
-- Write types and signatures in the target language, not pseudo-code.
-- List every expected failure: invalid input, not found, conflict, timeout, permission. Bugs are not failure modes.
-- Name the boundary where untrusted input becomes a precise type.
-- State the reason for each new dependency.
-- Design for current requirements only. "Might need later" is not a reason.
-- Ask for confirmation only when the plan changes an externally consumed interface or makes a breaking change; otherwise proceed.
+Apply worthwhile simplifications, then run the required checks on the final diff. Re-run affected checks after subsequent edits. Keep the pass internal for routine changes; report material retained tradeoffs when they help review. Do not turn simplification into unrelated cleanup or demand a report for every construct.
