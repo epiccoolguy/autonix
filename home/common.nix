@@ -489,6 +489,10 @@
       source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/codex/config.toml";
       force = true;
     };
+    ".codex/rules/default.rules" = {
+      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/codex/rules/default.rules";
+      force = true;
+    };
     ".claude/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
     ".claude/statusline.sh".source =
