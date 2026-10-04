@@ -8,4 +8,4 @@
 - When configuring a versioned tool or library, fetch docs for that exact version.
 - Format Nix with `nixfmt <file>` or `nixfmt-tree` (repo-wide); bare `nixfmt .` is deprecated.
 - Never lower pnpm's `minimumReleaseAge`, disable `trustPolicy`, set `dangerouslyAllowAllBuilds`, or widen `allowBuilds` without asking.
-- Resolve `pnpm-lock.yaml` conflicts with `pnpm install`, then review the lockfile diff.
+- Commit `pnpm-lock.yaml` with the manifest changes that produced it; never hand-edit it. Resolve its merge conflicts by re-running `pnpm install` on the merged manifests. Trust pnpm's output and skip reviewing the lockfile diff unless something is unexpected (lockfile changes without a manifest change, unrelated packages moving, an install failure).
