@@ -2,17 +2,18 @@
 
 ## Data and behavior
 
-- Prefer structs, enums, functions, and inherent impl methods. Use enums and match for closed alternatives, and Option for absence.
-- Protect invariants with private fields and validated constructors/newtypes. Typestate can justify extra types for important lifecycle constraints.
-- Use traits for needed capabilities, ecosystem integration, or polymorphism. Choose generics/impl Trait or dyn Trait for actual dispatch/storage needs; coherence rules constrain where implementations can live.
+- Prefer structs, enums, functions, and inherent `impl` methods. Use `Option` for absence. Model closed alternatives as enums handled with `match`, listing every variant of your own enums instead of a `_` arm so a new variant fails to compile.
+- Protect invariants with private fields and a validated constructor or newtype (`TryFrom`). Typestate is worth its extra types only for an important lifecycle constraint.
+- Use traits for needed capabilities, ecosystem integration, or real polymorphism, and reuse standard traits. Choose generics/`impl Trait` or `dyn Trait` by actual dispatch and storage needs; use an enum instead of `dyn` when the set is closed.
 
 ## Control flow and effects
 
-- Choose readable iterator chains or ordinary loops according to clarity. Use Result and ? for recoverable failures, preserving useful error meaning.
-- Make ownership and lifetimes clear; borrow or move deliberately. Clone, Box, Rc, Arc, and interior mutability need concrete ownership/storage reasons. A simple clone can be clearer than a convoluted lifetime design.
-- Use Drop/RAII for cleanup. Do not panic on ordinary input failures or obscure important effects behind unnamed machinery.
+- Choose iterator chains or loops by clarity: chains for transformations, loops for stateful or sequential work.
+- Return `Result` for recoverable failures and propagate with `?`, adding context. Follow the project's error crates (e.g. `thiserror` enums in libraries, `anyhow` with `.context(...)` in binaries) rather than adding new ones. No `unwrap` on input-dependent paths outside tests. Use `expect("why this holds")` only for a proven invariant, and `panic!` only for bugs.
+- Borrow or move deliberately. A simple `clone` can be clearer than threading lifetimes through domain structs. `Box`, `Rc`, `Arc`, and interior mutability need a concrete ownership reason, not silencing the borrow checker. Use `Drop`/RAII for cleanup.
 
 ## Modules and boundaries
 
-- Choose cohesive modules and narrow visibility rather than one file per type. Reuse standard traits and existing error conventions.
-- Generics and derive can reduce ceremony; custom macros, excessive bounds, and type-level machinery need benefits exceeding their diagnostic and maintenance costs.
+- Private by default, then `pub(crate)`, and `pub` only for the real API. Modules follow cohesive boundaries, not one file per type.
+- Pass dependencies as arguments or fields set by the caller. No global mutable state.
+- `derive` and established library macros reduce ceremony. Custom macros, sprawling trait bounds, and type-level machinery need benefits exceeding their diagnostic and maintenance cost.
