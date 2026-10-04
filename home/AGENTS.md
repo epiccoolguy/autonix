@@ -17,6 +17,6 @@ macOS, but GNU core tools precede Apple's BSD ones in `PATH` - assume GNU flags.
 
 - Commits, branches, worktrees, PRs, merges: `~/.config/agents/git.md`
 - Running alongside other sessions, or depending on another session's work: `~/.config/agents/parallel-sessions.md`
-- Installing tools, toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
+- Toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
 - Kubernetes, ArgoCD, deploys, promotions, release tags: `~/.config/agents/deploys.md`
 - Editing agent instruction files (this one included) or agent memory: `~/.config/agents/instruction-files.md`
