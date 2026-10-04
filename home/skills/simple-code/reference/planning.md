@@ -1,36 +1,45 @@
-# Simple Design
+# Simple Design & Planning
 
-Use the least powerful language-native construct that clearly and correctly expresses the design. Judge total complexity for readers, callers, tests, and operations, not line count or abstraction count. A small interface hiding substantial complexity is valuable; several forwarding layers are not.
+Express required behavior using the least powerful language-native construct that remains clear and maintainable. Judge total system complexity for callers, tests, and future maintainers, not raw line count or abstraction count. A small interface hiding substantial complexity is valuable; forwarding layers and speculative wrappers are not.
 
-These are defaults, not bans on classes, interfaces, functional code, duplication, patterns, or frameworks. Existing contracts, safety, ownership, performance requirements, and intentional architecture can justify more structure. Stay within the task; do not rewrite unrelated architecture.
+These principles are defaults against accidental complexity, not dogmatic bans on classes, interfaces, functional idioms, patterns, or frameworks. Existing contracts, safety, resource ownership, and verified architecture can justify structure. Stay within the scope of the task; do not rewrite unrelated architecture.
 
-## Before implementation
+## Pre-Coding Sanity Protocol (The 3-Step Filter)
 
-- Read the affected behavior, callers, tests, and applicable repo instructions. Identify the required behavior, invariants, effects, and compatibility constraints before selecting a structure.
-- Start with the simplest concrete solution. Identify actual complexity and boundaries: validation, authorization, ownership, transactions, protocols, lifetimes, concurrency, or independent consumers. Reuse an existing abstraction when its meaning fits, not merely its shape.
-- Compare added machinery with what it removes. Consider the concepts, files, dependency directions, execution paths, and runtime mechanisms needed to understand or change one behavior. If these grow out of proportion to the requirement, reconsider the design before coding.
-- In a substantial plan, briefly state the direct solution and the concrete reason for each significant new boundary or abstraction. A few sentences within the existing numbered plan suffice. For routine changes, reason internally and proceed; do not add design documents, approval gates, or architecture checklists.
+Before generating code or introducing abstractions, run these 3 checks:
 
-## During implementation
+1. "Can this be a single file or cohesive module?"
+   Default to implementing logic directly in the caller's file or a single cohesive module. Reject directory sprawl (`models/`, `services/`, `handlers/`, `interfaces/`) for a single task. Split only when a file exceeds ~400 lines or addresses distinct runtime domains (e.g. transport vs storage engine).
 
-- Implement the direct solution within required boundaries first. Add structure as concrete complexity emerges; do not generate unused scaffolding, plugin hooks, configuration, alternate implementations, or generalized frameworks.
-- Default to plain data, functions, cohesive modules, native collections and iteration, and native error handling. Prefer the standard library and existing dependencies when they fit; new dependencies need a concrete benefit that accounts for maintenance cost. Use methods, classes, interfaces, traits, and wrappers when they make ownership, invariants, behavior, lifecycle, or required polymorphism clearer.
-- Prefer readable statements and direct calls. Use loops, expressions, iterators, closures, or composition according to clarity and language idiom. Do not hide sequential effects inside clever pipelines or split one readable operation into tiny forwarding functions.
-- Keep helpers, constants, schemas, and types with their consumer, with the narrowest useful visibility. Move them when independent consumers share the same concept, a real boundary warrants it, or the module becomes harder to navigate. Prefer cohesive feature organization to global technical buckets when the repo permits; do not introduce generic utils/common/shared/types dumping grounds or reorganize a repo for symmetry.
-- Start concrete. Extract the smallest common concept after evidence from use, repeated change, or established domain semantics. Similar-looking code with different reasons to change need not share an abstraction. Repetition is evidence, not a required quota.
-- Every abstraction should hide, constrain, coordinate, or compress meaningful complexity. Forwarding services, one-method wrappers, one-implementation interfaces, single-type factories/generics, base classes with one subclass, CRUD repositories, identity mappers, and one-plugin systems warrant scrutiny, not automatic deletion. A named pattern is not a justification.
-- Shape contracts around the capabilities consumers need, not an implementation's whole API. Place them near consumers when the language and dependency rules support it. Prefer existing standard contracts. A small seam around real I/O can support deterministic tests even with one production implementation; mirroring every class solely for mocks does not justify an interface layer.
-- Make important dependencies explicit through parameters, constructors, or a small cohesive dependency value wired at an entry point. Avoid hidden mutable globals, service locators, and unnecessary DI containers. Keep network, database, filesystem, and process effects recognizable. Separate pure computation from I/O when this clarifies behavior; do not create ceremonial domain/application/infrastructure layers.
-- Use enums/unions, explicit optionality, narrow types, and useful immutability to remove invalid combinations. Use newtypes/brands and controlled construction when they enforce a meaningful invariant. Validate untrusted data at real boundaries. Do not replace runtime validation with casts, or relocate simple logic into difficult type machinery.
-- Use language features to implement the needed behavior before assembling textbook pattern machinery. Preserve required serialization, undo, extensibility, lifecycle, ordering, cancellation, and ownership semantics. Consult [examples and exceptions](examples.md) when the idiomatic form or an abstraction's payoff is unclear.
+2. "Can this be a plain function taking plain data?"
+   Do not introduce a class or struct with mutable internal state if a stateless function accepting input data and returning output or a result type suffices.
 
-## Before declaring completion
+3. "Does this abstraction earn its keep for current requirements?"
+   Verify whether every interface, generic type parameter, or wrapper layer is actively consumed by at least two distinct concrete paths or establishes a necessary boundary (e.g. I/O seam, transaction scope, security check). If not, delete the abstraction and write concrete code.
 
-Inspect every new or expanded file, module, type, interface/trait, class, function, generic, layer, configuration option, and dependency in the diff.
+## Planning & Implementation Workflow
 
-- Can it be deleted, inlined, made concrete, made private, or colocated with its only consumer without losing useful meaning or increasing reader effort?
-- What complexity does this abstraction hide, constrain, coordinate, or compress? Does this wrapper enforce an invariant, this contract represent a real capability or boundary, and this layer do useful work?
-- Are genericity, visibility, extension points, configuration, and dependencies needed for current requirements? Did any unrequested behavior or scaffolding enter the change?
-- Could direct code make the behavior easier to follow? Preserve security, validation, resource ownership, error semantics, transactions, concurrency, compatibility, and meaningful boundaries.
+### 1. Before Implementation
 
-Apply worthwhile simplifications, then run the required checks on the final diff. Re-run affected checks after subsequent edits. Keep the pass internal for routine changes; report material retained tradeoffs when they help review. Do not turn simplification into unrelated cleanup or demand a report for every construct.
+- Inspect existing behavior, callers, tests, and repo conventions. Identify required behavior, invariants, side effects, and compatibility constraints before selecting a structure.
+- Start with the simplest concrete design. Identify actual domain boundaries: validation, authorization, resource ownership, transactions, protocols, lifetimes, or concurrency.
+- In substantial plans, state the direct solution and the concrete justification for any significant new boundary or abstraction in a few numbered sentences. For routine changes, reason internally and proceed without ceremony.
+
+### 2. During Implementation
+
+- Implement the direct solution first. Add structure only as concrete complexity emerges; never generate speculative scaffolding, plugin hooks, configuration switches, or unused generic helpers.
+- Default to plain data, functions, cohesive modules, native collections, and native error handling. Prefer standard library and existing project dependencies.
+- Keep helpers, types, and schemas colocated with their caller at the narrowest useful visibility. Move them only when independent callers share the exact same domain concept.
+- Shape interfaces around consumer capabilities, not implementation APIs. Define contracts near consumers. A small seam around external I/O (network, disk, subprocess) is justified for deterministic testing; mirroring internal classes solely for mocks is not.
+- Make dependencies and side effects explicit. Pass dependencies via arguments or constructors wired at startup. Avoid hidden globals, service locators, and unnecessary DI containers.
+
+### 3. Before Declaring Completion (Simplification Pass)
+
+Inspect every newly added file, module, type, class, function, interface, and dependency in the diff:
+
+- Can it be deleted, inlined, made concrete, made private, or colocated without losing clarity or safety?
+- Does every abstraction hide, constrain, or coordinate meaningful complexity?
+- Did any unrequested behavior, generic machinery, or speculative scaffolding enter the diff?
+- Could direct code make the control flow easier to trace while preserving correctness, validation, concurrency safety, and error semantics?
+
+Apply worthwhile simplifications, then run the required static checks and tests on the final diff.

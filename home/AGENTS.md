@@ -17,7 +17,7 @@ macOS, but GNU core tools precede Apple's BSD ones in `PATH` - assume GNU flags.
 ## Read before the matching work
 
 - Architecture, new modules, layers, polymorphic contracts, generic APIs, extension points, or dependencies: `~/.agents/skills/simple-code/SKILL.md`
-- Implementing Go, Rust, Zig, TypeScript/JavaScript, or Python: read the matching `~/.agents/skills/simple-code/reference/go.md`, `~/.agents/skills/simple-code/reference/rust.md`, `~/.agents/skills/simple-code/reference/zig.md`, `~/.agents/skills/simple-code/reference/typescript.md`, or `~/.agents/skills/simple-code/reference/python.md` once per task, before choosing the design. Read only languages being changed.
+- Implementing Go, Rust, TypeScript/JavaScript, or Python: read the matching `~/.agents/skills/simple-code/reference/go.md`, `~/.agents/skills/simple-code/reference/rust.md`, `~/.agents/skills/simple-code/reference/typescript.md`, or `~/.agents/skills/simple-code/reference/python.md` once per task, before choosing the design. Read only languages being changed.
 - Commits, branches, worktrees, PRs, merges: `~/.config/agents/git.md`
 - Running alongside other sessions, or depending on another session's work: `~/.config/agents/parallel-sessions.md`
 - Toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
