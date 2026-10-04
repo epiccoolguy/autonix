@@ -1,21 +1,24 @@
 ---
 name: simple-code
-description: Design and review simple, local, idiomatic software. Use for architectural decisions, new abstractions, and implementation or simplification in TypeScript, Python, Go, Rust, and other languages.
+description: Design, implement, refactor, and review simple, idiomatic software. Use for coding tasks, with focused guidance for TypeScript, Python, Go, and Rust.
 ---
 
 # Simple Code
 
-Prefer direct, local, language-native solutions to current requirements. Added structure must remove greater complexity, enforce meaningful invariants, or establish a real boundary. These are pragmatic defaults, not blanket bans on classes, interfaces, functional code, patterns, or frameworks. Follow intentional repository conventions and stay within the task.
+Prefer direct, local, idiomatic code. Add structure when it removes greater complexity, enforces an invariant, or establishes a needed boundary. Respect intentional repository conventions and the current requirements.
 
-Read only relevant guidance, once per task and before choosing the design:
+Before choosing the design, read only the relevant references, once per task:
 
-- Architecture, new modules, layers, polymorphic contracts, generic APIs, extension points, or dependencies: [design and implementation](reference/planning.md).
-- Implementing or reviewing TypeScript or JavaScript: [TypeScript and JavaScript](reference/typescript.md).
-- Implementing or reviewing Python: [Python](reference/python.md).
-- Implementing or reviewing Go: [Go](reference/go.md).
-- Implementing or reviewing Rust: [Rust](reference/rust.md).
-- Other languages: apply the shared philosophy using that language's native idioms and the repository's conventions.
-- Unclear pattern choice or abstraction payoff: [examples and exceptions](reference/examples.md).
-- Only when asked to set up or tighten linting: the matching lint/typescript.md, lint/python.md, lint/go.md, or lint/rust.md. Check the project's installed versions; do not add lint configuration automatically.
+- Routine implementation or review: the matching language guide below.
+- Architectural decisions, new abstractions or dependencies, or changes crossing behavioral boundaries: also read [design](reference/design.md).
+- Unclear pattern choice or abstraction payoff: read [examples](reference/examples.md).
+- Requested lint setup or tightening: read [linting](reference/linting.md).
 
-Before completion, simplify the diff while preserving correctness and meaningful boundaries. Routine changes need no architecture document, checklist report, or extra approval gate.
+| Language | Reference |
+| --- | --- |
+| TypeScript | [TypeScript](reference/typescript.md) |
+| Python | [Python](reference/python.md) |
+| Go | [Go](reference/go.md) |
+| Rust | [Rust](reference/rust.md) |
+
+For mixed-language changes, read each affected guide. For other languages, use the shared principles and repository conventions; do not invent a matching reference. Routine work needs no architecture document, checklist report, or additional approval gate.

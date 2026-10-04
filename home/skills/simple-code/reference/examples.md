@@ -17,7 +17,7 @@ These are alternatives to consider, not automatic rewrites. First identify the b
 | Adapter | Small boundary function/type | Multiple operations or protocol translation require cohesive state and invariants. A tiny adapter can still be essential. |
 | Template Method | Explicit orchestration composed with functions/capabilities | A required framework or stable subclass contract supplies useful lifecycle behavior. |
 
-## Avoid unnecessary Strategy machinery
+## TypeScript: behavior variation
 
 For one stateless choice, avoid scaffolding such as:
 
@@ -55,7 +55,7 @@ function total(
 
 If there is no actual behavioral variation, remove the callback too and call the required calculation directly. If pricing needs maintained state or several related operations, a cohesive object may communicate the contract better.
 
-## Prefer valid variants to independent flags
+## TypeScript: valid states
 
 Avoid a record with loading, failed, optional data, and optional error that allows contradictory combinations. Represent only supported combinations:
 
@@ -68,7 +68,7 @@ type Load<T> =
 
 Here the generic relates a meaningful payload to reusable state semantics; it need not wait for two instantiations. Use a concrete payload when this is specific to one feature. At external boundaries, parse and validate before assigning this type.
 
-## Prefer Rust data and matching to a closed hierarchy
+## Rust: closed alternatives
 
 Avoid Box<dyn State> plus separate implementations merely to encode a fixed three-way decision:
 
@@ -90,22 +90,56 @@ fn label(job: &Job) -> &str {
 
 For a public, externally extensible provider system, a narrow trait may be the correct boundary. Typestate may be worthwhile if a forbidden lifecycle transition must be rejected at compile time.
 
-## Prefer direct Python functions to abstract pipeline frameworks
+## Python: direct collection processing
 
-Avoid an abstract `DataTransformerPipeline` or `FilterStrategy` framework for filtering items:
+Avoid a pipeline or strategy framework for filtering a finite collection when a comprehension expresses the operation:
 
 ```python
 def active_user_emails(users: list[User]) -> list[str]:
-    return [u.email for u in users if u.is_active and u.email]
+    return [user.email for user in users if user.is_active and user.email]
 ```
 
-Use a dedicated pipeline class or generator stream when processing unbounded data streams or when individual stages require distinct configuration, state, or error recovery.
+User is the existing domain type in this fragment. For unbounded input, use a generator or streaming API with clear resource lifetime. Stateful stages, backpressure, or separate recovery policies can justify a dedicated pipeline; streaming alone does not require a new framework.
+
+## Python: an invariant can justify a class
+
+Avoid factories, validators, and interfaces around one interval when a dataclass can own its ordering invariant:
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Window:
+    start: int
+    end: int
+
+    def __post_init__(self) -> None:
+        if self.end < self.start:
+            raise ValueError("end precedes start")
+
+    def contains(self, value: int) -> bool:
+        return self.start <= value < self.end
+```
+
+The methods enforce and express a concrete concept. Type hints still require runtime validation at untrusted input boundaries.
+
+## Go: a real effect can justify a narrow interface
+
+For a consumer that sends receipts over a network, ask only for the capability it needs:
+
+```go
+type receiptSender interface {
+    Send(ctx context.Context, recipient string, body []byte) error
+}
+```
+
+This can isolate network failure in deterministic tests even with one production sender. It does not justify mirroring the provider's full API. A function parameter may suffice for one independent operation.
 
 ## Preserve boundaries that earn their cost
 
 - A one-line service that only calls another service adds little; a similarly short surface that checks authorization before storage access enforces a real boundary.
 - A repository duplicating a database client's CRUD adds little; one that owns transactionality, tenant scoping, persistence mapping, or aggregate invariants can hide substantial complexity.
 - A mapper copying identical trusted fields adds little; an explicit allowlist separating a public response from sensitive internal fields protects a security boundary.
-- A narrow Go consumer-side Sender interface can isolate actual network effects for deterministic tests even with one production provider. Do not create an interface duplicating the provider's entire API. A callback may suffice for one independent operation.
 - A tiny shared function combining context detachment with a bounded timeout can encode a correctness rule. Size and forwarding are clues, not proofs of uselessness.
 - Keep a helper with its feature rather than starting utils.ts for one call site. Extract it when it expresses a shared concept or makes a genuine boundary clearer; a long file can also justify cohesive decomposition.
