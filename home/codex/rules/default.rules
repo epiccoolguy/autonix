@@ -18,3 +18,6 @@ prefix_rule(pattern=["nix", "develop", "/nix/store/vxskwbr5g798fl5bb2yrwa3hlw4v9
 prefix_rule(pattern=["nix", "develop", "/nix/store/vxskwbr5g798fl5bb2yrwa3hlw4v9svq-nix-shell-env.drv", "--command", "python3", "/Users/miguel/.codex/skills/.system/skill-creator/scripts/quick_validate.py", "home/skills/simple-code"], decision="allow")
 prefix_rule(pattern=["git", "add", "home/AGENTS.md", "home/agents/instruction-files.md", "home/claude/agents/code-reviewer.md", "home/skills/simple-code"], decision="allow")
 prefix_rule(pattern=["git", "add", "home/common.nix", "home/codex/rules/default.rules"], decision="allow")
+prefix_rule(pattern=["git", "rebase", "origin/master"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "edit", "148", "--body-file", "/private/tmp/normalize-coding-instructions/pr-body.md"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "ready", "148"], decision="allow")
