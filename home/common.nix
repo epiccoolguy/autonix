@@ -33,10 +33,13 @@
     diffutils
     findutils
     gawk
+    getopt
     gh
     gnugrep
     gnumake
+    gnupatch
     gnused
+    gnutar
     golangci-lint
     google-cloud-sdk
     gopls
@@ -98,6 +101,29 @@
   home.shell.enableShellIntegration = true;
 
   programs = {
+    # Agents spawn `bash -l` with an inherited PATH; macOS /etc/profile then runs
+    # path_helper, which moves the system dirs ahead of nix so BSD sed/grep/find
+    # shadow the GNU ones. Move them back behind the inherited entries.
+    bash = {
+      enable = true;
+      profileExtra = ''
+        if [ -x /usr/libexec/path_helper ]; then
+          __sys=$(eval "$(PATH=''' /usr/libexec/path_helper -s)"; printf %s "$PATH")
+          __rest=''' __tail=''' __ifs=$IFS
+          IFS=:
+          for __d in $PATH; do
+            case ":$__sys:" in
+              *":$__d:"*) __tail="''${__tail:+$__tail:}$__d" ;;
+              *) __rest="''${__rest:+$__rest:}$__d" ;;
+            esac
+          done
+          IFS=$__ifs
+          PATH="$__rest''${__tail:+:$__tail}"
+          unset __sys __rest __tail __d __ifs
+        fi
+      '';
+    };
+
     zsh = {
       enable = true;
       enableCompletion = true;
