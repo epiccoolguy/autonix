@@ -52,19 +52,11 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
   "fallbackModel": [
     "opus",
     "sonnet"
   ],
   "disableClaudeAiConnectors": true,
-  "worktree": {
-    "baseRef": "fresh"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -77,6 +69,13 @@
         ]
       }
     ]
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
