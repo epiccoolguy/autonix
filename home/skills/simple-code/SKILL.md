@@ -9,13 +9,14 @@ Write code the way idiomatic Go, Rust, and Zig read. Translate each rule into th
 
 Before writing code, read the file for the language you are editing:
 `reference/typescript.md`, `reference/python.md`, `reference/go.md`, `reference/rust.md`, `reference/zig.md`.
+No reference file for the language: apply the rules below in that language's own idiom.
 For non-trivial work, plan first with `reference/planning.md`.
 Read `lint/<language>.md` only when asked to set up or tighten linting.
 
 ## Design
 
 1. **Data first.** Model the data as plain structs, records, or types before writing behavior. No getters or setters on plain data; expose fields.
-2. **Closed variants are sum types, matched exhaustively.** Tagged union, enum, or discriminated union. No `default`/`_`/`else` arm when matching your own enum, so adding a variant breaks the build.
+2. **Closed variants are sum types, matched exhaustively.** Tagged union, enum, or discriminated union. When matching your own enum, no catch-all arm that handles unknown variants at runtime, so adding a variant breaks the build. An arm whose only job is to prove exhaustiveness (`assert_never`, a `never` check) is fine.
 3. **One state field, not several booleans.**
    Don't: `{ isLoading: boolean; error?: string; data?: User }`
    Do: `{ status: "loading" } | { status: "error"; error: string } | { status: "ok"; data: User }`

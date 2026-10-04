@@ -13,7 +13,7 @@ Most rules are already Go idiom; this file covers where agents drift.
 - Accept interfaces, return structs. Define the interface in the consumer package with only the methods it calls; never in the package that implements it.
 - No interface only for mocking, except at process or I/O boundaries. Otherwise test against real in-memory implementations or `httptest`.
   ```go
-  // package handler, not package storage
+  // package profile (the consumer), not package storage
   type userGetter interface {
       Get(ctx context.Context, id string) (storage.User, error)
   }
