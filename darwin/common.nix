@@ -26,6 +26,7 @@
     ];
     casks = [
       "balenaetcher"
+      "copilot-cli"
       "drawio"
       "ghostty"
       "git-credential-manager"
