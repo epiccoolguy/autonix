@@ -1,60 +1,9 @@
-# TypeScript
+# TypeScript and JavaScript
 
-## Data
-
-- Data shapes are `type` aliases (or `interface` for object shapes the repo already writes that way). Mark fields `readonly` and use `as const` for literal tables.
-- Variants are discriminated unions with a literal tag (`kind` or `status`). Use string literal unions instead of `enum`.
-- Exhaustive `switch` on the tag: no `default` arm, and end with a `never` check so a new variant fails to compile.
-  ```ts
-  function area(s: Shape): number {
-    switch (s.kind) {
-      case "circle": return Math.PI * s.r ** 2;
-      case "rect": return s.w * s.h;
-    }
-    const unreachable: never = s;
-    throw new Error(`unhandled shape ${JSON.stringify(unreachable)}`);
-  }
-  ```
-- No `any`. Use `unknown` at the boundary and narrow it. Use `as` only after narrowing, never to silence the compiler. No `!` non-null assertions.
-
-## Boundary parsing
-
-- Parse `unknown` input into a precise type in one function at the edge. Use the schema library the repo already has (zod, valibot); otherwise hand-write the parse function.
-- Branded types for parsed primitives: `type Email = string & { readonly __brand: "Email" }`.
-
-## Functions and modules
-
-- A module of exported functions, not a class. Classes only for `Error` subclasses or when a framework requires them (React error boundaries, NestJS, Angular).
-- No static-only classes and no singleton instances. No barrel `index.ts` files that only re-export.
-- Pass dependencies as parameters (`fetchUser(db, id)`), not constructor injection.
-
-## Errors
-
-- Expected domain failures inside your own code return a discriminated union:
-  ```ts
-  type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
-  ```
-  Define it once per project, next to its first use, unless the repo already has one. No tuple returns `[value, err]`.
-- Throw only for bugs, and at framework edges where the framework expects throws (HTTP handlers, React Query). Throw `Error` subclasses only, never strings.
-- `catch (e)`: `e` is `unknown`; narrow it, add context with `new Error("charge order", { cause: e })`, rethrow or convert to a value. Never an empty `catch`.
-- Every promise is awaited, returned, or explicitly `void`-ed with a comment explaining why.
-
-## Cleanup
-
-- `using` / `await using` with `Symbol.dispose` where the runtime supports it; otherwise `try { ... } finally { release() }` right after acquiring.
-
-## Don't / do
-
-Don't:
-```ts
-class UserService {
-  constructor(private readonly repo: IUserRepository) {}
-  async displayName(id: string) { const u = await this.repo.findById(id); return `${u.first} ${u.last}`; }
-}
-```
-Do:
-```ts
-export function displayName(user: User): string {
-  return `${user.first} ${user.last}`.trim();
-}
-```
+- Prefer functions, object literals, closures, and modules. Use classes when identity, encapsulated state, lifecycle, runtime behavior, or framework integration benefits. Do not introduce static utility classes, service/factory hierarchies, or DI containers just to organize functions.
+- Use structural object contracts or function types for the capabilities a consumer needs. Interfaces also describe plain data; they do not require classes or multiple implementations. Follow local type/interface conventions rather than imposing a universal choice.
+- Model closed alternatives with discriminated unions and narrow them with ordinary control flow. Use exhaustive checking where omissions matter; a never-check arm can prove exhaustiveness rather than supply a fallback. Distinguish absence from valid values explicitly. Use readonly where mutation should be constrained; it is not runtime deep immutability.
+- Validate unknown external input with the existing boundary schema/parser. Type annotations, assertions, and brands do not validate runtime data. Brands are useful only when construction and validation support a meaningful invariant; avoid elaborate conditional/mapped types for simple models.
+- Use async/await for clear sequential effects and the repo's established exception or result conventions. Do not impose Go-style error tuples or Rust-style Result wrappers across the app. Preserve rejection handling, cancellation, ordering, and cleanup.
+- Use map/filter, for...of, generators, or direct statements according to clarity. Make concurrency deliberate; async callbacks in forEach do not await the work. Pass dependencies explicitly or capture them in a clearly constructed closure; do not hide them in a service locator.
+- For JavaScript, use the same runtime design principles and existing JSDoc/checking conventions. Do not add a TypeScript migration or custom type machinery to obtain this style.

@@ -4,38 +4,20 @@ macOS, but GNU core tools precede Apple's BSD ones in `PATH` - assume GNU flags.
 
 ## Always
 
-- Concise, direct responses; match the repo's existing conventions over generic best practices.
-- Confirm externally consumed interface changes or breaking changes unless explicitly requested or already approved.
+- Concise, direct responses; follow intentional repo conventions. Do not copy accidental complexity or expand the task into an architecture rewrite.
+- No code comments unless the WHY is non-obvious; no error handling for impossible scenarios.
+- Before coding, inspect the existing behavior and conventions. Choose the simplest direct, local, language-native solution to the actual requirements. Prefer plain data and functions; add structure only when it removes greater complexity, enforces meaningful invariants, or establishes a real boundary. Keep dependencies and effects visible. Do not build for hypothetical requirements.
+- Prefer deep modules that hide meaningful complexity behind a small public interface; test behavior through that interface. Confirm externally consumed interface changes or breaking changes unless explicitly requested or already approved.
 - Plain printable ASCII in responses, code, commits, and docs: `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
-- For code/config changes, review the diff, run applicable static checks then tests, fix findings caused by the change, and rerun affected checks. Report failures and skipped checks plainly.
+- For code/config changes, review and simplify the diff: question each added construct and remove unneeded structure and speculative behavior while preserving correctness and real boundaries. Run applicable static checks then tests, fix findings caused by the change, and rerun affected checks. Report failures and skipped checks plainly.
 - Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
 - Never change cluster state directly - GitOps only.
 - Plans for my review: concise but unambiguous. Use numbered concrete steps, followed by unresolved questions, if any.
 
-## Code
-
-Write code the way idiomatic Go, Rust, and Zig read: plain data and functions, explicit control flow, errors as values - translated into each language's idioms, never transplanted. An existing repo's conventions win over these rules.
-
-- Data first: plain structs/records; closed variant sets as sum types matched exhaustively, so illegal states can't be built.
-- Parse untrusted input once at the boundary into precise types; code inside trusts them and doesn't re-validate.
-- Functions over classes; no inheritance. Methods on data are fine where the language puts them (Go, Rust, Zig).
-- No interface type, trait object, abstract base, or factory until two implementations exist (a test fake counts only at a process or I/O boundary); declare it at the consumer.
-- Dependencies are explicit parameters: no DI containers, service locators, or mutable globals.
-- Expected failures are in the signature (error return, `Result`, union, or a narrow documented exception where that is the idiom); panics/asserts only for bugs. Never swallow an error; add context when propagating. No handling for impossible cases.
-- Guard clauses and early returns; nesting depth at most 3.
-- Cleanup sits next to acquisition: `defer`, `using`, `with`, RAII.
-- No speculative generality: no unused params, options, hooks, config, or layers "for later".
-- Helpers and types stay in the file that uses them until a second consumer exists; inline single-use helpers unless the name captures a domain concept.
-- Prefer deep modules: small public API, tests against that API.
-- Standard library first; state the reason for each new dependency.
-- Domain names; no `Manager`, `Helper`, `Util`, `Factory`, `Impl`, `Base`.
-- Comments explain why, never what; omit them when the why is obvious.
-- Minimal diff: only what the task needs, no drive-by refactors.
-- Non-trivial work: plan data types, signatures, and failure modes before code.
-- Before designing, writing, or reviewing non-trivial code, read `~/.agents/skills/simple-code/SKILL.md` and the language file it names.
-
 ## Read before the matching work
 
+- Architecture, new modules, layers, polymorphic contracts, generic APIs, extension points, or dependencies: `~/.agents/skills/simple-code/SKILL.md`
+- Implementing Go, Rust, Zig, TypeScript/JavaScript, or Python: read the matching `~/.agents/skills/simple-code/reference/go.md`, `~/.agents/skills/simple-code/reference/rust.md`, `~/.agents/skills/simple-code/reference/zig.md`, `~/.agents/skills/simple-code/reference/typescript.md`, or `~/.agents/skills/simple-code/reference/python.md` once per task, before choosing the design. Read only languages being changed.
 - Commits, branches, worktrees, PRs, merges: `~/.config/agents/git.md`
 - Running alongside other sessions, or depending on another session's work: `~/.config/agents/parallel-sessions.md`
 - Toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
