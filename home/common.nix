@@ -9,6 +9,10 @@
 
   programs.home-manager.enable = true;
 
+  # Use ~/.config, ~/.local/share, ~/.cache instead of ~/Library paths for tools
+  # that honor XDG on macOS (pnpm, k9s, helm) and the HM modules keyed on it.
+  xdg.enable = true;
+
   home.packages = with pkgs; [
     ansible
     argo-workflows
@@ -455,6 +459,13 @@
       force = true;
     };
   };
+
+  # Global virtual store: worktree node_modules become symlinks into one shared
+  # store, so parallel agent worktrees install near-instantly.
+  xdg.configFile."pnpm/config.yaml".text = ''
+    virtualStoreType: global
+    trustPolicy: no-downgrade
+  '';
 
   # macOS has no "default terminal" setting; the closest is claiming the
   # LaunchServices types Terminal.app owns by default: double-clicked .command

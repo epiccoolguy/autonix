@@ -6,3 +6,5 @@
 - Commit `flake.nix`, `flake.lock`, `.envrc`. Verify a new devShell with `nix flake check` plus one real tool run; flag nixpkgs version drift rather than silently accepting it.
 - When configuring a versioned tool or library, fetch docs for that exact version.
 - Format Nix with `nixfmt <file>` or `nixfmt-tree` (repo-wide); bare `nixfmt .` is deprecated.
+- Never lower pnpm's `minimumReleaseAge`, disable `trustPolicy`, set `dangerouslyAllowAllBuilds`, or widen `allowBuilds` without asking.
+- Resolve `pnpm-lock.yaml` conflicts with `pnpm install`, then review the lockfile diff.
