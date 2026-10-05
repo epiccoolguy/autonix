@@ -4,6 +4,14 @@
   lib,
   ...
 }:
+let
+  # Evals stay in the repo next to the skill but aren't deployed, matching
+  # skill-creator's packaging (it drops a skill's root evals/ when shipping).
+  simpleCodeSkill = lib.fileset.toSource {
+    root = ./skills/simple-code;
+    fileset = lib.fileset.difference ./skills/simple-code ./skills/simple-code/evals;
+  };
+in
 {
   home.stateVersion = "25.05";
 
@@ -474,8 +482,8 @@
     ".config/agents".source = ./agents;
     # Shared skills: ~/.claude/skills (Claude, Copilot) and ~/.agents/skills (Codex, Gemini).
     # Link per skill - ~/.claude/skills also holds claude.ai's synced/ folder.
-    ".claude/skills/simple-code".source = ./skills/simple-code;
-    ".agents/skills/simple-code".source = ./skills/simple-code;
+    ".claude/skills/simple-code".source = simpleCodeSkill;
+    ".agents/skills/simple-code".source = simpleCodeSkill;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
