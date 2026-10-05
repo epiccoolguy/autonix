@@ -8,7 +8,7 @@
 
 ## Control flow and effects
 
-- Return `Result` for recoverable failures and propagate with `?`, adding context. Follow the project's error crates (e.g. `thiserror` enums in libraries, `anyhow` with `.context(...)` in binaries) rather than adding new ones. No `unwrap` on input-dependent paths outside tests. Use `expect("why this holds")` only for a proven invariant.
+- Return `Result` for recoverable failures and propagate with `?`, adding context. Follow the project's error crates (e.g. `thiserror` enums in libraries, `anyhow` with `.context(...)` in binaries) rather than adding new ones. Without an error crate, define a small error enum or struct; don't return `&str`/`String` errors. No `unwrap` on input-dependent paths outside tests. Use `expect("why this holds")` only for a proven invariant.
 - Prefer a simple `clone` to threading lifetimes through domain structs. `Rc`, `Arc`, and interior mutability need a concrete ownership reason, not silencing the borrow checker.
 
 ## Modules and boundaries
