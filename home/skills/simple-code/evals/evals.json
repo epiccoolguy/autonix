@@ -33,12 +33,12 @@
       "id": 3,
       "name": "py-discounts",
       "prompt": "Support discount codes in pricing: a code is either a percentage off or a fixed amount off the subtotal. Unknown or expired codes must be rejected, and the total can't go below zero. Marketing will likely ask for more discount types later.",
-      "expected_output": "Two discount kinds modeled as plain data handled by one function, with a narrow exception for invalid codes, validation that total() can't bypass, and Decimal arithmetic with stated rounding.",
+      "expected_output": "Two discount kinds modeled as plain data handled by one function, with a narrow exception for invalid codes, codes validated once at the boundary before total() applies them, and Decimal arithmetic with stated rounding.",
       "files": ["evals/files/py-discounts/pricing.py"],
       "expectations": [
         "Models the two kinds as a union of dataclasses, or a record tagged by an Enum or Literal[...] with exactly one value field, handled with match/if; a record with two optional amount fields fails, as does an abstract base class, Strategy hierarchy, or registry of discount classes",
         "Rejects unknown or expired codes by raising a narrow, named exception (a subclass of ValueError is fine; bare ValueError, returning None, or returning zero fails)",
-        "total() itself rejects unknown or expired codes, or the API makes it impossible to apply an unvalidated code",
+        "Codes are validated once where they enter (a lookup or parse step that checks unknown and expiry); total() receives only that validated discount value, or validates the code itself. Applying a raw code string without any check fails",
         "Keeps money in Decimal, clamps the total at zero, and quantizes percentage results to cents or states the rounding choice",
         "Keeps the new code in pricing.py (no new utils or discounts package) and adds no new dependency"
       ]
