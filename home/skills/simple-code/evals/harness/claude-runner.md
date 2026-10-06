@@ -1,4 +1,4 @@
-Run the simple-code skill evals on Claude Code. The arm (with-skill or without-skill) and the output root R are given at the end of this message. Only run them; do not open, judge, or grade any diff or output.
+Run the simple-code skill evals on Claude Code. The arm (with-skill or without-skill) and the output root R are given at the end of this message. Only run them; do not open, judge, or grade any eval run's diff or output (setup and smoke diagnostics are fine, see the hard rules).
 
 Inputs: /etc/nix-darwin/home/skills/simple-code/evals/evals.json and the fixtures under /etc/nix-darwin/home/skills/simple-code/evals/files/. From evals.json use only each eval's name, prompt, and files. Never pass expected_output or expectations to a child run, and never paraphrase the prompt.
 

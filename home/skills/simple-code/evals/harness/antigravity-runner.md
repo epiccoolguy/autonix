@@ -1,4 +1,4 @@
-Run a small A/B evaluation of the shared `simple-code` skill on the Antigravity CLI (`agy`). Only run it; do not open, judge, or grade any diff or output.
+Run a small A/B evaluation of the shared `simple-code` skill on the Antigravity CLI (`agy`). Only run it; do not open, judge, or grade any eval run's diff or output (setup and smoke diagnostics are fine, see the hard rules).
 
 ## Context
 - The skill is deployed at ~/.agents/skills/simple-code/ and ~/.claude/skills/simple-code/ (SKILL.md and reference/; symlinks into /nix/store). ~/.gemini/GEMINI.md imports the shared global ~/AGENTS.md, which tells agents to read the skill for coding tasks.
@@ -14,7 +14,7 @@ Run a small A/B evaluation of the shared `simple-code` skill on the Antigravity 
 ## Do not touch configuration
 - A PreToolUse hook syncs runtime permission changes from ~/.gemini/antigravity-cli/settings.json back into /etc/nix-darwin/home/antigravity/settings.json.
 - Never approve "always allow" prompts, and never edit ~/.gemini config, settings, or hooks, in this session or in child runs.
-- Use per-run flags or a temporary config/home dir instead.
+- Use per-run flags or an external `sandbox-exec` profile instead (the first Antigravity run isolated both arms this way); never copy credential files into a temporary home.
 - Afterwards, confirm `git -C /etc/nix-darwin status --short` shows nothing new from this work.
 
 ## Step 1: headless runs and isolation
