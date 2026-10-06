@@ -484,6 +484,8 @@ in
     # Link per skill - ~/.claude/skills also holds claude.ai's synced/ folder.
     ".claude/skills/simple-code".source = simpleCodeSkill;
     ".agents/skills/simple-code".source = simpleCodeSkill;
+    # Antigravity (agy) reads global skills only from ~/.gemini/config/skills.
+    ".gemini/config/skills/simple-code".source = simpleCodeSkill;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
