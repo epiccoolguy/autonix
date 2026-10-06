@@ -524,7 +524,6 @@ in
   # store, so parallel agent worktrees install near-instantly.
   xdg.configFile."pnpm/config.yaml".text = ''
     virtualStoreType: global
-    trustPolicy: no-downgrade
   '';
 
   # Global Node.js behind pnpm's `node` shim, pinned to the nixpkgs nodejs_24
