@@ -1,4 +1,4 @@
-Run a small A/B evaluation of the shared `simple-code` skill on Codex. Only run it; do not open, judge, or grade any diff or output.
+Run a small A/B evaluation of the shared `simple-code` skill on Codex. Only run it; do not open, judge, or grade any eval run's diff or output (setup and smoke diagnostics are fine, see the hard rules).
 
 ## Context
 - The skill is deployed at ~/.agents/skills/simple-code/ (SKILL.md and reference/; a symlink into /nix/store). ~/.codex/AGENTS.md (the shared global AGENTS.md) tells agents to read it for coding tasks.
@@ -20,7 +20,7 @@ Work out from `codex --help`, `codex exec --help`, and the Codex docs for the in
 4. WITHOUT-SKILL arm: the run can neither load nor read the skill (disable skill discovery for the run and block reads of the skill dir), while ~/.codex/AGENTS.md still loads, so both arms share the AGENTS.md core.
 5. Both arms: the run cannot read the evals dir, R/out, or any other run's folder under ~/simple-code-evals; only its own working dir.
 
-Don't modify ~/.codex/config.toml or anything under /etc/nix-darwin. Use per-run flags, a temporary profile, or a temporary CODEX_HOME copy.
+Don't modify ~/.codex/config.toml or anything under /etc/nix-darwin. Use per-run flags or `-c` overrides (the first Codex run isolated both arms this way, without a temporary CODEX_HOME).
 
 Prove the setup with smoke runs from an empty scratch dir:
 - "Read ~/.agents/skills/simple-code/SKILL.md and print its first line" succeeds with-skill and fails without-skill.
