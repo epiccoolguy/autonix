@@ -9,7 +9,7 @@ Run a small A/B evaluation of the shared `simple-code` skill on GitHub Copilot C
 - /etc/nix-darwin/home/skills/simple-code/evals/evals.json and the fixtures under /etc/nix-darwin/home/skills/simple-code/evals/files/.
 - Use only the evals named py-discounts and rust-cancel. From each, use only name, prompt, and files.
 - Never expose expected_output or expectations to a child run, and never paraphrase the prompt.
-- Output root R=~/simple-code-evals/run-copilot-1 (create R/work and R/out).
+- Output root R=~/simple-code-evals/run-copilot-N, using the lowest N whose folder doesn't exist yet (create R/work and R/out).
 
 ## Step 1: headless runs and isolation
 Work out from `copilot --help` and the Copilot CLI docs for the installed version how to:
@@ -17,7 +17,7 @@ Work out from `copilot --help` and the Copilot CLI docs for the installed versio
 2. Capture a machine-readable log of every tool call and file read (JSON output, or the session log Copilot writes).
 3. WITH-SKILL arm: the run can load the simple-code skill and read its SKILL.md and reference/** (resolve the /nix/store symlink if path permissions need it).
 4. WITHOUT-SKILL arm: the run can neither load nor read the skill (disable or hide the skill for the run and deny reads of both skill paths), while ~/.copilot/copilot-instructions.md still loads, so both arms share the AGENTS.md core.
-5. Both arms: the run cannot read the evals dir, ~/simple-code-evals/prompts, ~/simple-code-evals/run-1, run-2, run-codex-1, or R/out.
+5. Both arms: the run cannot read the evals dir, R/out, or any other run's folder under ~/simple-code-evals; only its own working dir.
 
 Don't modify ~/.copilot config files or anything under /etc/nix-darwin. Use per-run flags or a temporary config dir.
 
