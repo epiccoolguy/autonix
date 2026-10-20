@@ -319,6 +319,7 @@ in
       profiles = {
         default = {
           userSettings = {
+            "chat.permissions.default" = "autoApprove";
             "cSpell.dictionaries" = [
               "aws"
               "google"
