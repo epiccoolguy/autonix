@@ -46,6 +46,10 @@ in
   ];
 
   programs.vscode.profiles.default.userSettings = {
+    "chat.defaultConfiguration" = {
+      mode = "interactive";
+      approvals = "allowAll";
+    };
     "sonarlint.connectedMode.connections.sonarqube" = [
       {
         connectionId = "sonarqube.insim.biz";
