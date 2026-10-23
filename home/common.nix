@@ -320,8 +320,17 @@ in
         default = {
           userSettings = {
             "chat.permissions.default" = "autoApprove";
-            # Copilot gets AGENTS.md via ~/.copilot; CLAUDE.md adds Claude Code-only tools.
+            # Copilot gets AGENTS.md via ~/.copilot; Claude's instructions, rules and agents
+            # reference Claude Code-only tools. Skills stay shared.
             "chat.useClaudeMdFile" = false;
+            "chat.instructionsFilesLocations" = {
+              ".claude/rules" = false;
+              "~/.claude/rules" = false;
+            };
+            "chat.agentFilesLocations" = {
+              ".claude/agents" = false;
+              "~/.claude/agents" = false;
+            };
             "cSpell.dictionaries" = [
               "aws"
               "google"
