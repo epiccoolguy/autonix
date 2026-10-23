@@ -58,6 +58,8 @@ fmt_left() {
 PCT=${PCT%.*}
 LINE="${MODEL} | ${EFFORT:--} effort | ${PCT:-0}% context"
 [ -n "$BRANCH" ] && LINE="${BRANCH} | S: ${STAGED} U: ${UNSTAGED} A: ${ADDED} | ${LINE}"
+# EnterWorktree names the branch worktree-<name>; skip the redundant segment
+case "$BRANCH" in "$WORKTREE" | "worktree-$WORKTREE") WORKTREE=- ;; esac
 [ -n "$WORKTREE" ] && [ "$WORKTREE" != "-" ] && LINE="worktree ${WORKTREE} | ${LINE}"
 # Subscription usage segments are absent on non-Claude.ai plans
 if [ -n "$FIVE_H" ]; then
