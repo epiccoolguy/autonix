@@ -10,7 +10,7 @@ Install via nix by default. Use Homebrew casks for GUI apps and fast-moving tool
 
 ## Skills
 
-When adding or changing a skill under `home/skills/`, fetch https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices and review the change against it, including its closing checklist, before committing. Report checklist items you skip.
+When adding or changing a skill under `home/skills/`, fetch https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices and review the change against it, including its closing checklist (minus Haiku testing), before committing. Report checklist items you skip.
 
 ## Commands
 
