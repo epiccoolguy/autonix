@@ -320,6 +320,8 @@ in
         default = {
           userSettings = {
             "chat.permissions.default" = "autoApprove";
+            # Copilot gets AGENTS.md via ~/.copilot; CLAUDE.md adds Claude Code-only tools.
+            "chat.useClaudeMdFile" = false;
             "cSpell.dictionaries" = [
               "aws"
               "google"
