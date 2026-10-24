@@ -669,12 +669,13 @@ in
   # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
   # themselves (gopls, typescript-language-server, pyright, rust-analyzer) come from
   # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json.
+  # Activation's PATH has no git, which claude needs to clone marketplaces.
   home.activation.claudePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+    export PATH="/opt/homebrew/bin:/usr/local/bin:${config.programs.git.package}/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
       for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup; do
-        $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" 2>/dev/null || true
+        $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" || true
       done
     fi
   '';
