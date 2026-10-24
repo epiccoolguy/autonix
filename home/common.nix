@@ -566,25 +566,6 @@ in
     done
   '';
 
-  # Official Argo CD MCP server (npm `argocd-mcp`) for argocd.mlzw.dev. Not read-only:
-  # sync/rollback are deliberately allowed. Declared through programs.mcp because only its
-  # env file refs get a wrapper that reads the token at startup, keeping it out of the
-  # store. Mint the token with `argocd account generate-token`; the file is not nix-managed.
-  programs.mcp = {
-    enable = true;
-    servers.argocd = {
-      command = "pnpx";
-      args = [
-        "argocd-mcp@latest"
-        "stdio"
-      ];
-      env = {
-        ARGOCD_BASE_URL = "https://argocd.mlzw.dev";
-        ARGOCD_API_TOKEN.file = "${config.xdg.configHome}/mcp/argocd-agent-token";
-      };
-    };
-  };
-
   # kubernetes-mcp-server 0.0.68 dropped its CLI flags for a TOML config. Read-only, pinned
   # to the agent kubeconfig's current context. That kubeconfig holds a revocable agent-ops
   # token minted by mlzw-cluster's scripts/build-agent-kubeconfig.sh and is deliberately
@@ -606,7 +587,6 @@ in
   programs.claude-code = {
     enable = true;
     package = null;
-    enableMcpIntegration = true;
     plugins = lib.genAttrs [
       "frontend-design"
       "claude-md-management"
@@ -634,6 +614,26 @@ in
             '';
           }
         );
+      };
+      # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. The
+      # launcher reads the token from ~/.env at startup, so rotating it is re-running
+      # mlzw-infra's scripts/build-argocd-agent-token.sh and restarting the server.
+      argocd = {
+        command = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "argocd-mcp";
+            runtimeInputs = [
+              pkgs.gnugrep
+              pkgs.coreutils
+            ];
+            text = ''
+              ARGOCD_API_TOKEN="$(grep '^ARGOCD_API_TOKEN=' "$HOME/.env" | cut -d= -f2-)"
+              export ARGOCD_API_TOKEN
+              exec pnpx argocd-mcp@latest stdio
+            '';
+          }
+        );
+        env.ARGOCD_BASE_URL = "https://argocd.mlzw.dev";
       };
       kubernetes = {
         command = "pnpx";
@@ -699,19 +699,16 @@ in
   home.activation.antigravityMcp = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
         env_file="$HOME/.env"
-        argocd_token_file="$HOME/.config/mcp/argocd-agent-token"
         gemini_config_dir="$HOME/.gemini/config"
         mkdir -p "$gemini_config_dir"
 
         template="/etc/nix-darwin/home/antigravity/mcp_config.json"
         if [ -f "$template" ]; then
           pat=""
+          argocd_token=""
           if [ -f "$env_file" ]; then
             pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
-          fi
-          argocd_token=""
-          if [ -f "$argocd_token_file" ]; then
-            argocd_token="$(cat "$argocd_token_file")"
+            argocd_token="$(grep '^ARGOCD_API_TOKEN=' "$env_file" | cut -d= -f2- || true)"
           fi
 
           GITHUB_PAT="$pat" ARGOCD_TOKEN="$argocd_token" ${pkgs.python3}/bin/python3 -c "
