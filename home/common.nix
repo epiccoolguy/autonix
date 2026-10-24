@@ -582,29 +582,24 @@ in
     fi
   '';
 
-  # Official Argo CD MCP server (argoproj-labs/mcp-for-argocd, npm `argocd-mcp`)
-  # for the automatic-computing-machine cluster's Argo CD at argocd.mlzw.dev,
-  # registered the same imperative way as githubMcp. `pnpx ...@latest` matches
-  # the kubernetes MCP server precedent.
-  # NOT read-only (no MCP_READ_ONLY): mutating operations (sync/rollback/etc.)
-  # are deliberately allowed. The token is embedded into ~/.claude.json at
-  # activation time (same as githubMcp's PAT); the source file carries a live
-  # Argo CD API token and is deliberately NOT nix-managed -- mint one with
-  # `argocd account generate-token` and write it to
-  # ~/.config/mcp/argocd-agent-token to enable registration.
-  home.activation.argocdMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-    claude_bin="$(command -v claude || true)"
-    token_file="$HOME/.config/mcp/argocd-agent-token"
-    if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
-      argocd_token="$(cat "$token_file")"
-      if [ -n "$argocd_token" ]; then
-        argocd_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"argocd-mcp@latest\",\"stdio\"],\"env\":{\"ARGOCD_BASE_URL\":\"https://argocd.mlzw.dev\",\"ARGOCD_API_TOKEN\":\"$argocd_token\"}}"
-        $DRY_RUN_CMD "$claude_bin" mcp remove argocd --scope user 2>/dev/null || true
-        $DRY_RUN_CMD "$claude_bin" mcp add-json argocd "$argocd_json" --scope user
-      fi
-    fi
-  '';
+  # Official Argo CD MCP server (npm `argocd-mcp`) for argocd.mlzw.dev. Not read-only:
+  # sync/rollback are deliberately allowed. Declared through programs.mcp because only its
+  # env file refs get a wrapper that reads the token at startup, keeping it out of the
+  # store. Mint the token with `argocd account generate-token`; the file is not nix-managed.
+  programs.mcp = {
+    enable = true;
+    servers.argocd = {
+      command = "pnpx";
+      args = [
+        "argocd-mcp@latest"
+        "stdio"
+      ];
+      env = {
+        ARGOCD_BASE_URL = "https://argocd.mlzw.dev";
+        ARGOCD_API_TOKEN.file = "${config.xdg.configHome}/mcp/argocd-agent-token";
+      };
+    };
+  };
 
   # kubernetes-mcp-server 0.0.68 dropped its CLI flags for a TOML config. Read-only, pinned
   # to the agent kubeconfig's current context. That kubeconfig holds a revocable agent-ops
@@ -627,6 +622,7 @@ in
   programs.claude-code = {
     enable = true;
     package = null;
+    enableMcpIntegration = true;
     plugins = lib.genAttrs [
       "frontend-design"
       "claude-md-management"
