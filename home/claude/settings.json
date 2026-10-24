@@ -37,7 +37,7 @@
       "Bash(argocd:*)",
       "Bash(direnv:*)",
       "Bash(op:*)",
-      "mcp__github",
+      "mcp__plugin_hm_github",
       "mcp__plugin_hm_kubernetes",
       "mcp__plugin_hm_grafana",
       "mcp__plugin_hm_argocd",
