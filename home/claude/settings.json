@@ -40,7 +40,7 @@
       "mcp__github",
       "mcp__plugin_hm_kubernetes",
       "mcp__plugin_hm_grafana",
-      "mcp__argocd",
+      "mcp__plugin_hm_argocd",
       "mcp__claude-in-chrome",
       "WebFetch",
       "WebSearch"
