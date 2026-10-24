@@ -16,7 +16,7 @@ Swap `-sol` for `-luna` for the Luna tier. Sol: reviews, diagnosis, research, an
 
 Delegate on your own when a slice of the plan is self-contained, expected to change about 50 lines or more, and you can name its files and a check command up front. Do smaller or cross-cutting edits and judgment calls a brief can't pin down yourself.
 
-- Run it through the `codex:codex-rescue` subagent, sequentially in your current worktree, and don't edit while it runs. Run a slice in parallel (its own `isolation: "worktree"`, based on `origin/<default branch>`) only when it doesn't depend on your unpushed work; you own the merge order.
+- Run it through the `codex:codex-rescue` subagent, sequentially in your current worktree, and don't edit while it runs. Commit your own changes first (a WIP commit is fine) so `git status` afterwards shows only Codex's. Run a slice in parallel (its own `isolation: "worktree"`, based on `origin/<default branch>`) only when it doesn't depend on your unpushed work; you own the merge order.
 - Start each new slice with `--fresh`; follow-ups on the same slice use `--resume`. Without either, the subagent may continue the previous thread.
 - Write the brief like this:
 
@@ -32,7 +32,7 @@ For diagnosis (after two failed fix attempts, or when the root cause stays uncle
 
 ## Integrating a slice
 
-1. Treat Codex's report as a claim. Run `git status` and revert new or changed files outside the brief's scope.
+1. Treat Codex's report as a claim. Run `git status` and revert Codex's new or changed files outside the brief's scope.
 2. Review the diff against the plan and the surrounding code. Fix small issues yourself; send larger ones back with `--resume` - after 2 rounds, take over.
 3. Rerun the checks and commit under the usual conventions. Large diffs also go through `code-reviewer`.
 
