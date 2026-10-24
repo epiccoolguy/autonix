@@ -43,11 +43,15 @@
 
   # Codex plugin for Claude Code; miguel-only like the codex cask it drives. Enabled in
   # the shared claude/settings.json, where AS33AI ignores it since the marketplace is unknown there.
+  # `marketplace add` always writes extraKnownMarketplaces into that repo file (which would
+  # declare it to AS33AI too), so only add once; revert that one-time diff after a fresh setup.
   home.activation.claudeCodexPlugin = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"
     if [ -n "$claude_bin" ]; then
-      $DRY_RUN_CMD "$claude_bin" plugin marketplace add openai/codex-plugin-cc 2>/dev/null || true
+      if ! "$claude_bin" plugin marketplace list 2>/dev/null | grep -q openai-codex; then
+        $DRY_RUN_CMD "$claude_bin" plugin marketplace add openai/codex-plugin-cc || true
+      fi
       $DRY_RUN_CMD "$claude_bin" plugin install codex@openai-codex 2>/dev/null || true
     fi
   '';
