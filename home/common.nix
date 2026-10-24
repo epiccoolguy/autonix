@@ -566,22 +566,6 @@ in
     done
   '';
 
-  # Embeds the PAT, so it can't go in programs.claude-code.mcpServers (world-readable
-  # nix store); registered into ~/.claude.json instead.
-  home.activation.githubMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-    env_file="$HOME/.env"
-    claude_bin="$(command -v claude || true)"
-    if [ -f "$env_file" ] && [ -n "$claude_bin" ]; then
-      pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
-      if [ -n "$pat" ]; then
-        json="{\"type\":\"http\",\"url\":\"https://api.githubcopilot.com/mcp\",\"headers\":{\"Authorization\":\"Bearer $pat\"}}"
-        $DRY_RUN_CMD "$claude_bin" mcp remove github --scope user 2>/dev/null || true
-        $DRY_RUN_CMD "$claude_bin" mcp add-json github "$json" --scope user
-      fi
-    fi
-  '';
-
   # Official Argo CD MCP server (npm `argocd-mcp`) for argocd.mlzw.dev. Not read-only:
   # sync/rollback are deliberately allowed. Declared through programs.mcp because only its
   # env file refs get a wrapper that reads the token at startup, keeping it out of the
@@ -631,6 +615,26 @@ in
       "claude-code-setup"
     ] (name: "${inputs.claude-plugins-official}/plugins/${name}");
     mcpServers = {
+      # headersHelper reads the PAT from ~/.env when the server connects, so it never
+      # reaches the store.
+      github = {
+        type = "http";
+        url = "https://api.githubcopilot.com/mcp";
+        headersHelper = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "github-mcp-headers";
+            runtimeInputs = [
+              pkgs.gnugrep
+              pkgs.coreutils
+              pkgs.jq
+            ];
+            text = ''
+              pat="$(grep '^GITHUB_PAT=' "$HOME/.env" | cut -d= -f2-)"
+              jq -n --arg pat "$pat" '{Authorization: ("Bearer " + $pat)}'
+            '';
+          }
+        );
+      };
       kubernetes = {
         command = "pnpx";
         args = [
