@@ -22,6 +22,8 @@
     homebrew-betterdisplay.flake = false;
     codex-plugin-cc.url = "github:openai/codex-plugin-cc";
     codex-plugin-cc.flake = false;
+    claude-plugins-official.url = "github:anthropics/claude-plugins-official";
+    claude-plugins-official.flake = false;
   };
 
   outputs =
@@ -39,6 +41,7 @@
       homebrew-betterdisplay,
       nix-vscode-extensions,
       codex-plugin-cc,
+      claude-plugins-official,
     }:
     {
       # Build darwin flake using:
@@ -58,6 +61,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.test = import ./home/test.nix;
+              home-manager.extraSpecialArgs = { inherit inputs; };
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
               ];
@@ -135,6 +139,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.AS33AI = import ./home/AS33AI.nix;
+              home-manager.extraSpecialArgs = { inherit inputs; };
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
               ];

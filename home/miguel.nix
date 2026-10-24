@@ -42,11 +42,6 @@
 
   programs.git.settings.user.email = "miguel@loafoe.dev";
 
-  # Codex plugin for Claude Code, linked as a personal plugin and pinned by the flake input;
-  # miguel-only like the codex cask it drives. package = null: claude comes from brew.
-  programs.claude-code = {
-    enable = true;
-    package = null;
-    plugins.codex = "${inputs.codex-plugin-cc}/plugins/codex";
-  };
+  # miguel-only like the codex cask it drives.
+  programs.claude-code.plugins.codex = "${inputs.codex-plugin-cc}/plugins/codex";
 }

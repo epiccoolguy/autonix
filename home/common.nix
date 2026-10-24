@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 let
@@ -663,22 +664,53 @@ in
     fi
   '';
 
-  # Claude Code plugins must be *installed* (downloaded into ~/.claude/plugins) in addition
-  # to being enabled via settings.json's enabledPlugins. Installation state lives in mutable
-  # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
-  # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
-  # themselves (gopls, typescript-language-server, pyright, rust-analyzer) come from
-  # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json.
-  # Activation's PATH has no git, which claude needs to clone marketplaces.
-  home.activation.claudePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:${config.programs.git.package}/bin:$PATH"
-    claude_bin="$(command -v claude || true)"
-    if [ -n "$claude_bin" ]; then
-      for plugin in gopls-lsp typescript-lsp pyright-lsp rust-analyzer-lsp frontend-design claude-md-management hookify security-guidance claude-code-setup; do
-        $DRY_RUN_CMD "$claude_bin" plugin install "$plugin@claude-plugins-official" || true
-      done
-    fi
-  '';
+  # Claude Code plugins, linked into ~/.claude/skills as personal plugins and pinned by the
+  # flake inputs. package = null: claude comes from brew. The official *-lsp plugins only
+  # carry LSP config in their marketplace entry, so it's declared via lspServers instead;
+  # the servers themselves come from home.packages above.
+  programs.claude-code = {
+    enable = true;
+    package = null;
+    plugins = lib.genAttrs [
+      "frontend-design"
+      "claude-md-management"
+      "hookify"
+      "security-guidance"
+      "claude-code-setup"
+    ] (name: "${inputs.claude-plugins-official}/plugins/${name}");
+    lspServers = {
+      gopls = {
+        command = "gopls";
+        extensionToLanguage.".go" = "go";
+      };
+      typescript = {
+        command = "typescript-language-server";
+        args = [ "--stdio" ];
+        extensionToLanguage = {
+          ".ts" = "typescript";
+          ".tsx" = "typescriptreact";
+          ".js" = "javascript";
+          ".jsx" = "javascriptreact";
+          ".mts" = "typescript";
+          ".cts" = "typescript";
+          ".mjs" = "javascript";
+          ".cjs" = "javascript";
+        };
+      };
+      pyright = {
+        command = "pyright-langserver";
+        args = [ "--stdio" ];
+        extensionToLanguage = {
+          ".py" = "python";
+          ".pyi" = "python";
+        };
+      };
+      rust-analyzer = {
+        command = "rust-analyzer";
+        extensionToLanguage.".rs" = "rust";
+      };
+    };
+  };
 
   home.activation.antigravityMcp = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
