@@ -5,9 +5,6 @@ service_tier = "default"
 [projects."/private/etc/nix-darwin"]
 trust_level = "trusted"
 
-[projects."/Users/miguel/.claude/jobs/ebd8c560/tmp/smoke"]
-trust_level = "trusted"
-
 [tui]
 screen_reader_detection_done = true
 
