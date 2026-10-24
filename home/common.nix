@@ -566,11 +566,8 @@ in
     done
   '';
 
-  # programs.claude-code.mcpServers cannot be used here because claude is installed via brew
-  # (programs.claude-code.package = null). That option works by wrapping the nix-managed binary
-  # with --plugin-dir; without a package, no wrapper is created and mcpServers is ignored.
-  # Instead, we call `claude mcp add-json` directly to write into ~/.claude.json, which is
-  # where the CLI reads MCP server registrations from regardless of how it was installed.
+  # Embeds the PAT, so it can't go in programs.claude-code.mcpServers (world-readable
+  # nix store); registered into ~/.claude.json instead.
   home.activation.githubMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     env_file="$HOME/.env"
@@ -585,65 +582,10 @@ in
     fi
   '';
 
-  # Read-only Kubernetes MCP server for the mlzw k3s/Argo CD cluster, for incident
-  # diagnosis. Registered the same imperative way as githubMcp (brew claude, no nix
-  # wrapper). Runs with --read-only, so it cannot mutate; real changes stay on the
-  # GitOps path (PR -> Argo). Argo CD has its own MCP server (argocdMcp below) plus
-  # the `argocd` CLI (allowlisted in settings.json).
-  #
-  # Authenticates via ~/.kube/agent.mlzw.config, a revocable agent-ops token minted
-  # by mlzw-cluster's scripts/build-agent-kubeconfig.sh; --read-only bounds this
-  # server on top of that. --disable-multi-cluster pins it to the file's
-  # current-context. The file is deliberately NOT nix-managed -- we only reference
-  # the path here.
-  home.activation.k8sMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-    claude_bin="$(command -v claude || true)"
-    if [ -n "$claude_bin" ]; then
-      # Cluster-level reads via the agent kubeconfig (current context).
-      k8s_json="{\"type\":\"stdio\",\"command\":\"pnpx\",\"args\":[\"kubernetes-mcp-server@latest\",\"--read-only\",\"--disable-multi-cluster\",\"--kubeconfig\",\"$HOME/.kube/agent.mlzw.config\"]}"
-      $DRY_RUN_CMD "$claude_bin" mcp remove kubernetes --scope user 2>/dev/null || true
-      $DRY_RUN_CMD "$claude_bin" mcp add-json kubernetes "$k8s_json" --scope user
-    fi
-  '';
-
-  # Read-only Grafana MCP server (official grafana/mcp-grafana) for the
-  # automatic-computing-machine cluster's LGTM stack -- PromQL/LogQL/Tempo
-  # query access during incident diagnosis, registered the same imperative way
-  # as githubMcp/k8sMcp (brew claude, no nix wrapper). `uvx`, not a nixpkgs
-  # package: matches the always-latest precedent already set by k8sMcp's
-  # `pnpx kubernetes-mcp-server@latest` (and the `claude-code@latest` brew
-  # cask in darwin/miguel.nix) rather than nix-pinning a fast-moving MCP tool.
-  # Resolves via whatever index `programs.uv` is configured with above
-  # (`nn-pypi`) -- no per-invocation index override, so this relies on that
-  # index mirroring/proxying public PyPI for mcp-grafana to resolve.
-  #
-  # Read-only in TWO layers: the Grafana service account itself is Viewer
-  # role (server-side), and --disable-write additionally blocks
-  # dashboard/alert/datasource/annotation/snapshot writes client-side. This is
-  # deliberate, not just defense-in-depth: this cluster's Grafana is
-  # provisioned end-to-end from git (dashboards/datasources/alerts), so a
-  # direct write via MCP would be drift invisible to git -- the agent reads,
-  # every Grafana change ships as a git change. GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE
-  # carries a live token and is deliberately NOT nix-managed -- we only
-  # reference the path here; mint/rotate it with
-  # scripts/build-grafana-agent-token.sh (see
-  # docs/agent-cluster-access.md § Telemetry read access in the cluster repo).
-  home.activation.grafanaMcp = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-    claude_bin="$(command -v claude || true)"
-    token_file="$HOME/.config/mcp/grafana-agent-ops-token"
-    if [ -n "$claude_bin" ] && [ -f "$token_file" ]; then
-      grafana_json="{\"type\":\"stdio\",\"command\":\"uvx\",\"args\":[\"mcp-grafana\",\"-t\",\"stdio\",\"--disable-write\"],\"env\":{\"GRAFANA_URL\":\"https://grafana.mlzw.dev\",\"GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE\":\"$token_file\"}}"
-      $DRY_RUN_CMD "$claude_bin" mcp remove grafana --scope user 2>/dev/null || true
-      $DRY_RUN_CMD "$claude_bin" mcp add-json grafana "$grafana_json" --scope user
-    fi
-  '';
-
   # Official Argo CD MCP server (argoproj-labs/mcp-for-argocd, npm `argocd-mcp`)
   # for the automatic-computing-machine cluster's Argo CD at argocd.mlzw.dev,
-  # registered the same imperative way as githubMcp/k8sMcp/grafanaMcp (brew
-  # claude, no nix wrapper). `pnpx ...@latest` matches the k8sMcp precedent.
+  # registered the same imperative way as githubMcp. `pnpx ...@latest` matches
+  # the kubernetes MCP server precedent.
   # NOT read-only (no MCP_READ_ONLY): mutating operations (sync/rollback/etc.)
   # are deliberately allowed. The token is embedded into ~/.claude.json at
   # activation time (same as githubMcp's PAT); the source file carries a live
@@ -664,10 +606,24 @@ in
     fi
   '';
 
+  # kubernetes-mcp-server 0.0.68 dropped its CLI flags for a TOML config. Read-only, pinned
+  # to the agent kubeconfig's current context. That kubeconfig holds a revocable agent-ops
+  # token minted by mlzw-cluster's scripts/build-agent-kubeconfig.sh and is deliberately
+  # not nix-managed. Real changes stay on the GitOps path (PR -> Argo).
+  xdg.configFile."kubernetes-mcp-server/config.toml".source =
+    (pkgs.formats.toml { }).generate "kubernetes-mcp-server.toml"
+      {
+        read_only = true;
+        kubeconfig = "${config.home.homeDirectory}/.kube/agent.mlzw.config";
+        cluster_provider_strategy = "disabled";
+      };
+
   # Claude Code plugins, linked into ~/.claude/skills as personal plugins and pinned by the
   # flake inputs. package = null: claude comes from brew. The official *-lsp plugins only
   # carry LSP config in their marketplace entry, so it's declared via lspServers instead;
-  # the servers themselves come from home.packages above.
+  # the servers themselves come from home.packages above. mcpServers and lspServers ship
+  # as the generated `hm` plugin, so MCP tools are named mcp__plugin_hm_<server>__*.
+  # mcpServers land in the world-readable nix store: no secrets, only paths to them.
   programs.claude-code = {
     enable = true;
     package = null;
@@ -678,6 +634,34 @@ in
       "security-guidance"
       "claude-code-setup"
     ] (name: "${inputs.claude-plugins-official}/plugins/${name}");
+    mcpServers = {
+      kubernetes = {
+        command = "pnpx";
+        args = [
+          "kubernetes-mcp-server@latest"
+          "--config"
+          "${config.xdg.configHome}/kubernetes-mcp-server/config.toml"
+        ];
+      };
+      # Official grafana/mcp-grafana for the mlzw LGTM stack. Read-only twice: the service
+      # account is Viewer and --disable-write blocks writes client-side, because Grafana is
+      # provisioned from git and an MCP write would be drift. The token file is minted by
+      # the cluster repo's scripts/build-grafana-agent-token.sh. uvx resolves through the
+      # programs.uv index above.
+      grafana = {
+        command = "uvx";
+        args = [
+          "mcp-grafana"
+          "-t"
+          "stdio"
+          "--disable-write"
+        ];
+        env = {
+          GRAFANA_URL = "https://grafana.mlzw.dev";
+          GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE = "${config.xdg.configHome}/mcp/grafana-agent-ops-token";
+        };
+      };
+    };
     lspServers = {
       gopls = {
         command = "gopls";
