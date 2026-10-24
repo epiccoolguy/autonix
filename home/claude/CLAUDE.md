@@ -8,6 +8,6 @@
 - Never use ultraplan (cloud plan refinement) - plan locally only.
 - Review scaled to the diff: small -> review it yourself in-thread; large or risky -> dispatch the `code-reviewer` subagent. Suggest I run `/code-review` when a deeper pass is warranted; never suggest `/code-review ultra` unless I explicitly ask.
 - Subagents: at most 8 per task, and no more than 4 running at once. Anything larger needs my go-ahead.
-- Codex: delegate qualifying implementation slices to Codex without asking - read `~/.config/agents/codex-delegation.md` before planning multi-step implementation work. Delegations count toward the subagent limits.
+- Codex: delegate qualifying implementation slices and review every PR with Codex without asking - read `~/.config/agents/codex-delegation.md` before planning multi-step implementation work and before opening or updating a PR. Delegations count toward the subagent limits.
 - Worktrees (see `~/.config/agents/git.md`): `git fetch origin`, then `EnterWorktree` - never `git worktree add`. Once merged, clean up per git.md, using `ExitWorktree` with `remove`; `discard_changes: true` is safe only after git.md's merge check.
 - Anything that needs a browser (interactive pages, logins, web app testing, visual checks) goes through Claude in Chrome (`mcp__claude-in-chrome__*`) by default - not Playwright/puppeteer scripts and not handing it back to me. Plain content fetches still use WebFetch.
