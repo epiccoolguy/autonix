@@ -7,10 +7,8 @@
       "command": "pnpx",
       "args": [
         "kubernetes-mcp-server@latest",
-        "--read-only",
-        "--disable-multi-cluster",
-        "--kubeconfig",
-        "/Users/miguel/.kube/agent.mlzw.config"
+        "--config",
+        "/Users/miguel/.config/kubernetes-mcp-server/config.toml"
       ]
     },
     "argocd": {
