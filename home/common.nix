@@ -12,6 +12,24 @@ let
     root = ./skills/simple-code;
     fileset = lib.fileset.difference ./skills/simple-code ./skills/simple-code/evals;
   };
+
+  # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. Reads
+  # the token from ~/.env at startup, so no client config stores it and rotating is
+  # re-running mlzw-infra's scripts/build-argocd-agent-token.sh plus a server restart.
+  argocdMcp = lib.getExe (
+    pkgs.writeShellApplication {
+      name = "argocd-mcp";
+      runtimeInputs = [
+        pkgs.gnugrep
+        pkgs.coreutils
+      ];
+      text = ''
+        ARGOCD_API_TOKEN="$(grep '^ARGOCD_API_TOKEN=' "$HOME/.env" | cut -d= -f2-)"
+        export ARGOCD_API_TOKEN
+        exec pnpx argocd-mcp@latest stdio
+      '';
+    }
+  );
 in
 {
   home.stateVersion = "25.05";
@@ -615,24 +633,8 @@ in
           }
         );
       };
-      # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. The
-      # launcher reads the token from ~/.env at startup, so rotating it is re-running
-      # mlzw-infra's scripts/build-argocd-agent-token.sh and restarting the server.
       argocd = {
-        command = lib.getExe (
-          pkgs.writeShellApplication {
-            name = "argocd-mcp";
-            runtimeInputs = [
-              pkgs.gnugrep
-              pkgs.coreutils
-            ];
-            text = ''
-              ARGOCD_API_TOKEN="$(grep '^ARGOCD_API_TOKEN=' "$HOME/.env" | cut -d= -f2-)"
-              export ARGOCD_API_TOKEN
-              exec pnpx argocd-mcp@latest stdio
-            '';
-          }
-        );
+        command = argocdMcp;
         env.ARGOCD_BASE_URL = "https://argocd.mlzw.dev";
       };
       kubernetes = {
@@ -705,13 +707,11 @@ in
         template="/etc/nix-darwin/home/antigravity/mcp_config.json"
         if [ -f "$template" ]; then
           pat=""
-          argocd_token=""
           if [ -f "$env_file" ]; then
             pat="$(grep '^GITHUB_PAT=' "$env_file" | cut -d= -f2-)"
-            argocd_token="$(grep '^ARGOCD_API_TOKEN=' "$env_file" | cut -d= -f2- || true)"
           fi
 
-          GITHUB_PAT="$pat" ARGOCD_TOKEN="$argocd_token" ${pkgs.python3}/bin/python3 -c "
+          GITHUB_PAT="$pat" ${pkgs.python3}/bin/python3 -c "
     import os
     import json
 
@@ -722,9 +722,8 @@ in
     if pat and 'github' in d.get('mcpServers', {}):
         d['mcpServers']['github']['headers'] = {'Authorization': f'Bearer {pat}'}
 
-    argocd_token = os.environ.get('ARGOCD_TOKEN')
-    if argocd_token and 'argocd' in d.get('mcpServers', {}):
-        d['mcpServers']['argocd'].setdefault('env', {})['ARGOCD_API_TOKEN'] = argocd_token
+    if 'argocd' in d.get('mcpServers', {}):
+        d['mcpServers']['argocd'].update(command='${argocdMcp}', args=[])
 
     with open('$gemini_config_dir/mcp_config.json', 'w') as f:
         json.dump(d, f, indent=2)
