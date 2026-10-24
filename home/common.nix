@@ -668,8 +668,7 @@ in
   # ~/.claude/plugins/installed_plugins.json, which is not nix-managed, so install them
   # here for reproducibility. `claude plugin install` is idempotent. The LSP servers
   # themselves (gopls, typescript-language-server, pyright, rust-analyzer) come from
-  # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json
-  # (codex@openai-codex is installed from miguel.nix).
+  # home.packages above. Keep this list in sync with enabledPlugins in claude/settings.json.
   home.activation.claudePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
     claude_bin="$(command -v claude || true)"

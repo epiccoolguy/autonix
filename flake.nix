@@ -20,6 +20,8 @@
     homebrew-mssql.flake = false;
     homebrew-betterdisplay.url = "github:waydabber/homebrew-betterdisplay";
     homebrew-betterdisplay.flake = false;
+    codex-plugin-cc.url = "github:openai/codex-plugin-cc";
+    codex-plugin-cc.flake = false;
   };
 
   outputs =
@@ -36,6 +38,7 @@
       homebrew-mssql,
       homebrew-betterdisplay,
       nix-vscode-extensions,
+      codex-plugin-cc,
     }:
     {
       # Build darwin flake using:
@@ -93,6 +96,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.miguel = import ./home/miguel.nix;
+              home-manager.extraSpecialArgs = { inherit inputs; };
               home-manager.sharedModules = [
                 mac-app-util.homeManagerModules.default
               ];
