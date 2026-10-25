@@ -17,7 +17,7 @@ macOS, but GNU core tools precede Apple's BSD ones in `PATH` - assume GNU flags.
 ## Read before the matching work
 
 - Designing, implementing, refactoring, or reviewing code: `~/.agents/skills/simple-code/SKILL.md`
-- Architecture - decisions expensive to reverse or crossing a process, data, trust, or ownership boundary (services, capabilities, messaging, data ownership, audit, actors, decision records): `~/.agents/skills/simple-architecture/SKILL.md`
+- Architecture - decisions expensive to reverse or crossing a process, data, trust, or ownership boundary (services, capabilities, messaging, data ownership, audit, actors, frontends, sites, decision records): `~/.agents/skills/simple-architecture/SKILL.md`
 - Commits, branches, worktrees, PRs, merges: `~/.config/agents/git.md`
 - Running alongside other sessions, or depending on another session's work: `~/.config/agents/parallel-sessions.md`
 - Toolchains, devShells, flakes, running project tools, configuring a versioned tool, formatting Nix: `~/.config/agents/dev-environments.md`
