@@ -27,7 +27,7 @@ The repository also runs a daily GitHub Action that refreshes `flake.lock`, skip
 
 ## Linux-like command line
 
-The shell stays zsh, but `home.packages` puts the GNU/Linux userland (coreutils, findutils, grep, sed, awk, tar, util-linux, procps, ...) ahead of Apple's BSD tools in `PATH`, so commands and scripts behave as on a Linux machine and the package list can be shared with a future Linux host. Agents get bash-compatible behavior too: Claude Code runs its commands in nix bash 5, and zsh passes unmatched globs through like bash (`NO_NOMATCH`). Scripts use `#!/usr/bin/env bash`, never `/bin/bash` (3.2).
+The shell stays zsh, but `home.packages` puts the GNU/Linux userland (coreutils, findutils, grep, sed, awk, tar, util-linux, procps, ...) ahead of Apple's BSD tools in `PATH`, so commands and scripts behave as on a Linux machine and the package list can be shared with a future Linux host. Agents get bash-compatible behavior too: Claude Code runs its commands in nix bash 5, Codex and Antigravity use zsh, which passes unmatched globs through like bash (`NO_NOMATCH`), and Copilot CLI hard-codes `/bin/bash` 3.2. None of the others follow `$SHELL`. Scripts use `#!/usr/bin/env bash`, never `/bin/bash` (3.2).
 
 Where macOS has no Linux counterpart, or its native tool is better, the native one stays:
 

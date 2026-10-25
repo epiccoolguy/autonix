@@ -1,6 +1,6 @@
 # Global Agent Instructions
 
-macOS, but GNU core tools precede Apple's BSD ones in `PATH` - assume GNU flags. `docker` is podman.
+macOS, but the GNU/Linux userland precedes Apple's BSD tools in `PATH` - assume GNU flags. Commands run in bash 5 (Claude), zsh with bash-like globbing (Codex, Antigravity), or `/bin/bash` 3.2 (Copilot) - write bash that also runs on 3.2. Scripts use `#!/usr/bin/env bash`, never `/bin/bash` (3.2). `docker` is podman.
 
 ## Always
 
