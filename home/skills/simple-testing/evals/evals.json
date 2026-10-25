@@ -12,7 +12,8 @@
         "The new test asserts on billing_period's return value with explicitly constructed time-zone-aware datetimes; it does not mock or patch datetime, zoneinfo, time, or billing module attributes",
         "The full test file passes with the fix under both TZ=UTC and TZ=America/Los_Angeles (grader runs both)",
         "The transcript shows the test suite being run after the change (python3 -m unittest or pytest), and the final message reports the result",
-        "Changes only billing.py and test files; adds no dependency"
+        "Changes only billing.py and test files; adds no dependency",
+        "The transcript shows the new test run against the unfixed billing.py and failing before the fix is applied; reasoning that it would fail, without running it, fails"
       ]
     },
     {
@@ -27,7 +28,8 @@
         "The store double is a working in-memory fake (save and get), and the email-failure test asserts the stored order's status is confirmation_pending via the fake, not via save call counts or call arguments",
         "At least one test asserts the confirmation email was sent to the customer's address (spy or mock limited to the mailer)",
         "Tests do not import pg_store or psycopg, connect to a database, or add a dependency",
-        "Each test builds its own store, mailer, and order data; no module- or class-level mutable fixture shared between tests"
+        "Each test builds its own store, mailer, and order data; no module- or class-level mutable fixture shared between tests",
+        "Adds only test files: no new non-test module (for example the fake moved into its own module) and no change to orders.py, pricing.py, or pg_store.py"
       ]
     },
     {

@@ -1,6 +1,6 @@
 ---
 name: simple-testing
-description: Chooses, writes, and reviews automated tests and the checks that gate a change. Use when adding, changing, or reviewing tests; deciding between unit, integration, and end-to-end tests; choosing mocks, fakes, or real dependencies; fixing flaky or slow tests; laying out tests in CI; adding a deploy check; and before declaring a code change done.
+description: Chooses, writes, and reviews automated tests and the checks that gate a change. Use when adding, changing, or reviewing tests; fixing a bug, which starts with a failing regression test; deciding between unit, integration, and end-to-end tests; choosing mocks, fakes, or real dependencies; fixing flaky or slow tests; laying out tests in CI; adding a deploy check; and before declaring a code change done.
 ---
 
 # Simple Testing
@@ -27,7 +27,7 @@ Every deployable also gets a **deploy check** that fails the rollout (see [e2e](
 
 - **Behavior through the public interface.** Assert observable outcomes; never test private code or verify calls between in-process collaborators [Khorikov: Observable Behavior; Beck: Test Desiderata].
 - **Real in-process, doubles at the edge** (see [unit](reference/unit.md)).
-- **Deterministic.** Inject clock and randomness, never sleep, no order dependence, no real external network outside end-to-end tests.
+- **Deterministic.** Inject clock and randomness. Never sleep: wait on a signal or condition bounded by a deadline, or use fake time. No order dependence, no real external network outside end-to-end tests.
 - **Readable alone.** Each test builds its own data with the relevant values visible, contains no logic, and checks one behavior named in its title [SWE at Google: Unit Testing].
 - **A flaky test is a defect.** Fix it, or quarantine it with an issue and an owner and delete it if not fixed by a stated deadline. Never fix it with sleeps or retries [Fowler: Eradicating Non-Determinism].
 - **Coverage is a signal, not a gate.** Read coverage of the changed lines; never write a test only to raise the number [Fowler: TestCoverage].
