@@ -1,0 +1,89 @@
+{
+  "skill_name": "simple-architecture",
+  "evals": [
+    {
+      "id": 1,
+      "name": "signup-welcome",
+      "prompt": "Send a welcome email when a user signs up. We'll probably add SMS and push later, and other teams may want to react to signups someday.",
+      "expected_output": "The signup inserts the account and enqueues a welcome-email job in the existing jobs table in one transaction; the existing worker sends it with its own retries. No broker, no event for hypothetical consumers, no new service.",
+      "files": ["evals/files/signup-welcome/docs/ARCHITECTURE.md", "evals/files/signup-welcome/db/schema.sql", "evals/files/signup-welcome/app/signup.ts", "evals/files/signup-welcome/app/jobs.ts", "evals/files/signup-welcome/app/email.ts"],
+      "expectations": [
+        "Enqueues the email through the existing jobs table (enqueue in app/jobs.ts) in the same database transaction as the account insert; sending inline in the request, or enqueuing after a separate commit, fails",
+        "Adds no new runtime component: no message broker, queue product, cache, new service, or new deployable",
+        "Publishes no event or topic for the hypothetical SMS, push, or other-team consumers, and adds no notification-channel abstraction",
+        "The job is deduplicated or idempotent (for example a dedupe_key derived from the account id), so a retried signup or redelivered job does not send twice",
+        "Retries happen at one layer (the existing worker's attempts and backoff); the handler adds no retry loop of its own around sendEmail"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "invoice-audit",
+      "prompt": "Finance needs an audit trail of who changed invoice amounts and when, for disputes. Make it robust; we might need history on other tables later.",
+      "expected_output": "An append-only record of invoice amount changes (old and new amount) written in the same transaction as the update, carrying principal, executor, trace id, and time, made immutable in the database. No generic history machinery for tables nobody asked about.",
+      "files": ["evals/files/invoice-audit/docs/ARCHITECTURE.md", "evals/files/invoice-audit/db/schema.sql", "evals/files/invoice-audit/app/invoices.ts"],
+      "expectations": [
+        "Records history for invoice amount changes only (a dedicated append-only table or an audit_events table); a generic trigger or history table for every table, event sourcing, or a separate audit service fails",
+        "Each record carries the principal (user sub), the executor (the writing component), the trace or request id, the time, and the old and new amount",
+        "The audit row is written in the same transaction as the UPDATE, so the change and its record commit or roll back together",
+        "The application role cannot UPDATE or DELETE audit rows (privileges revoked or a rejecting trigger); stating immutability without enforcing it in the database fails",
+        "Adds no new runtime component or dependency, and leaves billing.invoice's own columns unchanged apart from what the change needs"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "reporting-split",
+      "prompt": "Month-end reports slow down checkout. The team wants to split reporting into its own microservice with its own database, synced through events. Please set that up.",
+      "expected_output": "Recognizes accepted decision 0001 and the incident's cause (a sequential scan from the to_char filter during repeated report runs), fixes or proposes fixes inside the deployable first (sargable range filter plus index, precomputed or materialized monthly totals, or a read replica), and treats a split as a proposed decision that supersedes 0001 rather than building it.",
+      "files": ["evals/files/reporting-split/docs/ARCHITECTURE.md", "evals/files/reporting-split/decisions/0001-modular-monolith.md", "evals/files/reporting-split/app/reports.ts", "evals/files/reporting-split/notes/incident.md"],
+      "expectations": [
+        "Cites decision 0001 and states that a split would need a new decision superseding it",
+        "Names the measured cause from the incident note (the to_char filter forcing a sequential scan, run about 15 times) and addresses it, for example a range predicate on placed_at with an index, or precomputed monthly totals",
+        "Creates no new service, deployable, database, or event pipeline in this change",
+        "If a split is still proposed, it is a decision record with status proposed, alternatives, and consequences; implementing the split outright fails",
+        "Leaves the final call to the owner (proposal or question) and does not claim the decision is accepted or merged"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "import-worker",
+      "prompt": "Add a background worker that processes uploaded CSV imports (they take minutes). Give me the design and the deployment manifest.",
+      "expected_output": "Uses the repository's own stack (Kotlin, RabbitMQ or a MySQL jobs table) and follows accepted decision 0002 (3 replicas across zones, PDB minAvailable 2). The API validates, records the import, returns 202 with an id and a status to poll; the worker is idempotent per import.",
+      "files": ["evals/files/import-worker/docs/ARCHITECTURE.md", "evals/files/import-worker/decisions/0002-availability.md", "evals/files/import-worker/deploy/import-api.yaml"],
+      "expectations": [
+        "Uses the existing broker (RabbitMQ) or a jobs table in the existing MySQL; introducing another broker, database, or language (for example Kafka, NATS, Postgres, Go, or Node) fails",
+        "The worker manifest follows decision 0002 (at least 3 replicas, zone topology spread, PodDisruptionBudget minAvailable 2) and cites it; a single-replica worker fails",
+        "The API validates synchronously and returns 202 (or equivalent) with an import id, and the client can read the import's status, including failure",
+        "Processing is idempotent per import (keyed by import id) and safe with concurrent workers; retries happen at one layer",
+        "The worker manifest has readiness and liveness probes and handles shutdown gracefully (stops taking work, finishes or requeues the current import)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "display-name",
+      "prompt": "Let users change their display name. Make it event-driven so it's future proof, like orders.",
+      "expected_output": "A plain synchronous update of users.profile with validation, and a short explanation that no event is published because nothing consumes display-name changes; publishing starts when a consumer exists.",
+      "files": ["evals/files/display-name/docs/ARCHITECTURE.md", "evals/files/display-name/app/profile.ts"],
+      "expectations": [
+        "Implements a synchronous write that the caller sees completed; an asynchronous command, queue, or eventual update fails",
+        "Publishes no event and adds no topic, schema, or consumer for display-name changes",
+        "Explains briefly why it does not follow the event-driven request (no consumer exists; it would add a pending state), and when it would add an event",
+        "Validates the display name at the boundary (length, characters, or emptiness)",
+        "Adds no new dependency and keeps the change in the existing profile module"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "spa-login",
+      "prompt": "Add login to our React app using the company OIDC provider, and store the access token in the browser so API calls can send it.",
+      "expected_output": "The existing Express server becomes the BFF: it runs the authorization code flow with PKCE, keeps tokens server-side, and sets an HttpOnly, Secure, SameSite session cookie; API calls use the cookie. It pushes back on storing tokens in the browser.",
+      "files": ["evals/files/spa-login/server/server.ts", "evals/files/spa-login/server/api.ts", "evals/files/spa-login/web/src/api.ts"],
+      "expectations": [
+        "Keeps tokens server-side in the existing Express process and gives the browser an HttpOnly session cookie; access tokens in localStorage, sessionStorage, or JavaScript-readable cookies fail",
+        "Uses the authorization code flow with PKCE; the implicit flow fails",
+        "Explains briefly why it does not store the token in the browser as asked (XSS exposure; the BFF pattern)",
+        "Adds no new deployable or separate BFF service; the existing server handles login, callback, logout, and session",
+        "Protects state-changing API calls against CSRF (SameSite cookie plus a CSRF token or origin check) and requires a session on /api routes"
+      ]
+    }
+  ]
+}
