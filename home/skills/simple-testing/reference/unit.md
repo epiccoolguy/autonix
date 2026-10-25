@@ -23,7 +23,7 @@ A test double stands in for a real dependency in a test [Meszaros: Test Double].
 ## Test data and determinism
 
 - Build data with small builder or factory functions that have valid defaults; the test overrides only what it is about [GOOS: Test Data Builders].
-- Inject the clock and randomness; print the seed on failure. Use fake time instead of sleeps.
+- Inject the clock and randomness; print the seed on failure. Instead of sleeping, wait on a signal from the code under test (a channel, WaitGroup, or callback) bounded by a deadline or the test context, or use fake time; an unbounded wait hangs the suite when the code breaks.
 - Tests pass in any order, in parallel, and in any time zone. Run the race detector where the language has one.
 
 ## Generated inputs
