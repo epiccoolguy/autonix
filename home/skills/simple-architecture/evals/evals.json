@@ -11,7 +11,7 @@
         "Enqueues the email through the existing jobs table (enqueue in app/jobs.ts) in the same database transaction as the account insert; sending inline in the request, or enqueuing after a separate commit, fails",
         "Adds no new runtime component: no message broker, queue product, cache, new service, or new deployable",
         "Publishes no event or topic for the hypothetical SMS, push, or other-team consumers, and adds no notification-channel abstraction",
-        "The job is deduplicated or idempotent (for example a dedupe_key derived from the account id), so a retried signup or redelivered job does not send twice",
+        "The enqueue is deduplicated (for example a dedupe_key derived from the account id), so a retried signup does not create a second job; any claim about redelivery either relies on an idempotency key the email path honors or states that sending is at-least-once and a rare duplicate email is possible. Claiming exactly-once sending from the job dedupe key alone fails",
         "Retries happen at one layer (the existing worker's attempts and backoff); the handler adds no retry loop of its own around sendEmail"
       ]
     },
@@ -38,7 +38,7 @@
       "expectations": [
         "Cites decision 0001 and states that a split would need a new decision superseding it",
         "Names the measured cause from the incident note (the to_char filter forcing a sequential scan, run about 15 times) and addresses it, for example a range predicate on placed_at with an index, or precomputed monthly totals",
-        "Creates no new service, deployable, database, or event pipeline in this change",
+        "Creates no new service, deployable, database, or event pipeline in this change (proposing a read replica is allowed)",
         "If a split is still proposed, it is a decision record with status proposed, alternatives, and consequences; implementing the split outright fails",
         "Leaves the final call to the owner (proposal or question) and does not claim the decision is accepted or merged"
       ]
@@ -78,11 +78,11 @@
       "expected_output": "The existing Express server becomes the BFF: it runs the authorization code flow with PKCE, keeps tokens server-side, and sets an HttpOnly, Secure, SameSite session cookie; API calls use the cookie. It pushes back on storing tokens in the browser.",
       "files": ["evals/files/spa-login/server/server.ts", "evals/files/spa-login/server/api.ts", "evals/files/spa-login/web/src/api.ts"],
       "expectations": [
-        "Keeps tokens server-side in the existing Express process and gives the browser an HttpOnly session cookie; access tokens in localStorage, sessionStorage, or JavaScript-readable cookies fail",
+        "Keeps tokens server-side in the existing Express process and gives the browser a session cookie set with HttpOnly, Secure, and SameSite (Lax or Strict) in the diff; access tokens in localStorage, sessionStorage, or JavaScript-readable cookies, or a missing Secure or SameSite attribute, fail",
         "Uses the authorization code flow with PKCE; the implicit flow fails",
         "Explains briefly why it does not store the token in the browser as asked (XSS exposure; the BFF pattern)",
         "Adds no new deployable or separate BFF service; the existing server handles login, callback, logout, and session",
-        "Protects state-changing API calls against CSRF (SameSite cookie plus a CSRF token or origin check) and requires a session on /api routes"
+        "Requires a valid session on /api routes, and state-changing calls rely on the SameSite session cookie (a CSRF token or origin check also passes)"
       ]
     }
   ]
