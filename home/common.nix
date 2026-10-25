@@ -166,6 +166,12 @@ in
       # Keep dotfiles in ~ (pre-26.05 default); an XDG dotDir needs ZDOTDIR set before ~/.zshenv is read.
       dotDir = config.home.homeDirectory;
 
+      # Pass unmatched globs through literally, as bash does, instead of aborting
+      # with "no matches found". In .zshenv so agents' `zsh -c` commands get it too.
+      envExtra = ''
+        setopt NO_NOMATCH
+      '';
+
       syntaxHighlighting = {
         enable = true;
       };
