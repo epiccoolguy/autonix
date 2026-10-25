@@ -1,7 +1,8 @@
 {
   "cleanupPeriodDays": 90,
   "env": {
-    "KUBECONFIG": "/Users/miguel/.kube/agent.mlzw.config"
+    "KUBECONFIG": "/Users/miguel/.kube/agent.mlzw.config",
+    "CLAUDE_CODE_SHELL": "/run/current-system/sw/bin/bash"
   },
   "attribution": {
     "commit": "",
