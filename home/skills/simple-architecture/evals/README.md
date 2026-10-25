@@ -12,8 +12,6 @@ targets one part of the skill:
 | display-name | sync unless a consumer exists |
 | spa-login | web edge as BFF; no tokens in the browser |
 
-The format matches `../../simple-code/evals/evals.json`, and the same harness runs it. In
-`../../simple-code/evals/harness/`, use the runner for your agent and replace the skill name and
-paths with `simple-architecture`. The Codex and Antigravity runners name simple-code's evals
-(`py-discounts`, `rust-cancel`); replace those with this suite's eval names. Grade blind with `grade.md` against each eval's `expectations`.
+The format matches `../../simple-code/evals/evals.json`. Run and grade with the shared harness in
+`home/skills/eval-harness/` (`SKILL=simple-architecture`; see its README). Grade blind with `grade.md` against each eval's `expectations`.
 Nothing under `evals/` is deployed. Run evals only when asked.
