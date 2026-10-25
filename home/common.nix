@@ -127,6 +127,14 @@ in
 
   home.shell.enableShellIntegration = true;
 
+  home.shellAliases = {
+    switch = "sudo darwin-rebuild switch";
+    docker = "podman";
+    createcacerts = "security export -t certs -k /System/Library/Keychains/SystemCertificates.keychain -p > \"/usr/local/share/ca-certificates/cacerts.crt\" && security export -t certs -k /Library/Keychains/System.keychain -p >> \"/usr/local/share/ca-certificates/cacerts.crt\"";
+    python = "python3";
+    pip = "pip3";
+  };
+
   programs = {
     # In login bash with an inherited PATH (e.g. an agent spawning `bash -l`),
     # macOS /etc/profile runs path_helper, which moves the system dirs ahead of
@@ -164,14 +172,6 @@ in
 
       autosuggestion = {
         enable = true;
-      };
-
-      shellAliases = {
-        switch = "sudo darwin-rebuild switch";
-        docker = "podman";
-        createcacerts = "security export -t certs -k /System/Library/Keychains/SystemCertificates.keychain -p > \"/usr/local/share/ca-certificates/cacerts.crt\" && security export -t certs -k /Library/Keychains/System.keychain -p >> \"/usr/local/share/ca-certificates/cacerts.crt\"";
-        python = "python3";
-        pip = "pip3";
       };
 
       # Removed initExtra, replaced with ordered initContent below
