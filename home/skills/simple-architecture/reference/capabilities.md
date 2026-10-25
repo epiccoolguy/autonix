@@ -30,6 +30,14 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 - an upgrade path and an exit path;
 - a decision record (see records).
 
+## Languages and runtimes
+
+- A language or runtime is a capability: one per role (for example one backend language and one rendering runtime), each recorded in a decision record with its steward and exit path [McKinley: Choose Boring Technology].
+- A new language needs a force: a runtime need, a separate owning team, or an ecosystem the role depends on.
+- Working code stays in its language; rewrite only for a concrete force.
+- Contracts cross languages through a language-neutral schema (JSON Schema) with generated types, not hand-written copies.
+- Data access is SQL-first: plain SQL migrations plus generated or typed queries, no ORM that hides transactions or per-transaction settings.
+
 ## Upgrades
 
 Automated upgrade PRs (Renovate) promoted through environments like any change. Where one deployment serves every environment (shared infrastructure), record how upgrades are staged instead. Small, frequent steps; nothing pinned without a recorded reason.
