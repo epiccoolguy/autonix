@@ -59,6 +59,7 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | Ford: Fitness Functions | Ford, Parsons, Kua, *Building Evolutionary Architectures* |
 | Brown: C4 Model | Simon Brown, c4model.com |
 | matklad: ARCHITECTURE.md | Aleksey Kladov, matklad.github.io, 2021 |
+| GDPR: Storage Limitation | GDPR Art. 5(1)(e); Recital 26 (pseudonymized data remains personal data) |
 | NIST SP 800-207 | Zero Trust Architecture |
 | NIST SP 800-53 AU-3 | Content of audit records |
 | OWASP Logging Cheat Sheet | cheatsheetseries.owasp.org |

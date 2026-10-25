@@ -52,7 +52,14 @@ erDiagram
 ## Deletes
 
 - Hard delete by default. When restore or retention is required, copy the row as JSON into a `deleted_records` table in the same transaction [brandur: Soft Deletion Probably Isn't Worth It].
-- Where retention and erasure both apply, keep the fact and erase or pseudonymize its personal data [DDIA: The Future of Data Systems].
+
+## Retention and erasure
+
+- Every dataset holding personal data states its purpose and a retention period that purpose needs; a scheduled job deletes after it [GDPR: Storage Limitation; DDIA: The Future of Data Systems].
+- Delete, don't pseudonymize: pseudonymized data is still personal data and keeps every obligation.
+- Erasure is an event from the owning domain; each component deletes its matching rows.
+- Backups keep deleted rows until they age out; state that backup retention as the erasure lag.
+- A business fact that must be kept (for example proof a reminder was sent) belongs to the owning domain, stripped to what its retention requires, not to a channel's operational log.
 
 ## Avoid
 
