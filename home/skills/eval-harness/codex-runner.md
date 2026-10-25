@@ -16,7 +16,7 @@ Run a small A/B evaluation of the shared `<SKILL>` skill on Codex. Only run it; 
 This orchestrating session is started with `-s danger-full-access` on purpose: macOS can't nest sandboxes, so a sandboxed orchestrator makes every child `codex sandbox`/`codex exec` fail with "sandbox_apply: Operation not permitted" (seen in the first Codex run, and confirmed to work outside a sandbox). Your own commands are therefore unsandboxed, so keep them to setup and bookkeeping inside ~/skill-evals/<SKILL>. Every child eval run must apply its own sandbox; no child may use danger-full-access or a bypass flag.
 
 Work out from `codex --help`, `codex exec --help`, and the Codex docs for the installed version how to:
-1. Run one task headless and non-interactive: it can edit files in its working dir and run python3 and rustc, with no approval prompts and no network.
+1. Run one task headless and non-interactive: it can edit files in its working dir and run python3, rustc, go test, go vet, and gofmt (with a writable Go build cache), with no approval prompts and no network.
 2. Capture a machine-readable log of every command and file read (e.g. JSON event output).
 3. WITH-SKILL arm: the run can load and read ~/.agents/skills/<SKILL>/SKILL.md and reference/** (resolve the /nix/store symlink if the sandbox needs it).
 4. WITHOUT-SKILL arm: the run can neither load nor read the skill (disable skill discovery for the run and block reads of the skill dir), while ~/.codex/AGENTS.md still loads, so both arms share the AGENTS.md core.
