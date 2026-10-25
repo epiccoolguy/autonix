@@ -24,7 +24,7 @@ There is no "system" actor. Jobs, migrations, operators, CI, and AI agents each 
 - Into the database: the data-access layer runs `SET LOCAL app.principal`, `app.executor`, `app.trace_id` per transaction; column defaults and audit triggers read them (PostgREST, Supabase pattern).
 - Order audit records by commit order or a sequence, not wall-clock time alone [DDIA: The Trouble with Distributed Systems].
 - Logs: structured, with principal, executor, and trace id [W3C Trace Context]. Log the token subject, never the token or a secret [OWASP Logging Cheat Sheet]. Logs rotate; durable records answer disputes.
-- Infrastructure changes go through GitOps, so the commit is the record; a direct change is an incident.
+- Infrastructure changes go through GitOps, so the commit is the record. A direct change is break-glass only: the path is documented in advance and each use is recorded as an incident.
 
 ```mermaid
 sequenceDiagram
