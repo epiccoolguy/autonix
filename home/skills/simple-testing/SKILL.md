@@ -21,12 +21,12 @@ Read the repository's test docs, CI config, and decision records first. Preceden
 
 Static checks (format, lint, types, schema breaking-change checks) run with unit tests. Most tests are unit tests; there is no fixed ratio [Fowler: Shapes of Testing].
 
-Every deployable also gets a **deploy check** that fails the rollout (see e2e).
+Every deployable also gets a **deploy check** that fails the rollout (see [e2e](reference/e2e.md)).
 
 ## Everywhere
 
 - **Behavior through the public interface.** Assert observable outcomes; never test private code or verify calls between in-process collaborators [Khorikov: Observable Behavior; Beck: Test Desiderata].
-- **Real in-process, doubles at the edge** (see unit).
+- **Real in-process, doubles at the edge** (see [unit](reference/unit.md)).
 - **Deterministic.** Inject clock and randomness, never sleep, no order dependence, no real external network outside end-to-end tests.
 - **Readable alone.** Each test builds its own data with the relevant values visible, contains no logic, and checks one behavior named in its title [SWE at Google: Unit Testing].
 - **A flaky test is a defect.** Fix it, or quarantine it with an issue and an owner and delete it if not fixed by a stated deadline. Never fix it with sleeps or retries [Fowler: Eradicating Non-Determinism].

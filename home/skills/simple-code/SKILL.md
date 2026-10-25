@@ -1,6 +1,6 @@
 ---
 name: simple-code
-description: Designs, implements, and reviews simple, idiomatic code. Use when writing or refactoring TypeScript, Python, Go, or Rust; when adding abstractions, interfaces, classes, generics, layers, or dependencies; when choosing a design pattern; or when reviewing a diff for unnecessary complexity.
+description: Designs, implements, and reviews simple, idiomatic code. Use when writing or refactoring TypeScript, Python, Go, or Rust; when adding abstractions, interfaces, classes, generics, layers, or libraries within one deployable; when choosing a design pattern; or when reviewing a diff for unnecessary complexity.
 ---
 
 # Simple Code
@@ -10,7 +10,7 @@ Prefer direct, local, idiomatic code. Add structure when it removes greater comp
 Before choosing the design, read only what applies, once per task:
 
 - Implementation or review: the matching language guide below.
-- Architectural decisions, new abstractions or dependencies, or changes crossing behavioral boundaries: also [design](reference/design.md).
+- New abstractions or libraries, or changes crossing behavioral boundaries within one deployable: also [design](reference/design.md). Decisions crossing a process, persisted-data, trust, or ownership boundary: the simple-architecture skill.
 - Unclear pattern choice or abstraction payoff: [examples](reference/examples.md).
 - Requested lint setup or tightening: [linting](reference/linting.md).
 

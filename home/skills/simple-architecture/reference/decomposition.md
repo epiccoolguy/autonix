@@ -4,7 +4,7 @@
 
 - Split along decisions likely to change, not along processing steps [Parnas: On the Criteria]. Each part is deep: a small interface over substantial hidden behavior. A shallow service is a shallow module plus a network [Ousterhout: Modules Should Be Deep].
 - **Modular monolith first:** one deployable per product, bounded contexts as modules [Evans: Bounded Context; Fowler: MonolithFirst].
-- **Enforce module boundaries with tools:** language visibility plus a CI import check (Go `internal/`, depguard, import-linter, dependency-cruiser) [Ford: Fitness Functions]. Each module owns its database schema (see data).
+- **Enforce module boundaries with tools:** language visibility plus a CI import check (Go `internal/`, depguard, import-linter, dependency-cruiser) [Ford: Fitness Functions]. Each module owns its database schema (see [data](data.md)).
 - **Split into a separate deployable only for a present force:**
   - trust boundary: public edge vs internal, processing untrusted input, different credentials;
   - measured scaling need or required failure isolation;

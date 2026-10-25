@@ -8,7 +8,7 @@
   - backups flow out to object storage outside the site;
   - observability is read across sites, read-only.
 - **No stretched clusters** (etcd, database, or broker quorums across a WAN). No synchronous replication across sites. Across distance, every consistency guarantee costs latency on every request [DDIA: Replication; Abadi: PACELC].
-- **Disaster recovery across sites:** off-site async backups, restored into another site. The restore is drilled with a stated RTO and RPO (see operability). A warm replica at another site is added only when restore cannot meet a stated target.
+- **Disaster recovery across sites:** off-site async backups, restored into another site. The restore is drilled with a stated RTO and RPO (see [operability](operability.md)). A warm replica at another site is added only when restore cannot meet a stated target.
 - **Data placement is explicit.** Each dataset has one home site. Personal data stays where residency rules require, and that includes backup locations.
 
 ```mermaid
