@@ -58,16 +58,16 @@ in
     ];
   };
 
-  # after zshGeneralConfig (1000)
-  programs.zsh.initContent = lib.mkOrder 1100 ''
-    # --- AS33AI environment exports (after general config) ---
-    export NIX_SSL_CERT_FILE=${lib.escapeShellArg certPath}
-    export NODE_EXTRA_CA_CERTS="$NIX_SSL_CERT_FILE"
-    export REQUESTS_CA_BUNDLE="$NIX_SSL_CERT_FILE"
-    export CURL_CA_BUNDLE="$NIX_SSL_CERT_FILE"
-    export AWS_CA_BUNDLE="$NIX_SSL_CERT_FILE"
-    export JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=${trustStorePath} -Djavax.net.ssl.trustStorePassword=changeit"
-  '';
+  # Session variables rather than zsh initContent, so non-interactive shells
+  # (agents' `zsh -c`, bash) trust the corporate CAs too.
+  home.sessionVariables = {
+    NIX_SSL_CERT_FILE = certPath;
+    NODE_EXTRA_CA_CERTS = certPath;
+    REQUESTS_CA_BUNDLE = certPath;
+    CURL_CA_BUNDLE = certPath;
+    AWS_CA_BUNDLE = certPath;
+    JAVA_TOOL_OPTIONS = "-Djavax.net.ssl.trustStore=${trustStorePath} -Djavax.net.ssl.trustStorePassword=changeit";
+  };
 
   # impure
   home.activation.exportKeychainCerts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
