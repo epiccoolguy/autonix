@@ -13,7 +13,7 @@ Tags in brackets name the source; [sources](reference/sources.md) gives the full
 
 1. Read the repository's architecture docs and decision records. Recorded decisions win over these defaults; deviating means proposing to supersede one. Following a recorded decision needs no proposal.
 2. Name the force that requires the decision now and the simplest direct alternative. Consider at least two designs [Ousterhout: Design It Twice].
-3. Propose in a PR: a decision record with status proposed (decision, alternatives, consequences), a Mermaid diagram when structure changes, and one or more working prototypes. Do not finalize it yourself. After the owner reviews, the record becomes accepted, the chosen prototype is completed, and the current-state doc is updated in the same PR.
+3. Propose in a PR: a decision record with status proposed (decision, alternatives, consequences), a Mermaid diagram when structure changes, and one or more working prototypes. Do not merge or push it directly, even where auto-merge or direct pushes are otherwise allowed. After the owner reviews, the record becomes accepted, the chosen prototype is completed, and the current-state doc is updated in the same PR.
 4. Add a CI fitness function when a tool can check the decision cheaply [Ford: Fitness Functions].
 
 ## Everywhere
