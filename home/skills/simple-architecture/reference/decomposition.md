@@ -4,7 +4,7 @@
 
 - Split along decisions likely to change, not along processing steps [Parnas: On the Criteria]. Each part is deep: a small interface over substantial hidden behavior. A shallow service is a shallow module plus a network [Ousterhout: Modules Should Be Deep].
 - **Modular monolith first:** one deployable per product, bounded contexts as modules [Evans: Bounded Context; Fowler: MonolithFirst].
-- **Enforce module boundaries with tools:** language visibility plus a CI import check (Go `internal/`, depguard, import-linter, dependency-cruiser) [Ford: Fitness Functions]. Each module owns its Postgres schema (see data).
+- **Enforce module boundaries with tools:** language visibility plus a CI import check (Go `internal/`, depguard, import-linter, dependency-cruiser) [Ford: Fitness Functions]. Each module owns its database schema (see data).
 - **Split into a separate deployable only for a present force:**
   - trust boundary: public edge vs internal, processing untrusted input, different credentials;
   - measured scaling need or required failure isolation;
@@ -30,7 +30,7 @@ flowchart TD
 | Monolith plus workers | One product, one owner | Discourse, Mastodon |
 | Modular monolith, few extractions | Extractions forced by performance or isolation | GitLab (Gitaly), Sentry (Relay) |
 | Single binary, multiple roles | Scale-out is foreseeable; run as one process until then | Grafana Loki/Mimir/Tempo `-target` |
-| Control plane plus reconcilers | Infrastructure with desired state | Kubernetes (about 40 controllers in one controller-manager binary), Argo CD, CNPG |
+| Control plane plus reconcilers | Infrastructure with desired state | Kubernetes (about 40 controllers in one controller-manager binary), Argo CD, cert-manager |
 
 ## Avoid
 

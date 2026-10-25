@@ -25,8 +25,8 @@ Propagate trace context everywhere; run a trace backend only when a real cross-c
 
 ## Availability and recovery
 
-- No HA by default. Each stateful capability states its RTO and RPO and has a performed restore drill; a backup never restored is a hypothesis.
-- Add HA only when a stated availability target cannot be met by restore [Brooks: The Second-System Effect].
+- Each stateful capability states its availability target (RTO and RPO) and has a performed restore drill; a backup never restored is a hypothesis.
+- Choose the simplest setup that meets the target: a single instance with a drilled restore when that suffices, replicas or HA when it does not [Brooks: The Second-System Effect].
 - Size with back-of-the-envelope estimates before choosing infrastructure [Bentley: The Back of the Envelope].
 
 ```mermaid
@@ -35,7 +35,7 @@ flowchart LR
     T -- yes --> OK[Degraded but correct]
     T -- no --> A[Symptom alert + runbook]
     A --> R{State lost?}
-    R -- no --> RB[Restart or roll back via GitOps]
+    R -- no --> RB[Restart or roll back via the pipeline]
     R -- yes --> RS[Restore - drilled, known RTO/RPO]
 ```
 

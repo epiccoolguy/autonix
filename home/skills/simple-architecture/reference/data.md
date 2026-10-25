@@ -5,7 +5,7 @@ The data design is the architecture: show the tables and the flowcharts become o
 ## Ownership and consistency
 
 - One owner and system of record per table; everything else is derived and rebuildable [DDIA: The Future of Data Systems].
-- In a modular monolith each module owns a Postgres schema; other modules use its code API, never its tables. Check this in CI.
+- In a modular monolith each module owns its database schema (for example a Postgres schema); other modules use its code API, never its tables. Check this in CI.
 - One aggregate per transaction; across aggregates, consistency is eventual [Evans: Aggregates]. Know the isolation level: invariants spanning rows need serializable isolation or an explicit lock [DDIA: Transactions].
 - Migrations are expand/contract so old and new code run against the same schema.
 

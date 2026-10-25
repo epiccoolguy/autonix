@@ -43,7 +43,7 @@ sequenceDiagram
 
 ## Contracts
 
-One envelope standard (CloudEvents) and one schema format for the system. Version the contract by major version only; consumers are tolerant readers [DDIA: Encoding and Evolution]. Every message carries id, type and version, source, principal, trace context, and time [Hohpe: Correlation Identifier].
+One envelope standard (for example CloudEvents) and one schema format for the system. Version the contract by major version only; consumers are tolerant readers [DDIA: Encoding and Evolution]. Every message carries id, type and version, source, principal, trace context, and time [Hohpe: Correlation Identifier].
 
 ## Workflows
 
