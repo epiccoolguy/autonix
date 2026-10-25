@@ -6,14 +6,15 @@ Decide per operation, in this order:
 
 1. **No consumer beyond the caller:** a plain synchronous write. Do not publish an event nobody consumes; events exist only where a consumer does.
 2. **Completion gates something you do not mediate** (authentication, authorization, a third party acting on the result) **or rejection must be immediate:** synchronous.
-3. **Otherwise, when another component must react, or the work is slow, external, or failure-prone:** validate synchronously, execute asynchronously. The handler checks authorization, schema, and invariants (reads only), publishes, and returns 202 with the idempotency key. A 202 then means "this will happen", not "this may be rejected later".
+3. **Otherwise, when another component must react, or the work is slow, external, or failure-prone:** validate synchronously, execute asynchronously. The handler checks authorization, schema, and invariants (reads only), publishes, and returns 202 with the idempotency key. A 202 then means "this will happen", not "this may be rejected later". When acceptance depends on contended state (uniqueness, stock, quota), reads cannot promise that: reserve atomically before the 202, or accept that the consumer may reject and expose that status.
 
 Async is not free: every read path gains a pending state, and a dead-lettered request needs a visible status. Do not go async to make a handler feel faster.
 
 ## Delivery
 
 - Assume at-least-once delivery. Every consumer is idempotent, keyed on a stable message or request id; redelivery is the retry mechanism.
-- An outbox is needed only where one operation writes two systems with no redelivery behind it (typically an HTTP handler that both commits a row and publishes). Removing the dual write - publish only, and let the consumer write - is simpler than adding an outbox.
+- An HTTP handler that both commits a row and publishes is a dual write with no redelivery behind it. Removing the dual write - validate, publish only, and let the consumer write - is simpler than adding an outbox.
+- A consumer that writes then publishes, acking last, is safe only if a redelivered message re-runs the publish after its idempotent write turns into a no-op. A handler that short-circuits on "already processed" loses the event; there, use an outbox.
 - Bound retries with backoff and route exhausted messages to a dead-letter path that someone is alerted on and can replay.
 - Large payloads go by reference (claim check), not through the broker.
 
