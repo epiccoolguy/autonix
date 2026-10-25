@@ -40,7 +40,13 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 
 ## Upgrades
 
-Automated upgrade PRs (Renovate) promoted through environments like any change. Where one deployment serves every environment (shared infrastructure), record how upgrades are staged instead. Small, frequent steps; nothing pinned without a recorded reason.
+Upgrades are as automated as possible behind guard rails:
+- automated upgrade PRs (Renovate) promoted through environments like any change;
+- a minimum release age before an update is proposed, also set in the package manager where it supports one (for example pnpm `minimumReleaseAge`), with install scripts disabled;
+- non-major updates automerge after green required checks; majors wait for the owner;
+- where one deployment serves every environment (shared infrastructure), automerge less (for example patch only) and record how upgrades are staged.
+
+Small, frequent steps; nothing pinned without a recorded reason.
 
 ```mermaid
 flowchart TD
