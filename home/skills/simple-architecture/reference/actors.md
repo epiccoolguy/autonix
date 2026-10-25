@@ -21,10 +21,10 @@ There is no "system" actor. Jobs, migrations, operators, CI, and AI agents each 
 ## Recording
 
 - Every fact, version, and audit row: principal, executor, trace id, time, plus the request or idempotency key when present. `audit_events` also records source IP, user agent, and outcome [NIST SP 800-53 AU-3; Kubernetes audit log].
-- Into the database: the data-access layer runs `SET LOCAL app.principal`, `app.executor`, `app.trace_id` per transaction; column defaults and audit triggers read them (PostgREST, Supabase pattern).
+- Into the database: the data-access layer sets principal, executor, and trace id as per-transaction session settings that column defaults and audit triggers read (in Postgres: `SET LOCAL app.principal` and so on, the PostgREST and Supabase pattern).
 - Order audit records by commit order or a sequence, not wall-clock time alone [DDIA: The Trouble with Distributed Systems].
 - Logs: structured, with principal, executor, and trace id [W3C Trace Context]. Log the token subject, never the token or a secret [OWASP Logging Cheat Sheet]. Logs rotate; durable records answer disputes.
-- Infrastructure changes go through GitOps, so the commit is the record. A direct change is break-glass only: the path is documented in advance and each use is recorded as an incident.
+- Infrastructure changes go through a reviewed, declarative pipeline (for example GitOps), so the commit is the record. A direct change is break-glass only: the path is documented in advance and each use is recorded as an incident.
 
 ```mermaid
 sequenceDiagram

@@ -13,6 +13,16 @@ let
     fileset = lib.fileset.difference ./skills/simple-code ./skills/simple-code/evals;
   };
 
+  # Deployed on corporate machines too, so the build fails if the skill names a
+  # personal-stack product; those choices live in that stack's decision records.
+  simpleArchitectureSkill = pkgs.runCommand "simple-architecture-skill" { } ''
+    if ${lib.getExe pkgs.gnugrep} -rniwE 'mlzw|authentik|zitadel|jetstream|cnpg|k3s|leafcloud|cyso' ${./skills/simple-architecture}; then
+      echo "simple-architecture names a personal-stack product (matches above)" >&2
+      exit 1
+    fi
+    cp -r ${./skills/simple-architecture} $out
+  '';
+
   # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. Reads
   # the token from ~/.env at startup, so no client config stores it and rotating is
   # re-running mlzw-infra's scripts/build-argocd-agent-token.sh plus a server restart.
@@ -545,9 +555,9 @@ in
     ".agents/skills/simple-code".source = simpleCodeSkill;
     # Antigravity (agy) reads global skills only from ~/.gemini/config/skills.
     ".gemini/config/skills/simple-code".source = simpleCodeSkill;
-    ".claude/skills/simple-architecture".source = ./skills/simple-architecture;
-    ".agents/skills/simple-architecture".source = ./skills/simple-architecture;
-    ".gemini/config/skills/simple-architecture".source = ./skills/simple-architecture;
+    ".claude/skills/simple-architecture".source = simpleArchitectureSkill;
+    ".agents/skills/simple-architecture".source = simpleArchitectureSkill;
+    ".gemini/config/skills/simple-architecture".source = simpleArchitectureSkill;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;

@@ -4,7 +4,7 @@
 
 - **Each site is an independent cell.** No runtime dependency crosses a site boundary: no cross-site reads, calls, consumers, or quorums [Helland: Life beyond Distributed Transactions; AWS: Cell-Based Architecture]. A WAN partition then degrades nothing except the cross-site paths below.
 - Only three things cross sites:
-  - desired state flows in through GitOps;
+  - desired state flows in through the deployment pipeline (for example GitOps);
   - backups flow out to object storage outside the site;
   - observability is read across sites, read-only.
 - **No stretched clusters** (etcd, database, or broker quorums across a WAN). No synchronous replication across sites. Across distance, every consistency guarantee costs latency on every request [DDIA: Replication; Abadi: PACELC].

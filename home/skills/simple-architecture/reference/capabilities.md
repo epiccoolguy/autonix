@@ -13,17 +13,17 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 
 ## A new capability
 
-- Show that a running capability cannot cover the need, even less elegantly: Postgres as a queue, a cache, search, or cron; the existing broker; the existing identity provider.
+- Show that a running capability cannot cover the need, even less elegantly: the existing database as a queue, a cache, search, or cron; the existing broker; the existing identity provider.
 - At most one new-to-us technology in flight at a time [McKinley: Choose Boring Technology].
 - Adoption criteria:
   - mature and maintained: years in production, active releases, more than one maintainer, CVE response (OpenSSF Scorecard as a signal);
-  - operability fit: declarative install via GitOps, a metrics endpoint, a backup and restore story, runs without HA;
+  - operability fit: declarative install through the deployment pipeline, a metrics endpoint, a backup and restore story, an availability setup that matches the target;
   - an open protocol and exit path (SQL, OIDC, S3, OTel, CloudEvents) [Pragmatic: Reversibility].
 - Prefer an operator already in use; use plain manifests when there is one instance and no lifecycle to automate.
 
 ## Definition of done
 
-- an owner and one GitOps declaration;
+- an owner and one declarative definition in the deployment pipeline;
 - credentials scoped per consumer and environment;
 - a symptom alert with a runbook;
 - for state: backups and a performed restore;
@@ -41,7 +41,7 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 ## Upgrades
 
 Upgrades are as automated as possible behind guard rails:
-- automated upgrade PRs (Renovate) promoted through environments like any change;
+- automated upgrade PRs (an update bot such as Renovate) promoted through environments like any change;
 - a minimum release age before an update is proposed, also set in the package manager where it supports one (for example pnpm `minimumReleaseAge`), with install scripts disabled;
 - non-major updates automerge after green required checks; majors wait for the owner;
 - where one deployment serves every environment (shared infrastructure), automerge less (for example patch only) and record how upgrades are staged.
