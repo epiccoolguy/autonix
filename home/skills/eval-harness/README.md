@@ -9,7 +9,7 @@ Prompts that run a skill's A/B eval (with the skill vs without it, on top of the
 | Antigravity (agy) | `antigravity-runner.md` | same as Codex |
 | Copilot CLI | delivery check below | does Copilot load the skill in normal use? |
 
-Every runner takes `SKILL` (for example `simple-testing`) and `EVALS` (comma-separated eval names, or `all`); the Claude runner also takes `ARM`, `R`, and optional `MODELS`. `rules.md` holds the hard rules every runner must follow: no delegation, a smoke-check gate (`R/SMOKE_PASSED`), setup diagnostics allowed, no credential copies, exact output layout, and narrow child tools. Always pass it before the runner. Each runner proves its isolation before the batch and writes to `~/skill-evals/<skill>/run-<agent>-N`. Grade with Claude: a different model grading avoids self-grading. For Codex and agy, pick 2-3 evals per round to keep runs short.
+Every runner takes `SKILL` (for example `simple-testing`) and `EVALS` (comma-separated eval names, or `all`); the Claude runner also takes `ARM`, `R`, and optional `MODELS`. `rules.md` holds the hard rules every runner must follow: no delegation, a smoke-check gate per arm (`R/SMOKE_PASSED-<arm>`), setup diagnostics allowed, no credential copies, exact output layout, and narrow child tools. Always pass it before the runner. Each runner proves its isolation before the batch and writes to `~/skill-evals/<skill>/run-<agent>-N`. Grade with Claude: a different model grading avoids self-grading. For Codex and agy, pick 2-3 evals per round to keep runs short.
 
 ## Run
 
@@ -17,16 +17,22 @@ Pull and switch first so the deployed skill is current:
 
 ```
 cd /etc/nix-darwin && git pull --ff-only && sudo darwin-rebuild switch --flake .
-S=simple-testing
+```
+
+Claude Code: two sessions in parallel, one per terminal. `run-claude.sh` builds the whole prompt (rules, runner, arguments), so nothing has to be set in the terminal first. Add a run number as the third argument when run-claude-1 exists; override `EVALS` or `MODELS` from the environment.
+
+```
+/etc/nix-darwin/home/skills/eval-harness/run-claude.sh simple-testing with-skill
+/etc/nix-darwin/home/skills/eval-harness/run-claude.sh simple-testing without-skill
+```
+
+The Claude children load no user settings or MCP servers (the user allow-list would pre-approve git, podman, kubectl, and web tools); AGENTS.md comes in through `--append-system-prompt-file`, and the with-skill arm gets the skill as a project skill. See `claude-runner.md`.
+
+For Codex, agy, and grading other runs, set the variables in the same terminal as the command:
+
+```
+S=simple-testing; P=/etc/nix-darwin/home/skills/eval-harness
 mkdir -p ~/skill-evals/$S && cd ~/skill-evals/$S
-P=/etc/nix-darwin/home/skills/eval-harness
-```
-
-Claude Code (two sessions, in parallel, same R):
-
-```
-claude "$(cat $P/rules.md $P/claude-runner.md) ARM=with-skill R=~/skill-evals/$S/run-claude-1 SKILL=$S EVALS=all"
-claude "$(cat $P/rules.md $P/claude-runner.md) ARM=without-skill R=~/skill-evals/$S/run-claude-1 SKILL=$S EVALS=all"
 ```
 
 Codex (the orchestrator must be unsandboxed; macOS can't nest sandboxes, and child runs keep their own):
@@ -61,7 +67,8 @@ grep -rIl "$S/SKILL.md" ~/.copilot 2>/dev/null
 ## Grade
 
 ```
-claude "$(cat $P/grade.md) SKILL=$S R=~/skill-evals/$S/run-codex-1"
+/etc/nix-darwin/home/skills/eval-harness/run-claude.sh simple-testing grade    # Claude run 1
+claude "$(cat $P/grade.md) SKILL=$S R=~/skill-evals/$S/run-codex-1"         # other runs, S and P set
 ```
 
 To grade a run from another machine, package it there, copy it over, and grade it here:
