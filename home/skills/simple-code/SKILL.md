@@ -12,7 +12,7 @@ Before choosing the design, read only what applies, once per task:
 - Implementation or review: the matching language guide below.
 - Architectural decisions, new abstractions or dependencies, or changes crossing behavioral boundaries: also [design](reference/design.md).
 - Unclear pattern choice or abstraction payoff: [examples](reference/examples.md).
-- New services or capabilities, sync vs async, audit or actor design: the simple-architecture skill.
+- Decisions expensive to reverse or crossing a process, data, trust, or ownership boundary: the simple-architecture skill.
 - Requested lint setup or tightening: [linting](reference/linting.md).
 
 | Language | Guide |

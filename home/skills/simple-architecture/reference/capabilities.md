@@ -1,32 +1,55 @@
-# Capabilities
+# Capabilities and dependencies
 
-A capability is anything the platform runs on behalf of applications: a database, broker, identity provider, operator, gateway, cache, scheduler, or observability backend.
+A capability is anything the platform runs on behalf of applications: a database, broker, identity provider, operator, gateway, cache, scheduler, or observability backend. The scarcest resource is operator attention [Brooks: The Design of Design].
 
-## Before adding one
+## Build or adopt
 
-- Name the requirement it serves today and the consumer that needs it. "We will need it later" is not a consumer.
-- Check whether a running capability already covers it, even if less elegantly: Postgres as a queue, cache, job table, or search index; the existing broker for scheduling; the existing identity provider for service credentials. A second mechanism needs a reason the first cannot meet.
-- Prefer a managed operator or upstream chart already in use over a new install method; prefer plain manifests over an operator when there is one instance and no lifecycle to automate.
-- Count what it adds: upgrades, CVEs, backups, restore drills, credentials, network policy, dashboards, alerts, on-call knowledge.
+Classify the need [Evans: Distillation]:
+- **core** (the differentiator): build it, and spend innovation there;
+- **generic** (identity, messaging, storage, email): adopt;
+- **supporting:** the simpler of a small build or an adoption.
+
+The cheapest code is code not written [Brooks: No Silver Bullet].
+
+## A new capability
+
+- Show that a running capability cannot cover the need, even less elegantly: Postgres as a queue, a cache, search, or cron; the existing broker; the existing identity provider.
+- At most one new-to-us technology in flight at a time [McKinley: Choose Boring Technology].
+- Adoption criteria:
+  - mature and maintained: years in production, active releases, more than one maintainer, CVE response (OpenSSF Scorecard as a signal);
+  - operability fit: declarative install via GitOps, a metrics endpoint, a backup and restore story, runs without HA;
+  - an open protocol and exit path (SQL, OIDC, S3, OTel, CloudEvents) [Pragmatic: Reversibility].
+- Prefer an operator already in use; use plain manifests when there is one instance and no lifecycle to automate.
 
 ## Definition of done
 
-A capability is not installed until it has:
+- an owner and one GitOps declaration;
+- credentials scoped per consumer and environment;
+- a symptom alert with a runbook;
+- for state: backups and a performed restore;
+- an upgrade path and an exit path;
+- a decision record (see records).
 
-- An owner and one place it is declared (GitOps; no hand-applied state).
-- Credentials scoped per consumer and environment, never shared between consumers.
-- Monitoring and an alert on the failure that matters.
-- For state: backups and a restore that has actually been performed. A backup never restored is a hypothesis.
-- A documented way to remove it.
+## Upgrades
+
+Automated upgrade PRs (Renovate) promoted through environments like any change. Small, frequent steps; nothing pinned without a recorded reason.
+
+```mermaid
+flowchart TD
+    N[Need] --> D{Subdomain}
+    D -- core --> B[Build]
+    D -- generic or supporting --> X{Existing capability covers it?}
+    X -- yes --> R[Reuse]
+    X -- no --> A[Adopt mature OSS with an open protocol]
+    A --> DOD[Definition of done]
+```
 
 ## Alternatives
 
 | Reaching for | Often sufficient | Add it when |
 | --- | --- | --- |
-| New service | Module in an existing service | Independent deploy cadence, scaling, ownership, or security boundary is needed now. |
-| Message broker | Direct call or a job table in the existing database | Several consumers, fan-out, or delivery guarantees across components (see communication). |
-| Cache (Redis etc.) | Database index, HTTP caching, in-process memo | Measured latency or load the database cannot meet. |
-| Search engine | Database full-text search | Relevance, scale, or language features the database lacks. |
-| Workflow engine | State column plus idempotent consumers or a scheduled job | Long-running multi-step processes with compensation that hand-rolled state cannot keep correct. |
-| Service mesh | NetworkPolicy plus TLS at the edge | mTLS identity or traffic policy is a current requirement. |
-| HA / replicas | Single instance plus tested restore | The availability target is stated and restore time cannot meet it. |
+| Cache server | Index, HTTP caching, in-process memo | Measured load or latency the database cannot meet |
+| Search engine | Postgres full-text search, pg_trgm | Relevance or scale the database lacks |
+| Workflow engine | Idempotent consumer chain, state in the owner's tables | Multi-step compensation must be tracked |
+| Service mesh | NetworkPolicy plus workload tokens | mTLS identity or traffic policy is required |
+| HA replicas | Single instance plus drilled restore | Restore cannot meet a stated target |
