@@ -8,7 +8,7 @@ Decide per operation, in order:
 
 1. **No one besides the caller reacts:** plain synchronous write, no event. Events exist only where a consumer does.
 2. **Completion gates something you do not mediate** (authentication, authorization, a third party acting on the result), **or rejection must be immediate:** synchronous.
-3. **Otherwise, when another component must react or the work is slow or external:** validate synchronously (authorization, schema, invariants), publish, return 202 with the idempotency key. When acceptance depends on contended state (uniqueness, stock, quota), reserve it atomically before the 202, or let the consumer reject and expose that status.
+3. **Otherwise, when another component must react or the work is slow or external:** validate synchronously (authorization, schema, invariants), publish, return 202 with the idempotency key. When acceptance depends on contended state (uniqueness, stock, quota), either commit the reservation and the outgoing message in one transaction (job table as outbox) before the 202, or move the check into the consumer and expose rejection as status.
 
 Async adds a pending state to every read path and needs a visible status for dead-lettered work [Ousterhout: The Nature of Complexity]. Do not go async to make a handler feel faster.
 
@@ -19,8 +19,9 @@ sequenceDiagram
     participant B as Broker
     participant W as Consumer
     C->>E: POST + Idempotency-Key
-    E->>E: authz, schema, invariants, reserve contended state
+    E->>E: authz, schema, invariants (reads)
     E->>B: publish (id = key, principal, traceparent)
+    Note over E,B: contended state: reservation + outbox row in one transaction instead
     E-->>C: 202 + key
     B->>W: deliver (at-least-once)
     W->>W: idempotent write + enqueue next fact in same transaction
