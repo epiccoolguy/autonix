@@ -1,0 +1,64 @@
+{
+  "skill_name": "simple-testing",
+  "evals": [
+    {
+      "id": 1,
+      "name": "py-billing-bug",
+      "prompt": "Customers say orders placed just after midnight on the first of the month get billed to the previous month. Fix it.",
+      "expected_output": "A regression test for an order placed shortly after local midnight on the 1st, written so it fails on the original code, then a fix that converts to the shop's time zone (Europe/Amsterdam) instead of UTC. The test calls billing_period directly with explicit time-zone-aware datetimes and no mocking.",
+      "files": ["evals/files/py-billing-bug/billing.py", "evals/files/py-billing-bug/test_billing.py"],
+      "expectations": [
+        "Adds a test with an order placed shortly after midnight Europe/Amsterdam time on the 1st of a month, and that test fails when run against the original billing.py (grader: copy the new test next to the fixture's billing.py and run it)",
+        "The new test asserts on billing_period's return value with explicitly constructed time-zone-aware datetimes; it does not mock or patch datetime, zoneinfo, time, or billing module attributes",
+        "The full test file passes with the fix under both TZ=UTC and TZ=America/Los_Angeles (grader runs both)",
+        "The transcript shows the test suite being run after the change (python3 -m unittest or pytest), and the final message reports the result",
+        "Changes only billing.py and test files; adds no dependency"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "py-order-tests",
+      "prompt": "Add tests for place_order, including what happens when the confirmation email can't be sent.",
+      "expected_output": "Unit tests that pass an in-memory fake store and a recording or failing mailer as arguments, use the real pricing module, and assert on the returned order and the stored state. The only interaction assertion is that the confirmation email went to the customer.",
+      "files": ["evals/files/py-order-tests/orders.py", "evals/files/py-order-tests/pricing.py", "evals/files/py-order-tests/pg_store.py"],
+      "expectations": [
+        "Does not replace pricing: no patch, mock, or monkeypatch of pricing or pricing.total, and expected totals come from the real pricing rules",
+        "No unittest.mock.patch, mock.patch.object, or monkeypatch.setattr on module paths; test doubles are passed to place_order as arguments",
+        "The store double is a working in-memory fake (save and get), and the email-failure test asserts the stored order's status is confirmation_pending via the fake, not via save call counts or call arguments",
+        "At least one test asserts the confirmation email was sent to the customer's address (spy or mock limited to the mailer)",
+        "Tests do not import pg_store or psycopg, connect to a database, or add a dependency",
+        "Each test builds its own store, mailer, and order data; no module- or class-level mutable fixture shared between tests"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "go-overdue-query",
+      "prompt": "Add a ListOverdue method to the invoice store that returns unpaid invoices whose due date has passed.",
+      "expected_output": "ListOverdue takes the reference time from the caller, with a parameterized query and no NOW() in the SQL. It is tested in the integration-tagged test file against the real Postgres, with test-owned uniquely keyed invoices. The final message says plainly that the integration tier was not run (or shows that it was) and gives the command.",
+      "files": ["evals/files/go-overdue-query/go.mod", "evals/files/go-overdue-query/go.sum", "evals/files/go-overdue-query/store/store.go", "evals/files/go-overdue-query/store/store_integration_test.go", "evals/files/go-overdue-query/migrations/001_invoices.sql", "evals/files/go-overdue-query/compose.yaml", "evals/files/go-overdue-query/Makefile", "evals/files/go-overdue-query/README.md"],
+      "expectations": [
+        "ListOverdue receives the reference time as a parameter (or the Store gets an injected clock); there is no time.Now() inside ListOverdue and no NOW(), CURRENT_DATE, or CURRENT_TIMESTAMP in its SQL",
+        "Adds a ListOverdue test in an integration-tagged test file using the real database via DATABASE_URL, not sqlmock, a fake driver, SQLite, or an in-memory substitute",
+        "The test inserts its own uniquely keyed invoices covering paid, unpaid and overdue, and unpaid but not yet due, and asserts only on those IDs (it does not assume an empty table)",
+        "Adds no new module dependency (no sqlmock, testcontainers, or SQLite driver)",
+        "The final message states whether `make test-integration` (or the tagged tests) ran; if it did not, it says so plainly and gives the command. Claiming the tests pass without having run the integration tier fails",
+        "go vet ./... and go vet -tags integration ./... pass (grader runs both)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "go-flaky-worker",
+      "prompt": "TestWorkerProcessesJob fails now and then in CI. Make it reliable.",
+      "expected_output": "The sleep is replaced by waiting on a signal from the handler (channel or WaitGroup) with a deadline, or by testing/synctest, and access to the collected IDs is race-free. No retries, skips, or longer sleeps; the final message names the cause (a timing assumption plus a data race).",
+      "files": ["evals/files/go-flaky-worker/go.mod", "evals/files/go-flaky-worker/worker/worker.go", "evals/files/go-flaky-worker/worker/worker_test.go"],
+      "expectations": [
+        "No time.Sleep remains in the test, and the fix is not a longer sleep, a longer timeout, or a polling loop that sleeps",
+        "The test waits on a synchronization signal from the handler (channel, WaitGroup) bounded by a deadline or the test context, or runs inside testing/synctest",
+        "go test -race -count=200 ./... passes (grader runs it)",
+        "No t.Skip, retry loop, rerun-on-failure, or build tag that excludes the test",
+        "The final message names the cause: the sleep assumes timing, and got is written and read without synchronization",
+        "Worker's exported API is unchanged, or any change is explained as needed beyond the test"
+      ]
+    }
+  ]
+}

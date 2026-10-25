@@ -8,24 +8,30 @@
 let
   # Evals stay in the repo next to the skill but aren't deployed, matching
   # skill-creator's packaging (it drops a skill's root evals/ when shipping).
-  simpleCodeSkill = lib.fileset.toSource {
-    root = ./skills/simple-code;
-    fileset = lib.fileset.difference ./skills/simple-code ./skills/simple-code/evals;
-  };
+  skillSource =
+    name:
+    let
+      dir = ./skills + "/${name}";
+    in
+    lib.fileset.toSource {
+      root = dir;
+      fileset = lib.fileset.difference dir (lib.fileset.maybeMissing (dir + "/evals"));
+    };
+  simpleCodeSkill = skillSource "simple-code";
 
   # Deployed on corporate machines too, so the build fails if a skill names a
   # personal-stack product; those choices live in that stack's decision records.
   stackNeutralSkill =
-    name: src:
+    name:
     pkgs.runCommand "${name}-skill" { } ''
-      if ${lib.getExe pkgs.gnugrep} -rniwE 'mlzw|authentik|zitadel|jetstream|cnpg|k3s|leafcloud|cyso' ${src}; then
+      if ${lib.getExe pkgs.gnugrep} -rniwE 'mlzw|authentik|zitadel|jetstream|cnpg|k3s|leafcloud|cyso' ${skillSource name}; then
         echo "${name} names a personal-stack product (matches above)" >&2
         exit 1
       fi
-      cp -r ${src} $out
+      cp -r ${skillSource name} $out
     '';
-  simpleArchitectureSkill = stackNeutralSkill "simple-architecture" ./skills/simple-architecture;
-  simpleTestingSkill = stackNeutralSkill "simple-testing" ./skills/simple-testing;
+  simpleArchitectureSkill = stackNeutralSkill "simple-architecture";
+  simpleTestingSkill = stackNeutralSkill "simple-testing";
 
   # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. Reads
   # the token from ~/.env at startup, so no client config stores it and rotating is
