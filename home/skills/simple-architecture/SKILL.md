@@ -35,7 +35,7 @@ Read only what applies, once per task:
 | Ownership, consistency, history, audit, deletes | [data](reference/data.md) |
 | Identity, actor propagation, who-did-what records | [actors](reference/actors.md) |
 | Failure handling, observability, availability, recovery | [operability](reference/operability.md) |
-| A new capability, operator, or dependency; upgrades | [capabilities](reference/capabilities.md) |
+| A new capability, operator, dependency, or language; upgrades | [capabilities](reference/capabilities.md) |
 | Decision records, diagrams, fitness functions | [records](reference/records.md) |
 | Web or native clients, BFF, where tokens live | [frontend](reference/frontend.md) |
 | Several sites or regions, data placement, cross-site DR | [topology](reference/topology.md) |
