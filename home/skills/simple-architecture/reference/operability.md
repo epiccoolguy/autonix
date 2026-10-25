@@ -20,7 +20,7 @@ Propagate trace context everywhere; run a trace backend only when a real cross-c
 
 ## Alerting
 
-- Alert on symptoms users feel: SLO burn rate, error rate, dead-letter growth, backup age, and saturation that will cause an outage (disk full) [Google SRE: Monitoring Distributed Systems].
+- Alert on symptoms users feel: SLO burn rate, error rate, a down single instance with no failover, dead-letter growth, backup age, and saturation that will cause an outage (disk full) [Google SRE: Monitoring Distributed Systems].
 - Every alert has a runbook link (`runbook_url`). Causes such as CPU and memory go on dashboards.
 
 ## Availability and recovery

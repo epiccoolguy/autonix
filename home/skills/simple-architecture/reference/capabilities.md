@@ -32,7 +32,7 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 
 ## Upgrades
 
-Automated upgrade PRs (Renovate) promoted through environments like any change. Small, frequent steps; nothing pinned without a recorded reason.
+Automated upgrade PRs (Renovate) promoted through environments like any change. Where one deployment serves every environment (shared infrastructure), record how upgrades are staged instead. Small, frequent steps; nothing pinned without a recorded reason.
 
 ```mermaid
 flowchart TD
