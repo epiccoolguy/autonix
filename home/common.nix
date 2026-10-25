@@ -40,6 +40,8 @@ in
   # that honor XDG on macOS (pnpm, k9s, helm) and the HM modules keyed on it.
   xdg.enable = true;
 
+  # Includes the GNU/Linux userland so the CLI behaves as on Linux; README.md
+  # lists the macOS-native tools kept instead and why.
   home.packages = with pkgs; [
     ansible
     argo-workflows
@@ -49,8 +51,10 @@ in
       azure-cli.extensions.azure-devops
     ])
     bashInteractive
+    bc
     bruno
     bruno-cli
+    bzip2
     cargo
     clippy
     coreutils
@@ -58,19 +62,26 @@ in
     delve
     deno
     diffutils
+    dnsutils
+    ed
+    file
     findutils
+    flock
     gawk
-    getopt
+    gettext
     gh
     gnugrep
+    gnum4
     gnumake
     gnupatch
+    gnupg
     gnused
     gnutar
     golangci-lint
     google-cloud-sdk
     gopls
     gradle
+    gzip
     inetutils
     jdk
     k9s
@@ -79,16 +90,21 @@ in
     kubelogin
     kubernetes-helm
     less
+    lsof
     maven
     mtr
+    ncurses
     neovim
     nixd
     nixfmt
     nixfmt-tree
     nodejs_24
+    openssl
     openstackclient
+    perl
     pnpm
     podman
+    procps
     pyright
     python3
     ripgrep
@@ -99,12 +115,18 @@ in
     shellcheck
     skaffold
     texliveFull
+    time
     tmux
     tree
     typescript-language-server
     unzip
+    util-linux
+    wget
+    which
+    xz
     yq
     zip
+    zstd
   ];
 
   home.sessionVariables = {
