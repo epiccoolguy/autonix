@@ -25,7 +25,7 @@ Propagate trace context everywhere; run a trace backend only when a real cross-c
 
 ## Availability and recovery
 
-- Each stateful capability states its availability target (RTO and RPO) and has a performed restore drill; a backup never restored is a hypothesis.
+- Each stateful capability states its availability target (RTO and RPO) and has a performed restore drill; a backup never restored is a hypothesis. simple-testing covers automating the drill.
 - Choose the simplest setup that meets the target: a single instance with a drilled restore when that suffices, replicas or HA when it does not [Brooks: The Second-System Effect].
 - Size with back-of-the-envelope estimates before choosing infrastructure [Bentley: The Back of the Envelope].
 

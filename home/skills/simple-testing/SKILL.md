@@ -49,4 +49,4 @@ Before declaring a change done:
 4. Bug fix: first write a test that fails without the fix, at the lowest tier that catches it [Ousterhout: Software Trends]. New behavior: add a test through the public interface.
 5. Read coverage of the changed lines; test what is uncovered or say why not.
 6. Never skip, weaken, or delete a test, or update goldens or snapshots, without saying so and why. Never fix a flaky test with sleeps or retries.
-7. With a PR, the work is done only when CI, including the deploy check, is green. Report skipped tiers plainly.
+7. With a PR, the work is done only when CI, including any deploy check, is green. Report skipped tiers plainly.
