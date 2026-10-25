@@ -28,7 +28,7 @@ The cheapest code is code not written [Brooks: No Silver Bullet].
 - a symptom alert with a runbook;
 - for state: backups and a performed restore;
 - an upgrade path and an exit path;
-- a decision record (see records).
+- a decision record (see [records](records.md)).
 
 ## Languages and runtimes
 

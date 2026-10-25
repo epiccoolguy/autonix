@@ -18,7 +18,7 @@ The data design is the architecture: show the tables and the flowcharts become o
 | Audit events | Who did what security-relevant thing? | Append-only `audit_events` per component, same transaction, for authentication, permission, admin, export, and delete actions (GitLab, Keycloak, Kubernetes audit log). Not needed where an existing durable audit log already records those actions, such as an identity provider's event log or the Kubernetes API audit log. |
 
 - Enforce immutability in the database (revoke UPDATE/DELETE from the app role, or a rejecting trigger) when the record must be trustworthy.
-- Every fact, version, and audit row carries actor fields (see actors).
+- Every fact, version, and audit row carries actor fields (see [actors](actors.md)).
 
 ```mermaid
 erDiagram
