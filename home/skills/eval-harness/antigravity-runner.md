@@ -21,7 +21,7 @@ Run a small A/B evaluation of the shared `<SKILL>` skill on the Antigravity CLI 
 
 ## Step 1: headless runs and isolation
 Work out from `agy --help`, `agy help`, and the docs for the installed version how to:
-1. Run one task headless (`agy -p` with `--output-format stream-json` looks right): it can edit files in its working dir (`--mode accept-edits`) and run python3 and rustc without prompting. Prefer `--sandbox` or a narrow grant over `--dangerously-skip-permissions`; if only the latter works, use it only inside the scratch work dirs and say so.
+1. Run one task headless (`agy -p` with `--output-format stream-json` looks right): it can edit files in its working dir (`--mode accept-edits`) and run python3, rustc, go test, go vet, and gofmt (with a writable Go build cache) without prompting. Prefer `--sandbox` or a narrow grant over `--dangerously-skip-permissions`; if only the latter works, use it only inside the scratch work dirs and say so.
 2. Capture a machine-readable log of every tool call and file read.
 3. WITH-SKILL arm: the run can load the <SKILL> skill and read its SKILL.md and reference/** (e.g. `--add-dir` for the skill dirs, resolving the /nix/store symlink if needed).
 4. WITHOUT-SKILL arm: the run can neither load nor read the skill (`--disable-slash-commands`, plus blocking reads of both skill paths), while GEMINI.md and the imported AGENTS.md still load, so both arms share the AGENTS.md core.
