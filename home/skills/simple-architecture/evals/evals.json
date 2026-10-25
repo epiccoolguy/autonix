@@ -54,7 +54,8 @@
         "The worker manifest follows decision 0002 (at least 3 replicas, zone topology spread, PodDisruptionBudget minAvailable 2) and cites it; a single-replica worker fails",
         "The API validates synchronously and returns 202 (or equivalent) with an import id, and the client can read the import's status, including failure",
         "Processing is idempotent per import (keyed by import id) and safe with concurrent workers; retries happen at one layer",
-        "The worker manifest has readiness and liveness probes and handles shutdown gracefully (stops taking work, finishes or requeues the current import)"
+        "The worker manifest has readiness and liveness probes and handles shutdown gracefully (stops taking work, finishes or requeues the current import)",
+        "Treats the separate worker deployable as an architecture decision: names the force for splitting it from import-api (minutes-long work, independent scaling, or failure isolation) and leaves acceptance to the owner, either as a decision record with status proposed that cites 0002, or as an explicit note that one is needed; presenting the split as settled, or marking a record accepted, fails. Running the worker inside the import-api deployable with a stated reason also passes"
       ]
     },
     {
