@@ -25,7 +25,9 @@ Propagate trace context everywhere; run a trace backend only when a real cross-c
 
 ## Availability and recovery
 
-- Each stateful capability states its availability target (RTO and RPO) and has a performed restore drill; a backup never restored is a hypothesis. simple-testing covers automating the drill.
+- Each stateful capability states its availability target (RTO and RPO) and has a performed restore drill; a backup never restored is a hypothesis. A scheduled job restores the latest backup into a scratch target, checks it, records restore time against the RTO and backup age against the RPO, and alerts on failure or staleness [Google SRE: Data Integrity]. Full-site recovery is drilled manually from a runbook.
+- A few critical user journeys run as scheduled synthetic probes against production and feed a symptom alert.
+- Scheduled data checks only for stated invariants that span stores or copies (derived data matches its source, the outbox drains), each with an alert.
 - Choose the simplest setup that meets the target: a single instance with a drilled restore when that suffices, replicas or HA when it does not [Brooks: The Second-System Effect].
 - Size with back-of-the-envelope estimates before choosing infrastructure [Bentley: The Back of the Envelope].
 
