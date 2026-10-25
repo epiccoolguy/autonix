@@ -1,0 +1,65 @@
+# Sources
+
+Each bracketed tag in this skill maps to one entry below. Read this file when asked why a rule exists or to justify one in a decision record. DDIA tags use 1st-edition chapter titles; the 2nd edition (Kleppmann and Riccomini) reorganizes chapters, so check titles there.
+
+## Core library
+
+| Tag | Source | Used for |
+| --- | --- | --- |
+| Ousterhout: The Nature of Complexity | Ousterhout, *A Philosophy of Software Design*, 2nd ed., ch. "The Nature of Complexity" | Complexity as change amplification, cognitive load, unknown unknowns; every part costs |
+| Ousterhout: Modules Should Be Deep | same, ch. "Modules Should Be Deep" | Deep parts, shallow services |
+| Ousterhout: Design It Twice | same, ch. "Design It Twice" | Alternatives and prototypes before deciding |
+| Evans: Bounded Context | Evans, *Domain-Driven Design*, ch. "Maintaining Model Integrity" | Modules along model boundaries |
+| Evans: Aggregates | same, ch. "The Life Cycle of a Domain Object" | One aggregate per transaction |
+| Evans: Distillation | same, ch. "Distillation" | Core vs supporting vs generic subdomains; build vs adopt |
+| Evans: Domain Events | Evans, *Domain-Driven Design Reference* (2015) | Events as facts in the domain language |
+| Fowler: Who Needs an Architect? | Fowler, IEEE Software 2003, citing Ralph Johnson | Architecture as the shared, hard-to-change decisions |
+| DDIA: Reliable, Scalable, and Maintainable Applications | Kleppmann, *Designing Data-Intensive Applications* | Fault vs failure; operability, simplicity, evolvability |
+| DDIA: Encoding and Evolution | same | Compatible schema evolution, tolerant readers |
+| DDIA: Transactions | same | Isolation levels, write skew |
+| DDIA: The Trouble with Distributed Systems | same | Unreliable clocks; ordering |
+| DDIA: Stream Processing | same | Logs, at-least-once plus idempotence |
+| DDIA: The Future of Data Systems | same | System of record vs derived data; end-to-end argument; data ethics and erasure |
+| Pragmatic: DRY | Thomas and Hunt, *The Pragmatic Programmer*, 20th anniv. ed., "DRY - The Evils of Duplication" | One authoritative representation of knowledge |
+| Pragmatic: Reversibility | same, "Reversibility" | No final decisions; exit paths |
+| Pragmatic: Dead Programs Tell No Lies | same | Crash on impossible state |
+| Pragmatic: Stay Safe Out There | same | Least privilege, secure defaults |
+| Bentley: Data Structures Programs | Bentley, *Programming Pearls*, 2nd ed., column 3 | Representation shapes the program |
+| Bentley: The Back of the Envelope | same, column 7 | Estimating before sizing |
+| Brooks: Aristocracy, Democracy, and System Design | Brooks, *The Mythical Man-Month*, anniv. ed., ch. 4 | Conceptual integrity |
+| Brooks: The Second-System Effect | same, ch. 5 | Over-building |
+| Brooks: Ten Pounds in a Five-Pound Sack | same, ch. 9 | "Show me your tables" |
+| Brooks: No Silver Bullet | same, ch. 16 | Essential vs accidental complexity; buy before build |
+| Brooks: The Design of Design | Brooks, *The Design of Design* | Recorded rationale; budgeting the scarcest resource |
+
+## Further
+
+| Tag | Source |
+| --- | --- |
+| Booch | Grady Booch: "significant decisions, where significant is measured by cost of change" |
+| Parnas: On the Criteria | Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules", CACM 1972 |
+| Conway | Conway, "How Do Committees Invent?", 1968 |
+| Deutsch: Fallacies of Distributed Computing | Peter Deutsch et al., Sun Microsystems, 1994 |
+| Fowler: MonolithFirst | martinfowler.com/bliki/MonolithFirst.html (2015) |
+| Fowler: Strangler Fig | martinfowler.com/bliki/StranglerFigApplication.html |
+| Newman: Monolith to Microservices | Newman, *Monolith to Microservices*, 2019 |
+| Skelton: Team Topologies | Skelton and Pais, *Team Topologies*, 2019 |
+| Hohpe: (pattern) | Hohpe and Woolf, *Enterprise Integration Patterns*, 2003 - Command Message, Event Message, Idempotent Receiver, Dead Letter Channel, Claim Check, Correlation Identifier |
+| Nygard: (pattern) | Nygard, *Release It!*, 2nd ed., 2018 - Timeouts, Circuit Breaker, Bulkheads |
+| Nygard: Documenting Architecture Decisions | Nygard, cognitect.com blog, 2011 (origin of ADRs) |
+| Helland: Immutability Changes Everything | Pat Helland, CIDR 2015 |
+| brandur: Soft Deletion Probably Isn't Worth It | brandur.org, 2022 |
+| Stripe: Idempotency Keys | Stripe API idempotent requests; IETF draft "The Idempotency-Key HTTP Header Field" |
+| Brooker: Exponential Backoff and Jitter | Marc Brooker, AWS Architecture Blog, 2015 |
+| Candea: Crash-Only Software | Candea and Fox, HotOS 2003 |
+| Google SRE: Monitoring Distributed Systems | Beyer et al., *Site Reliability Engineering*, 2016; burn-rate alerts in *The Site Reliability Workbook* |
+| McKinley: Choose Boring Technology | Dan McKinley, mcfunley.com, 2015 (innovation tokens) |
+| Ford: Fitness Functions | Ford, Parsons, Kua, *Building Evolutionary Architectures* |
+| Brown: C4 Model | Simon Brown, c4model.com |
+| matklad: ARCHITECTURE.md | Aleksey Kladov, matklad.github.io, 2021 |
+| NIST SP 800-207 | Zero Trust Architecture |
+| NIST SP 800-53 AU-3 | Content of audit records |
+| OWASP Logging Cheat Sheet | cheatsheetseries.owasp.org |
+| RFC 8693 | OAuth 2.0 Token Exchange (`act` claim) |
+| W3C Trace Context | w3.org/TR/trace-context |
+| Kubernetes | Controller/reconcile pattern; API server audit log fields |

@@ -1,41 +1,57 @@
 # Communication
 
+Every remote call can fail, time out, or succeed without a reply [Deutsch: Fallacies of Distributed Computing].
+
 ## Sync or async
 
-Decide per operation, in this order:
+Decide per operation, in order:
 
-1. **No consumer beyond the caller:** a plain synchronous write. Do not publish an event nobody consumes; events exist only where a consumer does.
-2. **Completion gates something you do not mediate** (authentication, authorization, a third party acting on the result) **or rejection must be immediate:** synchronous.
-3. **Otherwise, when another component must react, or the work is slow, external, or failure-prone:** validate synchronously, execute asynchronously. The handler checks authorization, schema, and invariants (reads only), publishes, and returns 202 with the idempotency key. A 202 then means "this will happen", not "this may be rejected later". When acceptance depends on contended state (uniqueness, stock, quota), reads cannot promise that: reserve atomically before the 202, or accept that the consumer may reject and expose that status.
+1. **No one besides the caller reacts:** plain synchronous write, no event. Events exist only where a consumer does.
+2. **Completion gates something you do not mediate** (authentication, authorization, a third party acting on the result), **or rejection must be immediate:** synchronous.
+3. **Otherwise, when another component must react or the work is slow or external:** validate synchronously (authorization, schema, invariants), publish, return 202 with the idempotency key. When acceptance depends on contended state (uniqueness, stock, quota), reserve it atomically before the 202, or let the consumer reject and expose that status.
 
-Async is not free: every read path gains a pending state, and a dead-lettered request needs a visible status. Do not go async to make a handler feel faster.
+Async adds a pending state to every read path and needs a visible status for dead-lettered work [Ousterhout: The Nature of Complexity]. Do not go async to make a handler feel faster.
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant E as Edge
+    participant B as Broker
+    participant W as Consumer
+    C->>E: POST + Idempotency-Key
+    E->>E: authz, schema, invariants, reserve contended state
+    E->>B: publish (id = key, principal, traceparent)
+    E-->>C: 202 + key
+    B->>W: deliver (at-least-once)
+    W->>W: idempotent write + enqueue next fact in same transaction
+    W->>B: ack last
+```
+
+## Reacting to state owned elsewhere
+
+- **Business facts** (payment received, order placed): events, past tense, owned by the emitter [Evans: Domain Events; Hohpe: Event Message].
+- **Desired state** (make X look like Y): level-triggered reconcile loops that converge and resync, so a missed event self-heals [Kubernetes].
+- A **command** asks one owner to act; do not disguise a command as an event to hide the dependency [Hohpe: Command Message].
 
 ## Delivery
 
-- Assume at-least-once delivery. Every consumer is idempotent, keyed on a stable message or request id; redelivery is the retry mechanism.
-- An HTTP handler that both commits a row and publishes is a dual write with no redelivery behind it. Removing the dual write - validate, publish only, and let the consumer write - is simpler than adding an outbox.
-- A consumer that writes then publishes, acking last, is safe only if a redelivered message re-runs the publish after its idempotent write turns into a no-op. A handler that short-circuits on "already processed" loses the event; there, use an outbox.
-- Bound retries with backoff and route exhausted messages to a dead-letter path that someone is alerted on and can replay.
-- Large payloads go by reference (claim check), not through the broker.
+- At-least-once delivery, idempotent consumers keyed on a stable id; "exactly-once" means effectively-once [DDIA: Stream Processing; Hohpe: Idempotent Receiver; Stripe: Idempotency Keys].
+- **Background work inside a component:** a job table in its own database, written in the same transaction as the change (River, Oban, Solid Queue). The same table serves as its outbox when the component must also publish.
+- **Messages between components:** the broker. An HTTP handler that both commits and publishes is a dual write; publish only and let the consumer write. A consumer that short-circuits redeliveries as "already processed" loses its outgoing event; enqueue the publish in its transaction instead.
+- Bounded retries with backoff to a dead-letter path that alerts and can replay [Hohpe: Dead Letter Channel]. Large payloads by reference [Hohpe: Claim Check].
 
-## Messages
+## Contracts
 
-- **Event:** a fact that happened, past tense, owned by the emitter, any number of consumers. **Command:** a request for one owner to do something. Do not disguise a command as an event to avoid naming the dependency.
-- One envelope standard and one schema format for the whole system. Version the contract, not each field; consumers are tolerant readers (ignore unknown fields, treat enums as open).
-- Every message carries: id, type and version, source component, actor (see actors), trace context, and time.
+One envelope standard (CloudEvents) and one schema format for the system. Version the contract by major version only; consumers are tolerant readers [DDIA: Encoding and Evolution]. Every message carries id, type and version, source, principal, trace context, and time [Hohpe: Correlation Identifier].
+
+## Workflows
+
+Default: a chain of idempotent consumers, each publishing the next fact, with progress visible in the owner's tables. Move to durable execution (Temporal, Restate) only when compensation across many steps must be tracked.
 
 ## Reads across components
 
-- Default to a synchronous read from the owner.
-- Materialize a local projection only when the call is too slow, too frequent, crosses an availability boundary, or many components need the same data. A projection is derived and must be rebuildable from its source.
-- Never write to another component's store.
+Read synchronously from the owner. Materialize a local projection only when the call is too slow or frequent, crosses an availability boundary, or many components need it; it must be rebuildable. Never write to another component's store.
 
-## Alternatives
+## Avoid
 
-| Reaching for | Often sufficient | Keep more structure when |
-| --- | --- | --- |
-| Event per write | Plain sync write | A consumer exists now. |
-| Saga / workflow engine | Chain of idempotent consumers, each publishing the next fact | Compensation across many steps must be tracked and visible. |
-| Outbox | Publish-only edge; consumer writes | A handler must both commit and publish atomically. |
-| Event sourcing | Current-state tables plus append-only facts where history matters | Rebuilding state from events is itself a requirement. |
-| Polling for status | 202 with key, then read the entity | Clients cannot read the entity, or work can dead-letter (then a status resource is required). |
+Two-phase commit across services; claims of exactly-once delivery; choreographing everything through events; an event per write with no consumer.
