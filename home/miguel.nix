@@ -45,6 +45,14 @@
   # miguel-only like the codex cask it drives.
   programs.claude-code.plugins.codex = "${inputs.codex-plugin-cc}/plugins/codex";
 
+  # Official OVHcloud MCP hub, scoped to the domain section (zones, records, DNSSEC) for
+  # external DNS. OAuth via /mcp, so no secret here. Left out of the permission allowlist:
+  # the section also edits and orders domains, so every call prompts.
+  programs.claude-code.mcpServers.ovh = {
+    type = "http";
+    url = "https://mcp.eu.ovhcloud.com/mcp/v1_domain";
+  };
+
   # Weekly renewal of the 30-day mlzw agent credentials the MCP servers use (kubeconfig,
   # Argo CD and Grafana tokens), via mlzw-infra's script. Needs the LAN or VPN; a missed
   # run (asleep) runs on wake. Failures raise a notification so nothing expires unnoticed.
