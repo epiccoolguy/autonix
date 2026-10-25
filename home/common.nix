@@ -13,15 +13,19 @@ let
     fileset = lib.fileset.difference ./skills/simple-code ./skills/simple-code/evals;
   };
 
-  # Deployed on corporate machines too, so the build fails if the skill names a
+  # Deployed on corporate machines too, so the build fails if a skill names a
   # personal-stack product; those choices live in that stack's decision records.
-  simpleArchitectureSkill = pkgs.runCommand "simple-architecture-skill" { } ''
-    if ${lib.getExe pkgs.gnugrep} -rniwE 'mlzw|authentik|zitadel|jetstream|cnpg|k3s|leafcloud|cyso' ${./skills/simple-architecture}; then
-      echo "simple-architecture names a personal-stack product (matches above)" >&2
-      exit 1
-    fi
-    cp -r ${./skills/simple-architecture} $out
-  '';
+  stackNeutralSkill =
+    name: src:
+    pkgs.runCommand "${name}-skill" { } ''
+      if ${lib.getExe pkgs.gnugrep} -rniwE 'mlzw|authentik|zitadel|jetstream|cnpg|k3s|leafcloud|cyso' ${src}; then
+        echo "${name} names a personal-stack product (matches above)" >&2
+        exit 1
+      fi
+      cp -r ${src} $out
+    '';
+  simpleArchitectureSkill = stackNeutralSkill "simple-architecture" ./skills/simple-architecture;
+  simpleTestingSkill = stackNeutralSkill "simple-testing" ./skills/simple-testing;
 
   # Official Argo CD MCP server (npm `argocd-mcp`), reachable on the LAN/VPN only. Reads
   # the token from ~/.env at startup, so no client config stores it and rotating is
@@ -558,6 +562,9 @@ in
     ".claude/skills/simple-architecture".source = simpleArchitectureSkill;
     ".agents/skills/simple-architecture".source = simpleArchitectureSkill;
     ".gemini/config/skills/simple-architecture".source = simpleArchitectureSkill;
+    ".claude/skills/simple-testing".source = simpleTestingSkill;
+    ".agents/skills/simple-testing".source = simpleTestingSkill;
+    ".gemini/config/skills/simple-testing".source = simpleTestingSkill;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
