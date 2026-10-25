@@ -52,6 +52,6 @@ Give a decision a CI check when a tool can verify it cheaply [Ford: Fitness Func
 - import or dependency rules (depguard, import-linter, dependency-cruiser);
 - a schema-ownership check;
 - policy as code for manifests (Kyverno, conftest, kubeconform);
-- contract and schema compatibility checks (built as simple-testing describes).
+- contract and schema compatibility checks.
 
 Everything else is checked in review against the record.

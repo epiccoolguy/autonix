@@ -54,6 +54,7 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | Stripe: Idempotency Keys | Stripe API idempotent requests; IETF draft "The Idempotency-Key HTTP Header Field" |
 | Brooker: Exponential Backoff and Jitter | Marc Brooker, AWS Architecture Blog, 2015 |
 | Candea: Crash-Only Software | Candea and Fox, HotOS 2003 |
+| Google SRE: Data Integrity | Beyer et al., *Site Reliability Engineering*, 2016, ch. 26 (restores, not backups) |
 | Google SRE: Monitoring Distributed Systems | Beyer et al., *Site Reliability Engineering*, 2016; burn-rate alerts in *The Site Reliability Workbook* |
 | McKinley: Choose Boring Technology | Dan McKinley, mcfunley.com, 2015 (innovation tokens) |
 | Ford: Fitness Functions | Ford, Parsons, Kua, *Building Evolutionary Architectures* |
