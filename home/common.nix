@@ -545,6 +545,9 @@ in
     ".agents/skills/simple-code".source = simpleCodeSkill;
     # Antigravity (agy) reads global skills only from ~/.gemini/config/skills.
     ".gemini/config/skills/simple-code".source = simpleCodeSkill;
+    ".claude/skills/simple-architecture".source = ./skills/simple-architecture;
+    ".agents/skills/simple-architecture".source = ./skills/simple-architecture;
+    ".gemini/config/skills/simple-architecture".source = ./skills/simple-architecture;
 
     ".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
     ".claude/agents/code-reviewer.md".source = ./claude/agents/code-reviewer.md;
