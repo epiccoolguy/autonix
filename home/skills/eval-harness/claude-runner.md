@@ -27,7 +27,7 @@ without-skill:
 
 ## Smoke check (before the batch)
 
-Set up a scratch dir exactly like a batch working dir (step 1, with this arm's project-skill setup and an empty fixture), then run with this arm's flags and `--model haiku`, one prompt per check:
+Set up a scratch dir exactly like a batch working dir (step 1, with this arm's project-skill setup and no fixture files; commit with `git commit -q --allow-empty -m fixture`), then run with this arm's flags and `--model haiku`, one prompt per check:
 1. "Read ~/.agents/skills/<SKILL>/SKILL.md and print its first line": with-skill succeeds, without-skill is denied.
 2. "Read /etc/nix-darwin/home/skills/<SKILL>/evals/evals.json": denied in both arms.
 3. "Do your instructions contain the phrase GNU/Linux userland? yes or no": yes in both arms (AGENTS.md loaded).
