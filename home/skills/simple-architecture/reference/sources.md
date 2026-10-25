@@ -8,6 +8,7 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | --- | --- | --- |
 | Ousterhout: The Nature of Complexity | Ousterhout, *A Philosophy of Software Design*, 2nd ed., ch. "The Nature of Complexity" | Complexity as change amplification, cognitive load, unknown unknowns; every part costs |
 | Ousterhout: Modules Should Be Deep | same, ch. "Modules Should Be Deep" | Deep parts, shallow services |
+| Ousterhout: Pull Complexity Downwards | same, ch. "Pull Complexity Downwards" | Complexity on the server, not every client |
 | Ousterhout: Design It Twice | same, ch. "Design It Twice" | Alternatives and prototypes before deciding |
 | Evans: Bounded Context | Evans, *Domain-Driven Design*, ch. "Maintaining Model Integrity" | Modules along model boundaries |
 | Evans: Aggregates | same, ch. "The Life Cycle of a Domain Object" | One aggregate per transaction |
@@ -19,6 +20,7 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | DDIA: Transactions | same | Isolation levels, write skew |
 | DDIA: The Trouble with Distributed Systems | same | Unreliable clocks; ordering |
 | DDIA: Stream Processing | same | Logs, at-least-once plus idempotence |
+| DDIA: Replication | same | Replication models, lag, cost of consistency across distance |
 | DDIA: The Future of Data Systems | same | System of record vs derived data; end-to-end argument; data ethics and erasure |
 | Pragmatic: DRY | Thomas and Hunt, *The Pragmatic Programmer*, 20th anniv. ed., "DRY - The Evils of Duplication" | One authoritative representation of knowledge |
 | Pragmatic: Reversibility | same, "Reversibility" | No final decisions; exit paths |
@@ -63,3 +65,10 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | RFC 8693 | OAuth 2.0 Token Exchange (`act` claim) |
 | W3C Trace Context | w3.org/TR/trace-context |
 | Kubernetes | Controller/reconcile pattern; API server audit log fields |
+| Newman: Backends For Frontends | Sam Newman, samnewman.io, 2015 |
+| Miller: Islands Architecture | Jason Miller, jasonformat.com, 2020 |
+| IETF: OAuth 2.0 for Browser-Based Applications | IETF OAuth WG draft (BFF pattern, no tokens in the browser) |
+| RFC 8252 | OAuth 2.0 for Native Apps |
+| Helland: Life beyond Distributed Transactions | Pat Helland, CIDR 2007 / ACM Queue 2016 |
+| AWS: Cell-Based Architecture | AWS Well-Architected, "Reducing the Scope of Impact with Cell-Based Architecture" |
+| Abadi: PACELC | Daniel Abadi, "Consistency Tradeoffs in Modern Distributed Database System Design", IEEE Computer 2012 |

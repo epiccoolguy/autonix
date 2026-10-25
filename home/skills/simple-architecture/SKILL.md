@@ -1,6 +1,6 @@
 ---
 name: simple-architecture
-description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; adopting dependencies; writing decision records (ADRs) and architecture diagrams.
+description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; adopting dependencies; frontend and BFF shape; multi-site topology; writing decision records (ADRs) and architecture diagrams.
 ---
 
 # Simple Architecture
@@ -37,5 +37,7 @@ Read only what applies, once per task:
 | Failure handling, observability, availability, recovery | [operability](reference/operability.md) |
 | A new capability, operator, or dependency; upgrades | [capabilities](reference/capabilities.md) |
 | Decision records, diagrams, fitness functions | [records](reference/records.md) |
+| Web or native clients, BFF, where tokens live | [frontend](reference/frontend.md) |
+| Several sites or regions, data placement, cross-site DR | [topology](reference/topology.md) |
 
 Before declaring a design done, check each component, hop, queue, table, and copy it adds: remove it, merge it into an existing one, or keep it synchronous and local unless it serves a current consumer, enforces an invariant, or marks a needed boundary.
