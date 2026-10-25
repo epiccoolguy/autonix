@@ -11,7 +11,7 @@ Tags in brackets name the source; [sources](reference/sources.md) gives the full
 
 ## Making a decision
 
-1. Read the repository's architecture docs and decision records. Precedence: repository decision records, then this skill's defaults. Deviating from a recorded decision means proposing to supersede it; following one needs no proposal. Never carry another organization's or repository's stack choices into this one.
+1. Read the repository's architecture docs and decision records. Precedence: repository decision records, then this skill's defaults. Deviating from a recorded decision means proposing to supersede it; following one needs no proposal. Applying one of this skill's defaults inside an existing component (for example keeping tokens server-side in the existing server) is not a new decision: implement it and say why. A record is for adding a component or departing from a default. Never carry another organization's or repository's stack choices into this one.
 2. Name the force that requires the decision now and the simplest direct alternative. Consider at least two designs [Ousterhout: Design It Twice].
 3. Propose in a PR: a decision record with status proposed (decision, alternatives, consequences), a Mermaid diagram when structure changes, and one or more working prototypes. Do not merge or push it directly, even where auto-merge or direct pushes are otherwise allowed. After the owner reviews, the record becomes accepted, the chosen prototype is completed, and the current-state doc is updated in the same PR.
 4. Add a CI fitness function when a tool can check the decision cheaply [Ford: Fitness Functions].
