@@ -22,6 +22,10 @@ in
 
   programs.git.settings = {
     credential."https://gitlab.insim.biz".useHttpPath = false;
+    credential."https://dev.azure.com" = {
+      msauthUseDefaultAccount = true;
+      msauthFlow = "system";
+    };
   };
 
   # Corporate Artifactory PyPI mirror -- corporate-only (moved out of
