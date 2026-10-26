@@ -371,6 +371,15 @@ in
       settings = {
         credential.helper = "manager";
         credential.useHttpPath = true;
+        # gh already holds a GitHub token, so GitHub never needs a Credential Manager prompt.
+        credential."https://github.com".helper = [
+          ""
+          "${lib.getExe pkgs.gh} auth git-credential"
+        ];
+        credential."https://gist.github.com".helper = [
+          ""
+          "${lib.getExe pkgs.gh} auth git-credential"
+        ];
         init.defaultBranch = "master";
         push.autoSetupRemote = true;
         user = {
@@ -632,6 +641,15 @@ in
   # LaunchServices types Terminal.app owns by default: double-clicked .command
   # and .tool scripts and bare unix executables. Ghostty declares no ssh://
   # URL scheme, so those links are out of reach. duti writes are idempotent.
+  # The git-credential-manager cask's installer writes its helper, behind an empty reset, to
+  # ~/.gitconfig. Git reads that file after programs.git's, so the reset would drop the gh
+  # helper above.
+  home.activation.dropInstallerCredentialHelpers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    for section in credential credential.https://github.com credential.https://gist.github.com; do
+      $DRY_RUN_CMD ${lib.getExe pkgs.git} config --file "$HOME/.gitconfig" --remove-section "$section" 2>/dev/null || true
+    done
+  '';
+
   home.activation.defaultTerminal = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     for type in .command .tool public.unix-executable; do
       $DRY_RUN_CMD ${pkgs.duti}/bin/duti -s com.mitchellh.ghostty "$type" all
