@@ -16,6 +16,7 @@
     "1password"
     "1password-cli"
     "antigravity-cli"
+    "balenaetcher"
     "claude"
     "claude-code@latest"
     "codex"

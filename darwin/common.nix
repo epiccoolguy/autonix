@@ -25,7 +25,6 @@
       "powershell"
     ];
     casks = [
-      "balenaetcher"
       "copilot-cli"
       "drawio"
       "ghostty"
