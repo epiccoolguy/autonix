@@ -85,6 +85,33 @@
         "Adds no new deployable or separate BFF service; the existing server handles login, callback, logout, and session",
         "Requires a valid session on /api routes, and state-changing calls rely on the SameSite session cookie (a CSRF token or origin check also passes)"
       ]
+    },
+    {
+      "id": 7,
+      "name": "column-rename",
+      "prompt": "Rename users.full_name to display_name everywhere - the column name confuses people. Should be a quick one.",
+      "expected_output": "Expand/contract across deploys: add display_name and keep both columns in sync, switch reads, drop full_name only in a later deploy, because old and new replicas run side by side during the rolling update and a rollback must still work. Names the startup-migration race across 3 replicas and recommends a separate, serialized migration step. No flag or new component.",
+      "files": ["evals/files/column-rename/docs/ARCHITECTURE.md", "evals/files/column-rename/src/main.ts", "evals/files/column-rename/src/users.ts", "evals/files/column-rename/migrations/0001_users.sql", "evals/files/column-rename/deploy/api.yaml"],
+      "expectations": [
+        "Does not ship a single-step rename: an ALTER TABLE ... RENAME COLUMN (or add-and-drop) in the same deploy as the code switch fails. The change is split across deploys: add display_name and keep it in sync with full_name (dual write or trigger, plus backfill), switch reads, then drop full_name in a later deploy",
+        "Justifies the split by old and new versions running at the same time (3 replicas, rolling update) and by rollback to the previous version needing the old column",
+        "Points out that migrations run inside the app at startup on 3 replicas and recommends a separate, serialized migration step that completes before the new version serves (as a proposal or follow-up; implementing it is not required)",
+        "Adds no feature flag, migration service, or other new component for the rename"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "slow-deploys",
+      "prompt": "Our pipeline is slow (about 11 minutes to staging) and prod releases are a manual chore. Speed it up and make prod deploys safer. I was thinking we should move to self-hosted runners with bigger machines.",
+      "expected_output": "Uses the timings: the codegen step compiling protogen every run is the longest stage, so fix it first (prebuilt binary, cache, or committed generated code) instead of self-hosted runners. Build the image once and promote that digest to production through the pipeline; remove the laptop release path and mutable :staging/:prod tags; state rollback as redeploying the previous digest. Stop deploying with an admin kubeconfig from pull-request runs.",
+      "files": ["evals/files/slow-deploys/docs/ARCHITECTURE.md", "evals/files/slow-deploys/docs/RELEASING.md", "evals/files/slow-deploys/.github/workflows/ci.yml", "evals/files/slow-deploys/notes/ci-timings.md"],
+      "expectations": [
+        "Uses notes/ci-timings.md to name code generation (compiling protogen every run) as the longest stage and fixes it first (prebuilt or cached binary, or committed generated code); recommending self-hosted or bigger runners as the main fix fails (queue time is 4s and CPU is not saturated)",
+        "Builds the image once per commit and deploys that same artifact to production by digest or immutable SHA tag; rebuilding for production or deploying a mutable :staging or :prod tag fails",
+        "Production deploys go through the pipeline; the laptop build/push/kubectl path is removed. Promotion after staging is automatic on a passing check or an explicit recorded approval step; either passes",
+        "States rollback as redeploying the previous known-good digest through the pipeline, not rebuilding an older commit",
+        "Notices that deploy-staging also runs on pull_request with an admin kubeconfig and restricts deploys to main with environment-scoped, preferably short-lived credentials (or a pull-based deploy); leaving deploys on PR runs fails"
+      ]
     }
   ]
 }

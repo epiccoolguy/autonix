@@ -33,6 +33,14 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | Brooks: Ten Pounds in a Five-Pound Sack | same, ch. 9 | "Show me your tables" |
 | Brooks: No Silver Bullet | same, ch. 16 | Essential vs accidental complexity; buy before build |
 | Brooks: The Design of Design | Brooks, *The Design of Design* | Recorded rationale; budgeting the scarcest resource |
+| Ousterhout: Designing for Performance | Ousterhout, *A Philosophy of Software Design*, 2nd ed., ch. "Designing for Performance" | Measure before modifying; fix the critical path |
+| Pragmatic: Pragmatic Starter Kit | Thomas and Hunt, *The Pragmatic Programmer*, 20th anniv. ed., Topic 51 | Version control, regression tests, full automation |
+| CD: The Problem of Delivering Software | Humble and Farley, *Continuous Delivery*, 2010, ch. 1 | Small, frequent, automated releases |
+| CD: Configuration Management | same, ch. 2 | Everything needed to recreate an environment in version control |
+| CD: Only Build Your Binaries Once | same, ch. 5 (deployment pipeline practices) | Build once, promote the same artifact |
+| CD: Deploying and Releasing Applications | same, ch. 10 | One automated path; rollback by redeploying a known-good version |
+| CD: Managing Data | same, ch. 12 | Migrations decoupled from application deploys |
+| Accelerate | Forsgren, Humble, Kim, *Accelerate*, 2018; DORA reports | Trunk-based development, deployment automation; heavyweight change approval hurts delivery |
 
 ## Further
 
@@ -74,3 +82,13 @@ Each bracketed tag in this skill maps to one entry below. Read this file when as
 | Helland: Life beyond Distributed Transactions | Pat Helland, CIDR 2007 / ACM Queue 2016 |
 | AWS: Cell-Based Architecture | AWS Well-Architected, "Reducing the Scope of Impact with Cell-Based Architecture" |
 | Abadi: PACELC | Daniel Abadi, "Consistency Tradeoffs in Modern Distributed Database System Design", IEEE Computer 2012 |
+| Fowler: Continuous Integration | martinfowler.com/articles/continuousIntegration.html (2024 rev.) |
+| Hammant: Trunk-Based Development | Paul Hammant, trunkbaseddevelopment.com |
+| Hodgson: Feature Toggles | Pete Hodgson, martinfowler.com/articles/feature-toggles.html, 2017 |
+| Twelve-Factor: (factor) | 12factor.net - Build, Release, Run; Dev/Prod Parity; Logs |
+| OpenGitOps | opengitops.dev principles v1.0 (declarative, versioned, pulled, continuously reconciled) |
+| SLSA | slsa.dev, v1.2 Build track (provenance, hardened isolated builds) |
+| Sigstore | sigstore.dev (keyless signing, transparency log) |
+| OpenSSF Scorecard | scorecard.dev - Pinned-Dependencies, Dangerous-Workflow |
+| Prometheus: Naming | prometheus.io/docs/practices/naming and instrumentation (units, suffixes, label cardinality) |
+| OpenTelemetry: Semantic Conventions | opentelemetry.io/docs/specs/semconv (metric names, resource attributes, messaging span links) |

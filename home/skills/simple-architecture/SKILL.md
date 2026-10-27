@@ -1,6 +1,6 @@
 ---
 name: simple-architecture
-description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; adopting a capability, framework, or language and dependency upgrade policy; frontend and BFF shape, including login, OIDC, sessions, and where tokens live; multi-site topology; writing decision records (ADRs) and architecture diagrams.
+description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; CI/CD pipelines, promotion, rollback, and migrations at deploy; adopting a capability, framework, or language and dependency upgrade policy; frontend and BFF shape, including login, OIDC, sessions, and where tokens live; multi-site topology; writing decision records (ADRs) and architecture diagrams.
 ---
 
 # Simple Architecture
@@ -35,6 +35,7 @@ Read only what applies, once per task:
 | Ownership, consistency, history, audit, deletes | [data](reference/data.md) |
 | Identity, actor propagation, who-did-what records | [actors](reference/actors.md) |
 | Failure handling, observability, availability, recovery | [operability](reference/operability.md) |
+| CI/CD pipelines, promotion, rollback, environments, supply chain | [delivery](reference/delivery.md) |
 | A new capability, operator, framework, or language; upgrade policy | [capabilities](reference/capabilities.md) |
 | Decision records, diagrams, fitness functions | [records](reference/records.md) |
 | Web or native clients, BFF, where tokens live | [frontend](reference/frontend.md) |
