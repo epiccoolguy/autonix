@@ -334,6 +334,7 @@ in
         # Left Option acts as Meta (word jumps, Claude Code Option shortcuts);
         # right Option still types special characters.
         macos-option-as-alt = "left";
+        theme = "light:Catppuccin Latte,dark:Catppuccin Mocha";
         # Remotes lack the xterm-ghostty terminfo, breaking rendering and
         # cursor handling over ssh: install it on the remote when possible,
         # else fall back to TERM=xterm-256color. Unlisted features keep their
