@@ -1,6 +1,6 @@
 # Delivery
 
-Ship small, frequent changes through one automated path to production; no freezes [CD: The Problem of Delivering Software; Accelerate]. CI test tiers, the deploy check, and the done gate belong to simple-testing; how a repository deploys (tools, environments, hooks) belongs to its decision records.
+Ship small, frequent changes through one automated path to production; no freezes [CD: The Problem of Delivering Software; Accelerate]. CI test tiers, the deploy check, and the done gate belong to simple-testing; how a repository deploys (tools, environments, hooks) belongs to its decision records. Moving a repository onto these defaults inside its existing pipeline is implementation; adopting a new tool (a reconciler, a rollout tool) is a proposal.
 
 ## Pipeline
 
@@ -12,7 +12,7 @@ Ship small, frequent changes through one automated path to production; no freeze
 - Progressive delivery (canary, blue-green) only with replicas and a rollout tool that supports it.
 - Reference a shared pipeline (reusable workflows, templates) by an immutable ref (SHA or tag) and upgrade it through the update bot like any dependency.
 - Measure the pipeline's critical path before changing CI infrastructure and fix the longest stage first. Aim for about 10 minutes from PR to deployed in the first environment [Ousterhout: Designing for Performance; Fowler: Continuous Integration].
-- Prefer that no runner reaches production: CI writes to git and the environment pulls. A runner that must is ephemeral, least-privilege, uses short-lived credentials, and never runs untrusted code [SLSA].
+- Prefer that no runner reaches production: CI writes to git and the environment pulls. Without a reconciler, deploy from the existing pipeline rather than adding one: from the main branch only, in an ephemeral, least-privilege job with short-lived, environment-scoped credentials that never runs untrusted code [SLSA].
 
 ## Branches and flags
 

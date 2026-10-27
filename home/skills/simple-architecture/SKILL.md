@@ -1,6 +1,6 @@
 ---
 name: simple-architecture
-description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; CI/CD pipelines, promotion, rollback, and migrations at deploy; adopting a capability, framework, or language and dependency upgrade policy; frontend and BFF shape, including login, OIDC, sessions, and where tokens live; multi-site topology; writing decision records (ADRs) and architecture diagrams.
+description: Designs and reviews system architecture with the fewest moving parts. Use for decisions that are expensive to reverse or cross a process, persisted-data, trust, or ownership boundary - splitting or adding services and cluster capabilities; sync vs async, events, queues, workflows; data ownership, history, audit trails, deletes; propagating and recording actors; operability and recovery; CI/CD pipelines, promotion, rollback, and schema changes and migrations at deploy; adopting a capability, framework, or language and dependency upgrade policy; frontend and BFF shape, including login, OIDC, sessions, and where tokens live; multi-site topology; writing decision records (ADRs) and architecture diagrams.
 ---
 
 # Simple Architecture
