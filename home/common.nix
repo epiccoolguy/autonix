@@ -594,15 +594,9 @@ in
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/settings.json";
     ".claude/statusline.sh".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/statusline.sh";
-    ".claude/hooks/enforce-pnpm.sh".source =
-      config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/claude/hooks/enforce-pnpm.sh";
 
     ".gemini/antigravity-cli/settings.json" = {
       source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/antigravity/settings.json";
-      force = true;
-    };
-    ".gemini/config/hooks.json" = {
-      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/antigravity/hooks.json";
       force = true;
     };
   };

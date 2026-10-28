@@ -14,7 +14,6 @@ Run a small A/B evaluation of the shared `<SKILL>` skill on the Antigravity CLI 
 - Output root R=~/skill-evals/<SKILL>/run-antigravity-N, using the lowest N whose folder doesn't exist yet (create R/work and R/out).
 
 ## Do not touch configuration
-- A PreToolUse hook syncs runtime permission changes from ~/.gemini/antigravity-cli/settings.json back into /etc/nix-darwin/home/antigravity/settings.json.
 - Never approve "always allow" prompts, and never edit ~/.gemini config, settings, or hooks, in this session or in child runs.
 - Use per-run flags or an external `sandbox-exec` profile instead (the first Antigravity run isolated both arms this way); never copy credential files into a temporary home.
 - Afterwards, confirm `git -C /etc/nix-darwin status --short` shows nothing new from this work.
