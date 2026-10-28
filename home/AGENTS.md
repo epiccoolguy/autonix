@@ -8,7 +8,7 @@ macOS, but the GNU/Linux userland precedes Apple's BSD tools in `PATH` - assume 
 - No code comments unless the WHY is non-obvious; no error handling for impossible scenarios.
 - Before coding, inspect the existing implementation and choose the simplest direct, local, idiomatic solution to the actual requirements. Keep dependencies and effects visible; introduce structure only for a concrete benefit.
 - Prefer deep modules that hide meaningful complexity behind a small public interface; test behavior through that interface. Confirm externally consumed interface changes or breaking changes unless explicitly requested or already approved.
-- Plain printable ASCII in responses, code, commits, and docs: `-`, `"`, `'`, `...` instead of em dashes, smart quotes, ellipses, arrows, or decorative symbols.
+- Use ASCII by default; Unicode is fine in string literals and constants when it is intended content.
 - For code/config changes, review and simplify the diff: question each added construct and remove unneeded structure and speculative behavior while preserving correctness and real boundaries. Run applicable static checks then tests, fix findings caused by the change, and rerun affected checks. Report failures and skipped checks plainly.
 - Secrets: read tokens from the environment or `~/.env`; never print them or write them anywhere else.
 - Never change cluster state directly - GitOps only.
