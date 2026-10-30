@@ -1,6 +1,6 @@
-# 0001. Corporate SonarQube MCP and early PR checks
+# 0001. Corporate SonarQube MCP and early code checks
 
-Status: proposed
+Status: accepted
 
 ## Context
 
