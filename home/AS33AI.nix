@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  config,
   ...
 }:
 let
@@ -63,38 +62,27 @@ in
     ];
   };
 
+  # `sonar run mcp` authenticates with the CLI's Keychain login (`sonar auth login`), so no
+  # token lives in a file. Read-only: agents query SonarQube but cannot change issues.
   home.file."Library/Application Support/Code/User/mcp.json" = {
     text = builtins.toJSON {
       servers.sonarqube = {
         type = "stdio";
-        command = "docker";
+        command = "sonar";
         args = [
           "run"
-          "--init"
-          "--pull=always"
-          "-i"
-          "--rm"
-          "-e"
-          "SONARQUBE_TOKEN"
-          "-e"
-          "SONARQUBE_URL"
-          "sonarsource/sonarqube-mcp"
+          "mcp"
+          "--read-only"
         ];
-        envFile = "${config.home.homeDirectory}/.env";
       };
     };
     force = true;
   };
 
-  home.file."Library/Application Support/Code/User/instructions/sonarqube-pr.instructions.md".source =
-    ./vscode/instructions/sonarqube-pr.instructions.md;
-
-  home.activation.secureSonarEnvFile = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    envFile=${lib.escapeShellArg "${config.home.homeDirectory}/.env"}
-    if [ -f "$envFile" ]; then
-      chmod 0600 "$envFile"
-    fi
-  '';
+  # Copilot sessions read user instructions from ~/.copilot/instructions, not the VS Code
+  # profile. `sonar integrate copilot` writes its own sonarqube.instructions.md there.
+  home.file.".copilot/instructions/sonarqube-pr.instructions.md".source =
+    ./copilot/sonarqube-pr.instructions.md;
 
   # Session variables rather than zsh initContent, so non-interactive shells
   # (agents' `zsh -c`, bash) trust the corporate CAs too.
