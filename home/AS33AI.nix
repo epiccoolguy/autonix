@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 let
@@ -61,6 +62,39 @@ in
       }
     ];
   };
+
+  home.file."Library/Application Support/Code/User/mcp.json" = {
+    text = builtins.toJSON {
+      servers.sonarqube = {
+        type = "stdio";
+        command = "docker";
+        args = [
+          "run"
+          "--init"
+          "--pull=always"
+          "-i"
+          "--rm"
+          "-e"
+          "SONARQUBE_TOKEN"
+          "-e"
+          "SONARQUBE_URL"
+          "sonarsource/sonarqube-mcp"
+        ];
+        envFile = "${config.home.homeDirectory}/.env";
+      };
+    };
+    force = true;
+  };
+
+  home.file."Library/Application Support/Code/User/instructions/sonarqube-pr.instructions.md".source =
+    ./vscode/instructions/sonarqube-pr.instructions.md;
+
+  home.activation.secureSonarEnvFile = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    envFile=${lib.escapeShellArg "${config.home.homeDirectory}/.env"}
+    if [ -f "$envFile" ]; then
+      chmod 0600 "$envFile"
+    fi
+  '';
 
   # Session variables rather than zsh initContent, so non-interactive shells
   # (agents' `zsh -c`, bash) trust the corporate CAs too.
