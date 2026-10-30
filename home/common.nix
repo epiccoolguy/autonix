@@ -155,13 +155,6 @@ in
     HOMEBREW_ACCEPT_EULA = "Y";
     SSH_SK_PROVIDER = "/usr/lib/ssh-keychain.dylib";
     PNPM_HOME = "${config.xdg.dataHome}/pnpm";
-    # bash >= 5.1 writes a here-document or here-string smaller than its build-time
-    # pipe capacity into a pipe before starting the command. macOS 26 accepts only
-    # 512 bytes in a pipe with no reader, so any such document over 512 bytes
-    # deadlocks, for every nixpkgs bash, nix develop shells included (which
-    # inherit this). Compat level 5.0 makes bash use temporary files, as 5.0 did.
-    # Apple's /bin/bash 3.2 is unaffected.
-    BASH_COMPAT = "5.0";
   };
 
   # pnpm's bin dir precedes nix's so its project-aware `node` shim wins: it runs
