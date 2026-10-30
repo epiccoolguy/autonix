@@ -10,6 +10,8 @@
     mac-app-util.url = "github:hraban/mac-app-util";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    nix-homebrew.inputs.brew-src.url = "github:Homebrew/brew/7.0.11";
+    nix-homebrew.inputs.brew-src.flake = false;
     homebrew-core.url = "github:homebrew/homebrew-core";
     homebrew-core.flake = false;
     homebrew-cask.url = "github:homebrew/homebrew-cask";

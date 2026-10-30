@@ -10,6 +10,12 @@
   nix.settings.keep-derivations = true;
   nix.optimise.automatic = true;
 
+  # Keep the reported version aligned with the overridden brew-src input.
+  nix-homebrew.package = inputs.nix-homebrew.inputs.brew-src // {
+    name = "brew-7.0.11";
+    version = "7.0.11";
+  };
+
   system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
   system.stateVersion = 6;
 
