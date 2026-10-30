@@ -367,7 +367,7 @@ in
         ".gemini/worktrees/"
       ];
       settings = {
-        credential.helper = "manager";
+        credential.helper = [ "" "manager" ];
         credential.useHttpPath = true;
         credential.gitHubAuthModes = "browser";
         init.defaultBranch = "master";
