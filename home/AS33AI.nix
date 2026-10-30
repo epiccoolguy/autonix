@@ -11,6 +11,15 @@ let
   awk = "/usr/bin/awk";
   openssl = "${pkgs.openssl}/bin/openssl";
   keytool = "${pkgs.jdk}/bin/keytool";
+  podman = "${pkgs.podman}/bin/podman";
+  podmanMachine = "podman-machine-default";
+  podmanCaPath = "/etc/pki/ca-trust/source/anchors/macos-cacerts.crt";
+  podmanRegistryPath = "/etc/containers/registries.conf.d/100-nn-artifactory.conf";
+  podmanRegistryConfig = pkgs.writeText "nn-artifactory-registries.conf" ''
+    [[registry]]
+    prefix = "docker.io"
+    location = "nn-docker.artifactory.insim.biz"
+  '';
 in
 {
   imports = [ ./common.nix ];
@@ -103,6 +112,52 @@ in
     ${security} export -t certs -p -k /System/Library/Keychains/SystemRootCertificates.keychain > ${lib.escapeShellArg certPath}
     ${security} export -t certs -p -k /Library/Keychains/System.keychain >> ${lib.escapeShellArg certPath}
     chmod 0644 ${lib.escapeShellArg certPath}
+  '';
+
+  home.activation.syncPodmanTrust = lib.hm.dag.entryAfter [ "exportKeychainCerts" ] ''
+    set -euo pipefail
+    podman='${podman}'
+    machine='${podmanMachine}'
+    machineState=$("$podman" machine inspect --format '{{.State}}' "$machine" 2>/dev/null || true)
+    if [ -z "$machineState" ]; then
+      echo "Podman machine '$machine' not found; CA bundle and registry mirror were not synced." >&2
+    else
+      startedMachine=0
+      if [ "$machineState" != running ]; then
+        "$podman" machine start "$machine"
+        startedMachine=1
+      fi
+      stopStartedMachine() {
+        if [ "$startedMachine" -eq 1 ]; then
+          "$podman" machine stop "$machine"
+        fi
+      }
+      trap stopStartedMachine EXIT
+
+      syncFile() {
+        sourceFile=$1
+        targetFile=$2
+        sourceHash=$(${pkgs.coreutils}/bin/sha256sum "$sourceFile" | cut -d ' ' -f 1)
+        if "$podman" machine ssh "$machine" sudo test -f "$targetFile"; then
+          targetHash=$("$podman" machine ssh "$machine" sudo sha256sum "$targetFile" | cut -d ' ' -f 1)
+        else
+          targetHash=""
+        fi
+        if [ "$sourceHash" != "$targetHash" ]; then
+          "$podman" machine ssh "$machine" sudo tee "$targetFile" < "$sourceFile" >/dev/null
+          "$podman" machine ssh "$machine" sudo chmod 0644 "$targetFile"
+          fileChanged=1
+        else
+          fileChanged=0
+        fi
+      }
+
+      syncFile ${lib.escapeShellArg certPath} ${lib.escapeShellArg podmanCaPath}
+      if [ "$fileChanged" -eq 1 ]; then
+        "$podman" machine ssh "$machine" sudo update-ca-trust
+      fi
+      syncFile ${lib.escapeShellArg podmanRegistryConfig} ${lib.escapeShellArg podmanRegistryPath}
+    fi
   '';
 
   # impure as well
