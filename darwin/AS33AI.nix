@@ -9,12 +9,10 @@
   # https://github.com/nix-community/home-manager/issues/6036
   users.users.AS33AI.home = "/Users/AS33AI";
 
-  homebrew.brews = [
-    "sonar-scanner"
-  ];
   homebrew.casks = [
     "citrix-workspace"
     "copilot-cli"
+    "sonarqube-cli"
     "soapui"
   ];
 
