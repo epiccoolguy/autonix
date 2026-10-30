@@ -10,6 +10,7 @@
   users.users.AS33AI.home = "/Users/AS33AI";
 
   homebrew.brews = [
+    "sonar-scanner"
   ];
   homebrew.casks = [
     "citrix-workspace"
