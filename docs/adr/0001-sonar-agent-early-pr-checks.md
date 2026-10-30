@@ -4,47 +4,55 @@ Status: proposed
 
 ## Context
 
-The corporate SonarQube MCP configuration is currently edited in VS Code's user profile and contains credentials. SonarQube CI checks already run for pull requests, but findings discovered there waste CI cycles. The corporate profile should keep its MCP configuration reproducible without storing credentials in the Nix store, and agents should run useful checks before pushing.
+SonarQube already runs in CI for corporate pull requests, but findings discovered there cost a CI cycle. Agents should catch issues locally before pushing. The VS Code SonarQube MCP configuration held a literal token in the user profile.
+
+Tested against sonarqube.insim.biz (Enterprise 2026.5.2):
+
+- `sonar analyze` runs the secrets scan; Sonar Vortex code analysis returns 403 (no Vortex subscription), so the CLI cannot preview code issues.
+- The SonarQube for IDE extension (already connected to the server) exposes `sonarqube_analyzeFile`, which analyzes a file locally and reports findings in the Problems view.
+- `sonar integrate copilot` registers `sonar run mcp` in `~/.copilot/mcp-config.json`, authenticated through the CLI's Keychain login.
+- The global Sonar pre-push hook sets `core.hooksPath` globally; Husky repositories set a local `core.hooksPath`, so the hook does not run in them.
 
 ## Decision
 
-- Manage the corporate VS Code user-profile `mcp.json` and a SonarQube-specific user instruction through Home Manager.
-- Load `SONARQUBE_TOKEN` and `SONARQUBE_URL` from `~/.env`; keep the file owner-readable only and keep values out of the repository and Nix store.
-- Use the MCP for project and issue context, and run `sonar analyze agentic` on local changes when supported.
-- Install the global Sonar CLI pre-push hook with `sonar integrate git --hook pre-push --non-interactive` to scan unpushed commits for secrets. Keep the existing CI Quality Gate as the authoritative quality check.
+- Code issues: agents run `sonarqube_analyzeFile` on changed files before pushing.
+- Secrets: agents run `sonar analyze --base <base-branch>`; the global pre-push hook covers repositories without a local `core.hooksPath`.
+- Server context: the VS Code profile `mcp.json` is Home Manager-managed and runs `sonar run mcp --read-only`, reusing the CLI's Keychain login. No token is stored in a file.
+- A corporate-only Copilot instruction in `~/.copilot/instructions/` defines this workflow.
+- CI's SonarQube analysis and Quality Gate remain authoritative.
 
 ```mermaid
 sequenceDiagram
     actor Agent
-    participant VSCode as VS Code profile
-    participant Env as ~/.env
-    participant Docker as SonarQube MCP container
-    participant Sonar as SonarQube Server
-    participant Hook as Sonar CLI pre-push hook
+    participant IDE as SonarQube for IDE
+    participant CLI as sonar CLI
+    participant MCP as sonar run mcp (read-only)
+    participant Sonar as sonarqube.insim.biz
     participant CI as Existing CI
 
-    VSCode->>Env: Load MCP environment file
-    VSCode->>Docker: Start MCP with explicit Sonar variables
-    Agent->>Docker: Query linked project and relevant findings
-    Docker->>Sonar: Read project data
-    Agent->>Sonar: Run local agentic analysis when supported
-    Agent->>Hook: Push branch
-    Hook->>Hook: Scan unpushed commits for secrets
-    Hook-->>Agent: Allow or block push
-    Agent->>CI: Push after local checks pass
-    CI->>Sonar: Run existing PR analysis and Quality Gate
+    Agent->>IDE: sonarqube_analyzeFile per changed file
+    IDE-->>Agent: Findings in Problems view
+    Agent->>CLI: sonar analyze --base main
+    CLI-->>Agent: Secrets findings (Vortex 403: unavailable)
+    Agent->>Agent: Fix and repeat until clean
+    Agent->>MCP: Existing issues and PR quality gate
+    MCP->>Sonar: Read with Keychain login
+    Agent->>CI: Push
+    CI->>Sonar: Full analysis and Quality Gate
 ```
 
 ## Alternatives
 
-- Keep editing the VS Code MCP file manually and replace literal credentials with `envFile`. This avoids a Home Manager takeover but allows configuration drift.
-- Rely only on agent instructions. This is easy to bypass and cannot block a push.
-- Rely only on CI. This remains authoritative but discovers issues after spending CI time.
+- Load the MCP token from `~/.env` through VS Code's `envFile` with the Docker image. Works for the VS Code Local harness, but keeps a long-lived token in a file and duplicates the CLI login.
+- Rely on `sonar analyze` alone. Without Vortex it only scans for secrets.
+- Rely on CI alone. Authoritative, but finds issues only after a CI run.
 
 ## Consequences
 
-- Nix stores only the MCP command, the `~/.env` path, and the Sonar variable names; credential values remain local.
-- Home Manager owns the complete VS Code MCP file. Changes to its server definition must be made in this repository rather than through the VS Code editor.
-- The MCP config loads `~/.env` for the local Docker client and explicitly forwards only Sonar variables to the container.
-- The pre-push hook is a local secret scan, not a code-quality gate, and can be bypassed. Agent instructions are advisory; CI remains the enforcement point for the Quality Gate.
-- Local agentic analysis depends on project linking and server support; unavailable checks must be reported rather than treated as passing.
+- One credential: the CLI's Keychain login serves the CLI and both MCP registrations. Nix stores no secret.
+- Home Manager owns the VS Code profile `mcp.json`; servers added through the VS Code UI are overwritten on switch.
+- `~/.copilot/mcp-config.json` stays owned by `sonar integrate copilot` and is not read-only; the instruction forbids changing issues or remediating without approval.
+- The MCP server needs a running container runtime. The podman machine must be started, and it must trust the corporate TLS-inspection CA to pull `sonarsource/sonarqube-mcp`; until then, step 4 of the instruction is skipped.
+- SonarQube for IDE uses the server's quality profile only for workspaces bound in Connected Mode; unbound workspaces use default rules.
+- The global `core.hooksPath` makes Git ignore other `.git/hooks/` scripts; Sonar chains only a same-named local hook. No local corporate repository had such scripts when this was written.
+- Agent instructions are advisory; CI remains the enforcement point.
