@@ -90,8 +90,8 @@ in
 
   # Copilot sessions read user instructions from ~/.copilot/instructions, not the VS Code
   # profile. `sonar integrate copilot` writes its own sonarqube.instructions.md there.
-  home.file.".copilot/instructions/sonarqube-pr.instructions.md".source =
-    ./copilot/sonarqube-pr.instructions.md;
+  home.file.".copilot/instructions/sonarqube-code.instructions.md".source =
+    ./copilot/sonarqube-code.instructions.md;
 
   # Session variables rather than zsh initContent, so non-interactive shells
   # (agents' `zsh -c`, bash) trust the corporate CAs too.
