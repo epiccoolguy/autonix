@@ -22,14 +22,15 @@
     onActivation.autoUpdate = true;
     onActivation.upgrade = true;
     brews = [
-      # Not nixpkgs: its azure-cli needs fabric 3.2.3, which requires invoke<3 while
-      # nixpkgs ships invoke 3, so it does not build and blocked every daily flake
-      # update from 2026-10-25. Homebrew bundles its own Python environment. Add the
-      # DevOps extension once: az extension add --name azure-devops
-      "azure-cli"
       "powershell"
     ];
     casks = [
+      # Not nixpkgs: its azure-cli needs fabric 3.2.3, which requires invoke<3 while
+      # nixpkgs ships invoke 3, so it does not build and blocked every daily flake
+      # update from 2026-10-25. Homebrew moved azure-cli from a formula to a cask; it
+      # bundles its own Python. Add the DevOps extension once:
+      # az extension add --name azure-devops
+      "azure-cli"
       "copilot-cli"
       "drawio"
       "ghostty"
