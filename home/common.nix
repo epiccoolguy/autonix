@@ -67,9 +67,6 @@ in
     argo-workflows
     argocd
     awscli2
-    (azure-cli.withExtensions [
-      azure-cli.extensions.azure-devops
-    ])
     bashInteractive
     bc
     bruno
