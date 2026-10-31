@@ -13,6 +13,15 @@
 
   home.packages = with pkgs; [
     wireguard-tools
+    # The mlzw repos' toolchain, on PATH everywhere instead of per-repo devShells (mlzw-infra#454).
+    actionlint
+    age
+    cilium-cli
+    cosign
+    crane
+    kubeconform
+    kustomize
+    sops
     # Owner admin access to mlzw-hp (mlzw-infra decisions/0020): runs one command with the
     # admin kubeconfig, read from 1Password behind its approval and kept only in a temp file
     # for that command. The ambient KUBECONFIG stays the read-only agent one.
@@ -99,6 +108,40 @@
       };
       StandardOutPath = "${config.home.homeDirectory}/Library/Logs/renew-agent-tokens.log";
       StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/renew-agent-tokens.log";
+    };
+  };
+
+  # Daily Renovate triage (mlzw-infra decisions/0021): headless Claude runs the repo's
+  # /renovate-triage skill as the mlzw-agent App with read-only cluster access. Local, not a
+  # cloud routine, because verifying a deploy needs the LAN-only cluster and Argo. A missed
+  # run (asleep) runs on wake; failures raise a notification.
+  launchd.agents.renovate-triage = {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "${pkgs.writeShellScript "renovate-triage" ''
+          echo "== $(date)"
+          cd ${config.home.homeDirectory}/github.com/epiccoolguy/mlzw-infra || exit 1
+          if ! git pull -q --ff-only || ! /opt/homebrew/bin/claude -p "/renovate-triage" \
+            --allowedTools "Bash Read Grep Glob Skill"; then
+            /usr/bin/osascript -e 'display notification "See ~/Library/Logs/renovate-triage.log" with title "mlzw Renovate triage failed"'
+            exit 1
+          fi
+        ''}"
+      ];
+      StartCalendarInterval = [
+        {
+          Hour = 10;
+          Minute = 0;
+        }
+      ];
+      RunAtLoad = false;
+      EnvironmentVariables = {
+        HOME = config.home.homeDirectory;
+        PATH = "/etc/profiles/per-user/miguel/bin:/opt/homebrew/bin:/usr/bin:/bin";
+      };
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/renovate-triage.log";
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/renovate-triage.log";
     };
   };
 }
