@@ -21,7 +21,10 @@
     crane
     kubeconform
     kustomize
+    podman-compose
     sops
+    # The mlzw repos use yq-go syntax; common.nix's python yq keeps the name elsewhere.
+    (lib.hiPrio yq-go)
     # Owner admin access to mlzw-hp (mlzw-infra decisions/0020): runs one command with the
     # admin kubeconfig, read from 1Password behind its approval and kept only in a temp file
     # for that command. The ambient KUBECONFIG stays the read-only agent one.
