@@ -22,6 +22,7 @@
     kubeconform
     kustomize
     podman-compose
+    prometheus.cli # promtool, for mlzw-infra's alert-rule checks
     sops
     # The mlzw repos use yq-go syntax; common.nix's python yq keeps the name elsewhere.
     (lib.hiPrio yq-go)
