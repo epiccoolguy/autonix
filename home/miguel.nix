@@ -13,7 +13,24 @@
 
   home.packages = with pkgs; [
     wireguard-tools
+    # Owner admin access to mlzw-hp (mlzw-infra decisions/0020): runs one command with the
+    # admin kubeconfig, read from 1Password behind its approval and kept only in a temp file
+    # for that command. The ambient KUBECONFIG stays the read-only agent one.
+    (writeShellScriptBin "mlzw-admin" ''
+      set -euo pipefail
+      [ $# -gt 0 ] || { echo "usage: mlzw-admin <command> [args...], e.g. mlzw-admin kubectl get nodes" >&2; exit 2; }
+      f="$(mktemp)"
+      trap 'rm -f "$f"' EXIT
+      op read "''${MLZW_ADMIN_KUBECONFIG_REF:-op://Private/mlzw-hp-admin-kubeconfig/notesPlain}" >"$f"
+      KUBECONFIG="$f" "$@"
+    '')
   ];
+
+  # mlzw nodes: the cluster key is served by the 1Password SSH agent with approval per use, so
+  # an agent session cannot reach a node's admin credential on its own (mlzw-infra decisions/0020).
+  programs.ssh.settings."172.22.20.* 172.17.20.* 10.10.20.*" = {
+    IdentityAgent = "\"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
+  };
 
   programs.vscode.profiles.default.extensions = with pkgs.vscode-marketplace; [
     anthropic.claude-code
