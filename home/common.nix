@@ -149,6 +149,21 @@ in
     (writeShellScriptBin "switch" ''
       exec sudo darwin-rebuild switch "$@"
     '')
+    # The podman machine stays off until needed; agents stop it when done.
+    (lib.hiPrio (
+      writeShellScriptBin "podman" ''
+        podman=${lib.getExe pkgs.podman}
+        case "''${1-}" in
+          "" | machine | help | version | --help | --version | -v) ;;
+          *)
+            if [ "$("$podman" machine inspect --format '{{.State}}' 2>/dev/null)" = stopped ]; then
+              "$podman" machine start >&2
+            fi
+            ;;
+        esac
+        exec "$podman" "$@"
+      ''
+    ))
     (writeShellScriptBin "docker" ''
       exec podman "$@"
     '')
@@ -371,7 +386,10 @@ in
         ".gemini/worktrees/"
       ];
       settings = {
-        credential.helper = [ "" "manager" ];
+        credential.helper = [
+          ""
+          "manager"
+        ];
         credential.useHttpPath = true;
         credential.gitHubAuthModes = "browser";
         init.defaultBranch = "master";
