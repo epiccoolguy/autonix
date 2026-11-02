@@ -115,19 +115,19 @@ review() {
     *) die "unknown scope: $scope (auto, working-tree or branch)" ;;
   esac
 
-  # Large diffs: send the stat and let Vibe read the files itself.
+  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mistral-review.XXXXXX")"
+  trap 'rm -rf "$work_dir"' EXIT
+  local prompt_file="$work_dir/prompt.md"
+
+  # Large diffs: keep the full diff in a file Vibe can read in chunks.
   if [ "${#context}" -gt 300000 ]; then
-    if [ "$scope" = branch ]; then
-      context="$(git log --oneline "$base..HEAD"; echo; git diff --stat "$base...HEAD")"
-    else
-      context="$(git status --short --untracked-files=all; echo; git diff --stat HEAD)"
-    fi
-    context="The full diff is too large to inline. Read the changed files with your tools.
-$context"
+    printf '%s\n' "$context" >"$work_dir/full-diff.txt"
+    context="The full diff is too large to inline; it is saved at $work_dir/full-diff.txt.
+Read it in chunks with read_file, and read the changed files for surrounding context.
+Summary:
+$(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status --short --untracked-files=all; fi)"
   fi
 
-  prompt_file="$(mktemp "${TMPDIR:-/tmp}/mistral-review.XXXXXX")"
-  trap 'rm -f "$prompt_file"' EXIT
   {
     cat "$plugin_root/prompts/$kind.md"
     echo
@@ -141,7 +141,7 @@ $context"
 
   echo "Mistral $kind of $target" >&2
   run_vibe --output text --max-turns 40 --max-price 2 --time-limit 900 \
-    --enabled-tools read_file --enabled-tools grep \
+    --enabled-tools read_file --enabled-tools grep --add-dir "$work_dir" \
     --prompt-file "$prompt_file"
 }
 
@@ -160,7 +160,8 @@ task() {
   done
   [ ${#text[@]} -gt 0 ] || die "no task text given"
 
-  local args=(--output json --max-turns 80 --max-price 5 --time-limit 1800)
+  # Stays under the rescue agent's 600 s Bash timeout so the answer and session id survive.
+  local args=(--output json --max-turns 80 --max-price 5 --time-limit 540)
   if [ "$mode" = write ]; then
     args+=(--auto-approve)
   else
