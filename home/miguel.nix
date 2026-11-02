@@ -11,6 +11,12 @@
   home.username = "miguel";
   home.homeDirectory = "/Users/miguel";
 
+  # Applies when the machine is (re)created; this Mac has 8 GB.
+  xdg.configFile."containers/containers.conf".text = ''
+    [machine]
+    memory = 3072
+  '';
+
   home.packages = with pkgs; [
     wireguard-tools
     # The mlzw repos' toolchain, on PATH everywhere instead of per-repo devShells (mlzw-infra#454).
