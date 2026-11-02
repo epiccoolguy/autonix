@@ -1,0 +1,14 @@
+; Seatbelt profile for Vibe, like Codex's macOS sandbox: read anything, write only to
+; Vibe's own state, temp dirs, and WRITE_ROOT (the repo for write tasks, a scratch dir
+; otherwise). Network stays open because Vibe needs Mistral's API.
+(version 1)
+(allow default)
+(deny file-write*)
+(allow file-write*
+  (subpath (param "WRITE_ROOT"))
+  (subpath (param "VIBE_HOME"))
+  (subpath "/private/var/folders")
+  (subpath "/private/tmp")
+  (literal "/dev/null")
+  (literal "/dev/tty")
+  (regex #"^/dev/fd/"))

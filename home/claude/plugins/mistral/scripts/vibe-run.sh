@@ -45,30 +45,49 @@ default_base() {
   die "cannot determine a base branch; pass --base <ref>"
 }
 
+command -v sandbox-exec >/dev/null || die "sandbox-exec not found; this plugin needs macOS"
+
+# Read-only runs still get a shell; the sandbox is what keeps them read-only.
+read_only_tools=(--auto-approve --enabled-tools bash --enabled-tools read_file)
+
 work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mistral.XXXXXX")"
 trap 'rm -rf "$work_dir"' EXIT
 
-# Must stay under Claude's 600 s Bash timeout so the answer and session id survive.
-time_limit=540
-
-# Streams one "[mistral] ..." line per tool call to stderr, prints the final answer, and
-# sets $session. Exit 3 means Vibe stopped at its turn, cost, or time limit.
+# Usage: run_vibe <write-root> <vibe args...>
+# Runs Vibe in the Seatbelt sandbox with writes allowed only under <write-root> (plus
+# Vibe's state and temp dirs). Streams one "[mistral] ..." line per event to stderr,
+# prints the final answer, and sets $session. Exit 3 means Vibe stopped at its turn,
+# cost, or time limit.
 run_vibe() {
-  local log="$work_dir/stream.jsonl" rc
+  local write_root log="$work_dir/stream.jsonl" rc
+  write_root="$(realpath "$1")"
+  shift
+  # The whole script must finish inside Claude's 600 s Bash timeout so the answer and
+  # session id survive; SECONDS already covers the git work done before this.
+  local time_limit=$((560 - SECONDS))
+  [ "$time_limit" -ge 60 ] || time_limit=60
   set +e
-  vibe --trust --disabled-tools ask_user_question --output streaming --time-limit "$time_limit" "$@" |
+  sandbox-exec -f "$plugin_root/scripts/vibe.sb" \
+    -D WRITE_ROOT="$write_root" -D VIBE_HOME="$(realpath "${VIBE_HOME:-$HOME/.vibe}")" \
+    vibe --trust --disabled-tools ask_user_question --output streaming --time-limit "$time_limit" "$@" |
     tee "$log" |
-    jq --unbuffered -r '
-      select(.type == "effect" and .title != "Searching for relevant tools")
-      | "[mistral] \((.detail | objects | .display.summary) // .title)"
-        + (if .state.status == "failed" then " - \(.state.error.message // "failed")" else "" end)' >&2
+    jq --unbuffered -rR '
+      fromjson? | objects |
+      if .type == "message" and .role == "user" then
+        "[mistral] session \(.sessionId) started; model is reading the prompt"
+      elif .type == "reasoning" and (.text | type) == "string" then
+        "[mistral] thinking: \(.text | gsub("\\s+"; " ") | .[0:120])"
+      elif .type == "effect" and .title != "Searching for relevant tools" then
+        "[mistral] \((.detail | objects | .display.summary) // .title)"
+          + (if .state.status == "failed" then " - \(.state.error.message // "failed")" else "" end)
+      else empty end' >&2
   rc=${PIPESTATUS[0]}
   set -e
 
   # Per-line parsing, so a truncated last line can't discard the whole run.
-  session="$(jq -rRn '[inputs | fromjson? | .sessionId // empty] | last // empty' "$log")"
+  session="$(jq -rRn '[inputs | fromjson? | objects | .sessionId // empty] | last // empty' "$log")"
   local answer
-  answer="$(jq -rRn '[inputs | fromjson? | select(.type == "message" and .role == "assistant")] | last | .content // [] | map(select(.type == "text") | .text) | join("")' "$log")"
+  answer="$(jq -rRn '[inputs | fromjson? | objects | select(.type == "message" and .role == "assistant")] | last | .content // [] | map(select(.type == "text") | .text) | join("")' "$log")"
   [ "$rc" -eq 3 ] && echo "mistral: Vibe stopped at its turn, cost, or time limit; the answer may be incomplete." >&2
   if [ -n "$answer" ]; then
     printf '%s\n' "$answer"
@@ -98,7 +117,9 @@ working_tree_context() {
   git ls-files --others --exclude-standard -z | while IFS= read -r -d '' f; do
     echo
     echo "## Untracked file: $f"
-    git diff --no-index -- /dev/null "$f" || true
+    # Exit 1 just means "differs"; anything higher means the file couldn't be read.
+    git diff --no-index -- /dev/null "$f" || [ $? -eq 1 ] ||
+      echo "mistral: could not diff untracked file $f; it is listed without contents" >&2
   done
 }
 
@@ -173,7 +194,7 @@ $(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status
     echo "Target: $target"
     echo "User focus: ${focus[*]:-none}"
     echo "Repository root and working directory: $root. Use paths relative to it."
-    echo "Only read_file and grep are available; there is no shell, so do not try to run git or other commands."
+    echo "You have read_file and a shell (git, rg, ls, ...). A sandbox blocks all writes to the repository; do not try to modify anything."
     echo
     echo "<repository_context>"
     echo "$context"
@@ -181,8 +202,8 @@ $(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status
   } >"$prompt_file"
 
   echo "Mistral $kind of $target" >&2
-  run_vibe --workdir "$root" --max-turns 40 --max-price 2 \
-    --enabled-tools read_file --enabled-tools grep --add-dir "$work_dir" \
+  run_vibe "$work_dir" --workdir "$root" --max-turns 40 --max-price 2 \
+    "${read_only_tools[@]}" --add-dir "$work_dir" \
     --prompt-file "$prompt_file"
 }
 
@@ -201,11 +222,16 @@ task() {
   done
   [ ${#text[@]} -gt 0 ] || die "no task text given"
 
-  local args=(--max-turns 80 --max-price 5)
+  local root write_root
+  root="$(repo_root)"
+  cd "$root"
+  local args=(--workdir "$root" --max-turns 80 --max-price 5)
   if [ "$mode" = write ]; then
     args+=(--auto-approve)
+    write_root="$root"
   else
-    args+=(--enabled-tools read_file --enabled-tools grep --enabled-tools web_search --enabled-tools web_fetch)
+    args+=("${read_only_tools[@]}")
+    write_root="$work_dir"
   fi
   if [ "$resume" = last ]; then
     local id
@@ -216,8 +242,9 @@ task() {
 
   local rc=0
   session=""
-  run_vibe "${args[@]}" -p "${text[*]}" || rc=$?
-  if [ -n "$session" ]; then
+  run_vibe "$write_root" "${args[@]}" -p "${text[*]}" || rc=$?
+  # Exit 3 (stopped at a limit) is worth resuming; other failures are not.
+  if [ -n "$session" ] && { [ "$rc" -eq 0 ] || [ "$rc" -eq 3 ]; }; then
     mkdir -p "$state_dir"
     echo "$session" >"$(session_file)"
     printf '\n---\nVibe session %s (%s). Continue with /mistral:rescue --resume.\n' "$session" "$mode"
