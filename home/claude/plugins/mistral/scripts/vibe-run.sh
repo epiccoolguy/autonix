@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Thin wrapper around headless `vibe -p` for the mistral plugin.
+# Thin wrapper around headless `vibe -p` for the mistral plugin. Progress goes to stderr,
+# the final answer to stdout.
 #   vibe-run.sh review [--base <ref>] [--scope auto|working-tree|branch]
 #   vibe-run.sh adversarial-review [--base <ref>] [--scope ...] [focus text]
 #   vibe-run.sh task [--read-only] [--resume|--resume-last|--fresh] <task text>
@@ -12,6 +13,11 @@ state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/claude-mistral-plugin"
 die() {
   echo "mistral: $*" >&2
   exit 1
+}
+
+# Usage: need_value "$#" "$1" - for flags that consume the next argument.
+need_value() {
+  [ "$1" -ge 2 ] || die "$2 needs a value"
 }
 
 command -v vibe >/dev/null || die "vibe not found; install the mistral-vibe formula and run /mistral:setup"
@@ -39,11 +45,38 @@ default_base() {
   die "cannot determine a base branch; pass --base <ref>"
 }
 
-# Exit 3 is vibe's --time-limit stop.
+work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mistral.XXXXXX")"
+trap 'rm -rf "$work_dir"' EXIT
+
+# Must stay under Claude's 600 s Bash timeout so the answer and session id survive.
+time_limit=540
+
+# Streams one "[mistral] ..." line per tool call to stderr, prints the final answer, and
+# sets $session. Exit 3 means Vibe stopped at its turn, cost, or time limit.
 run_vibe() {
-  local rc=0
-  vibe --trust --disabled-tools ask_user_question "$@" || rc=$?
-  [ "$rc" -eq 3 ] && echo "mistral: Vibe hit its time limit; output may be incomplete." >&2
+  local log="$work_dir/stream.jsonl" rc
+  set +e
+  vibe --trust --disabled-tools ask_user_question --output streaming --time-limit "$time_limit" "$@" |
+    tee "$log" |
+    jq --unbuffered -r '
+      select(.type == "effect" and .title != "Searching for relevant tools")
+      | "[mistral] \((.detail | objects | .display.summary) // .title)"
+        + (if .state.status == "failed" then " - \(.state.error.message // "failed")" else "" end)' >&2
+  rc=${PIPESTATUS[0]}
+  set -e
+
+  # Per-line parsing, so a truncated last line can't discard the whole run.
+  session="$(jq -rRn '[inputs | fromjson? | .sessionId // empty] | last // empty' "$log")"
+  local answer
+  answer="$(jq -rRn '[inputs | fromjson? | select(.type == "message" and .role == "assistant")] | last | .content // [] | map(select(.type == "text") | .text) | join("")' "$log")"
+  [ "$rc" -eq 3 ] && echo "mistral: Vibe stopped at its turn, cost, or time limit; the answer may be incomplete." >&2
+  if [ -n "$answer" ]; then
+    printf '%s\n' "$answer"
+  else
+    echo "mistral: Vibe returned no answer (exit $rc). Last events:" >&2
+    tail -n 3 "$log" | cut -c1-500 >&2
+    [ "$rc" -ne 0 ] || rc=1
+  fi
   return "$rc"
 }
 
@@ -78,10 +111,10 @@ review() {
   local base="" scope="auto" focus=()
   while [ $# -gt 0 ]; do
     case "$1" in
-      --base) base="$2"; shift 2 ;;
-      --scope) scope="$2"; shift 2 ;;
+      --base) need_value $# "$1"; base="$2"; shift 2 ;;
+      --scope) need_value $# "$1"; scope="$2"; shift 2 ;;
       --wait | --background) shift ;;
-      --model | --effort) shift 2 ;;
+      --model | --effort) need_value $# "$1"; shift 2 ;;
       *) focus+=("$1"); shift ;;
     esac
   done
@@ -115,10 +148,6 @@ review() {
     *) die "unknown scope: $scope (auto, working-tree or branch)" ;;
   esac
 
-  work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mistral-review.XXXXXX")"
-  trap 'rm -rf "$work_dir"' EXIT
-  local prompt_file="$work_dir/prompt.md"
-
   # Large diffs: keep the full diff in a file Vibe can read in chunks.
   if [ "${#context}" -gt 300000 ]; then
     printf '%s\n' "$context" >"$work_dir/full-diff.txt"
@@ -128,11 +157,15 @@ Summary:
 $(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status --short --untracked-files=all; fi)"
   fi
 
+  local root prompt_file="$work_dir/prompt.md"
+  root="$(repo_root)"
   {
     cat "$plugin_root/prompts/$kind.md"
     echo
     echo "Target: $target"
     echo "User focus: ${focus[*]:-none}"
+    echo "Repository root and working directory: $root. Use paths relative to it."
+    echo "Only read_file and grep are available; there is no shell, so do not try to run git or other commands."
     echo
     echo "<repository_context>"
     echo "$context"
@@ -140,13 +173,13 @@ $(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status
   } >"$prompt_file"
 
   echo "Mistral $kind of $target" >&2
-  run_vibe --output text --max-turns 40 --max-price 2 --time-limit 900 \
+  run_vibe --workdir "$root" --max-turns 40 --max-price 2 \
     --enabled-tools read_file --enabled-tools grep --add-dir "$work_dir" \
     --prompt-file "$prompt_file"
 }
 
 task() {
-  local mode=write resume="" text=()
+  local mode="write" resume="" text=()
   while [ $# -gt 0 ]; do
     case "$1" in
       --read-only) mode=read-only; shift ;;
@@ -154,14 +187,13 @@ task() {
       --resume | --resume-last) resume=last; shift ;;
       --fresh) resume=""; shift ;;
       --wait | --background) shift ;;
-      --model | --effort) shift 2 ;;
+      --model | --effort) need_value $# "$1"; shift 2 ;;
       *) text+=("$1"); shift ;;
     esac
   done
   [ ${#text[@]} -gt 0 ] || die "no task text given"
 
-  # Stays under the rescue agent's 600 s Bash timeout so the answer and session id survive.
-  local args=(--output json --max-turns 80 --max-price 5 --time-limit 540)
+  local args=(--max-turns 80 --max-price 5)
   if [ "$mode" = write ]; then
     args+=(--auto-approve)
   else
@@ -169,21 +201,19 @@ task() {
   fi
   if [ "$resume" = last ]; then
     local id
-    id="$(cat "$(session_file)" 2>/dev/null)" || die "no previous Mistral task for this repository; start a fresh one"
+    id="$(cat "$(session_file)" 2>/dev/null || true)"
+    [ -n "$id" ] || die "no previous Mistral task for this repository; start a fresh one"
     args+=(--resume "$id")
   fi
 
-  local out rc=0
-  out="$(run_vibe "${args[@]}" -p "${text[*]}")" || rc=$?
-  local session
-  session="$(jq -r 'last(.[] | .sessionId // empty) // empty' <<<"$out" 2>/dev/null || true)"
+  local rc=0
+  session=""
+  run_vibe "${args[@]}" -p "${text[*]}" || rc=$?
   if [ -n "$session" ]; then
     mkdir -p "$state_dir"
     echo "$session" >"$(session_file)"
+    printf '\n---\nVibe session %s (%s). Continue with /mistral:rescue --resume.\n' "$session" "$mode"
   fi
-  jq -r 'last(.[] | select(.role == "assistant" and .type == "message")) | [.content[] | select(.type == "text") | .text] | join("")' <<<"$out" 2>/dev/null ||
-    printf '%s\n' "$out"
-  [ -n "$session" ] && printf '\n---\nVibe session %s (%s). Continue with /mistral:rescue --resume.\n' "$session" "$mode"
   return "$rc"
 }
 

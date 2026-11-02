@@ -27,10 +27,14 @@ Argument handling:
 - Preserve the user's arguments and focus text exactly; do not weaken the adversarial framing. Quote the focus text as one argument.
 
 Foreground flow:
-```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/vibe-run.sh" adversarial-review <flags> "<focus text>"
+```typescript
+Bash({
+  command: `bash "${CLAUDE_PLUGIN_ROOT}/scripts/vibe-run.sh" adversarial-review <flags> "<focus text>"`,
+  description: "Mistral adversarial review",
+  timeout: 600000
+})
 ```
-Return stdout verbatim, without commentary, and do not fix anything it mentions. If it fails, show stderr.
+The `[mistral] ...` lines are progress on stderr; leave them out. Return the review that follows them verbatim, without commentary, and do not fix anything it mentions. If it fails, show the error output (the `mistral:` lines and any Vibe error text) verbatim.
 
 Background flow:
 ```typescript
@@ -40,4 +44,4 @@ Bash({
   run_in_background: true
 })
 ```
-Then tell the user: "Mistral adversarial review started in the background. You'll be notified when it finishes." When it completes, return its output verbatim.
+Then tell the user: "Mistral adversarial review started in the background; its shell shows live `[mistral]` progress. You'll be notified when it finishes." When it completes, return the review verbatim, without the progress lines.

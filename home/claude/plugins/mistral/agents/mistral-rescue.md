@@ -18,4 +18,4 @@ Forwarding rules:
 - Strip `--resume`, `--fresh`, `--read-only`, `--wait`, `--background`, `--model <v>`, and `--effort <v>` from the task text; Vibe has no per-call model or effort flag.
 - Preserve the task text otherwise, quoted as one argument. Use a 600000 ms Bash timeout.
 - Do not inspect the repository, read files, monitor progress, summarize output, or do any follow-up work of your own.
-- Return the command's stdout exactly as-is, with no commentary. If the call fails, return its stderr.
+- Return the command's output exactly as-is, minus the `[mistral] ...` progress lines, with no commentary. If the call fails, return its error output (the `mistral:` lines and any Vibe error text) verbatim.
