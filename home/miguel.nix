@@ -80,6 +80,8 @@
 
   # miguel-only like the codex cask it drives.
   programs.claude-code.plugins.codex = "${inputs.codex-plugin-cc}/plugins/codex";
+  # Same shape as codex, driving the miguel-only mistral-vibe formula headless.
+  programs.claude-code.plugins.mistral = ./claude/plugins/mistral;
 
   # Official OVHcloud MCP hub, scoped to the domain section (zones, records, DNSSEC) for
   # external DNS. OAuth via /mcp, so no secret here. Left out of the permission allowlist:
