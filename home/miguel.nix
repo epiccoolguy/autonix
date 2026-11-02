@@ -78,6 +78,19 @@
 
   programs.git.settings.user.email = "miguel@loafoe.dev";
 
+  # Mistral Vibe (brew formula in darwin/miguel.nix), same pattern as Codex: global
+  # instructions plus config from this repo. Skills are already shared via
+  # ~/.agents/skills, which Vibe also reads. Per-file links keep runtime state (logs,
+  # caches, trusted_folders.toml) user-owned; secrets stay in ~/.vibe/.env, never here.
+  # The config symlink is read-only, so /config edits in Vibe go through this repo.
+  home.file = {
+    ".vibe/AGENTS.md".source = ./AGENTS.md;
+    ".vibe/config.toml" = {
+      source = config.lib.file.mkOutOfStoreSymlink "/etc/nix-darwin/home/vibe/config.toml";
+      force = true;
+    };
+  };
+
   # miguel-only like the codex cask it drives.
   programs.claude-code.plugins.codex = "${inputs.codex-plugin-cc}/plugins/codex";
 
