@@ -45,31 +45,69 @@ default_base() {
   die "cannot determine a base branch; pass --base <ref>"
 }
 
-command -v sandbox-exec >/dev/null || die "sandbox-exec not found; this plugin needs macOS"
-
 # Read-only runs still get a shell; the sandbox is what keeps them read-only.
 read_only_tools=(--auto-approve --enabled-tools bash --enabled-tools read_file)
 
 work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mistral.XXXXXX")"
 trap 'rm -rf "$work_dir"' EXIT
 
-# Usage: run_vibe <write-root> <vibe args...>
-# Runs Vibe in the Seatbelt sandbox with writes allowed only under <write-root> (plus
-# Vibe's state and temp dirs). Streams one "[mistral] ..." line per event to stderr,
-# prints the final answer, and sets $session. Exit 3 means Vibe stopped at its turn,
-# cost, or time limit.
-run_vibe() {
-  local write_root log="$work_dir/stream.jsonl" rc
+# Usage: sandbox_cmd <write-root> [<protected-path>...]
+# Vibe has no sandbox of its own (Codex ships one per OS), so wrap it: Seatbelt on macOS,
+# bubblewrap on Linux/WSL2. Both allow reads everywhere and writes only to <write-root>,
+# Vibe's state, and temp dirs; the network stays open for Mistral's API. Protected paths
+# are made read-only last, so they win over the writable dirs that contain them.
+sandbox_cmd() {
+  local write_root vibe_home p
   write_root="$(realpath "$1")"
   shift
+  vibe_home="${VIBE_HOME:-$HOME/.vibe}"
+  mkdir -p "$vibe_home"
+  vibe_home="$(realpath "$vibe_home")"
+  # Vibe must write its logs, but a tool call must not change the config, agents, or
+  # skills that a later unsandboxed interactive vibe would load.
+  local protected=()
+  for p in "$@" "$vibe_home"/{config.toml,trusted_folders.toml,.env,agents,skills,prompts,tools,plugins}; do
+    [ -e "$p" ] && protected+=("$(realpath "$p")")
+  done
+  case "$(uname -s)" in
+    Darwin)
+      local profile i
+      profile="$(cat "$plugin_root/scripts/vibe.sb")"
+      sandbox=(sandbox-exec -D WRITE_ROOT="$write_root" -D VIBE_HOME="$vibe_home")
+      for i in "${!protected[@]}"; do
+        profile+=$'\n'"(deny file-write* (subpath (param \"PROTECTED_$i\")))"
+        sandbox+=(-D "PROTECTED_$i=${protected[$i]}")
+      done
+      sandbox+=(-p "$profile")
+      ;;
+    Linux)
+      command -v bwrap >/dev/null || die "bwrap not found; install bubblewrap (e.g. apt install bubblewrap)"
+      sandbox=(bwrap --die-with-parent --ro-bind / / --dev /dev --proc /proc --bind /tmp /tmp
+        --bind "$vibe_home" "$vibe_home" --bind "$write_root" "$write_root")
+      [ -z "${TMPDIR:-}" ] || sandbox+=(--bind "$(realpath "$TMPDIR")" "$(realpath "$TMPDIR")")
+      for p in "${protected[@]}"; do
+        sandbox+=(--ro-bind "$p" "$p")
+      done
+      sandbox+=(--)
+      ;;
+    *) die "no sandbox for $(uname -s); supported: macOS, Linux" ;;
+  esac
+}
+
+# Usage: run_vibe <write-root> <protected-path> <vibe args...>
+# Runs Vibe in the sandbox with writes allowed only under <write-root>, never under
+# <protected-path>. Streams one "[mistral] ..." line per event to stderr, prints the final
+# answer, and sets $session. Exit 3 means Vibe stopped at its turn, cost, or time limit.
+run_vibe() {
+  local log="$work_dir/stream.jsonl" rc sandbox
+  sandbox_cmd "$1" "$2"
+  shift 2
   # The whole script must finish inside Claude's 600 s Bash timeout so the answer and
   # session id survive; SECONDS already covers the git work done before this.
   local time_limit=$((560 - SECONDS))
   [ "$time_limit" -ge 60 ] || time_limit=60
   set +e
-  sandbox-exec -f "$plugin_root/scripts/vibe.sb" \
-    -D WRITE_ROOT="$write_root" -D VIBE_HOME="$(realpath "${VIBE_HOME:-$HOME/.vibe}")" \
-    vibe --trust --disabled-tools ask_user_question --output streaming --time-limit "$time_limit" "$@" |
+  "${sandbox[@]}" vibe --trust --disabled-tools ask_user_question --output streaming --time-limit "$time_limit" "$@" |
     tee "$log" |
     jq --unbuffered -rR '
       fromjson? | objects |
@@ -202,7 +240,7 @@ $(if [ "$scope" = branch ]; then git diff --stat "$base...HEAD"; else git status
   } >"$prompt_file"
 
   echo "Mistral $kind of $target" >&2
-  run_vibe "$work_dir" --workdir "$root" --max-turns 40 --max-price 2 \
+  run_vibe "$work_dir" "$root" --workdir "$root" --max-turns 40 --max-price 2 \
     "${read_only_tools[@]}" --add-dir "$work_dir" \
     --prompt-file "$prompt_file"
 }
@@ -222,16 +260,19 @@ task() {
   done
   [ ${#text[@]} -gt 0 ] || die "no task text given"
 
-  local root write_root
+  local root write_root protected
   root="$(repo_root)"
   cd "$root"
   local args=(--workdir "$root" --max-turns 80 --max-price 5)
   if [ "$mode" = write ]; then
     args+=(--auto-approve)
     write_root="$root"
+    # Like Codex: the task may edit the work tree but not plant hooks or rewrite history.
+    protected="$root/.git"
   else
     args+=("${read_only_tools[@]}")
     write_root="$work_dir"
+    protected="$root"
   fi
   if [ "$resume" = last ]; then
     local id
@@ -242,7 +283,7 @@ task() {
 
   local rc=0
   session=""
-  run_vibe "$write_root" "${args[@]}" -p "${text[*]}" || rc=$?
+  run_vibe "$write_root" "$protected" "${args[@]}" -p "${text[*]}" || rc=$?
   # Exit 3 (stopped at a limit) is worth resuming; other failures are not.
   if [ -n "$session" ] && { [ "$rc" -eq 0 ] || [ "$rc" -eq 3 ]; }; then
     mkdir -p "$state_dir"

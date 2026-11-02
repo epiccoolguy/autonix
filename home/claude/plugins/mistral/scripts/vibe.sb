@@ -3,6 +3,8 @@
 ; otherwise). Network stays open because Vibe needs Mistral's API.
 (version 1)
 (allow default)
+; Apple Events would let a sandboxed command ask an unsandboxed app (Finder) to write.
+(deny appleevent-send)
 (deny file-write*)
 (allow file-write*
   (subpath (param "WRITE_ROOT"))
