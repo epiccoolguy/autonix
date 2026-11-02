@@ -107,5 +107,38 @@
       "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster"
     ]
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/etc/nix-darwin/home/claude/codex-broker-gc.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/etc/nix-darwin/home/claude/codex-broker-gc.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "ExitWorktree",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/etc/nix-darwin/home/claude/codex-broker-gc.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
