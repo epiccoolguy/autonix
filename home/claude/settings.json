@@ -51,7 +51,7 @@
       "Bash(gh secret:*)",
       "Bash(gh auth:*)"
     ],
-    "defaultMode": "auto"
+    "defaultMode": "bypassPermissions"
   },
   "fallbackModel": [
     "opus",
