@@ -144,6 +144,14 @@ in
     yq
     zip
     zstd
+    # Scripts rather than aliases so non-interactive shells (agents, Claude's `!`) and
+    # child processes have them too.
+    (writeShellScriptBin "switch" ''
+      exec sudo darwin-rebuild switch "$@"
+    '')
+    (writeShellScriptBin "docker" ''
+      exec podman "$@"
+    '')
   ];
 
   home.sessionVariables = {
@@ -167,11 +175,7 @@ in
   home.shell.enableShellIntegration = true;
 
   home.shellAliases = {
-    switch = "sudo darwin-rebuild switch";
-    docker = "podman";
     createcacerts = "security export -t certs -k /System/Library/Keychains/SystemCertificates.keychain -p > \"/usr/local/share/ca-certificates/cacerts.crt\" && security export -t certs -k /Library/Keychains/System.keychain -p >> \"/usr/local/share/ca-certificates/cacerts.crt\"";
-    python = "python3";
-    pip = "pip3";
   };
 
   programs = {
