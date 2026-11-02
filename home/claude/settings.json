@@ -58,56 +58,6 @@
     "sonnet"
   ],
   "disableClaudeAiConnectors": true,
-  "worktree": {
-    "baseRef": "fresh"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
-  "feedbackSurveyRate": 0,
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "modelSettings": {
-    "claude-fable-5": {
-      "effortLevel": "high"
-    }
-  },
-  "advisorModel": "opus",
-  "awaySummaryEnabled": true,
-  "askUserQuestionTimeout": "10m",
-  "dialogExpiry": "10m",
-  "autoUpdatesChannel": "stable",
-  "skipWorkflowUsageWarning": false,
-  "theme": "auto",
-  "editorMode": "normal",
-  "verbose": false,
-  "preferredNotifChannel": "ghostty",
-  "switchModelsOnFlag": false,
-  "remoteControlAtStartup": true,
-  "crossSessionInbound": "accept",
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "useAutoModeDuringPlan": true,
-  "autoMode": {
-    "allow": [
-      "$defaults",
-      "GitHub collaboration: authoring or updating issues, creating or updating pull requests, and merging pull requests (gh CLI or GitHub MCP tools)",
-      "GitOps deploy flow for all environments including prd: pushing feature branches, opening PRs against master, merging to master, re-pinning overlays/acc and overlays/prd image digests, promoting releases to prd, creating vX.Y.Z release tags"
-    ],
-    "soft_deny": [
-      "$defaults"
-    ],
-    "environment": [
-      "$defaults",
-      "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
-      "Source control: github.com/epiccoolguy and all repos under it",
-      "Trusted internal domains: *.mlzw.dev",
-      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the revocable agent kubeconfig ~/.kube/agent.mlzw.config",
-      "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster"
-    ]
-  },
-  "skipDangerousModePermissionPrompt": true,
   "hooks": {
     "SessionStart": [
       {
@@ -141,6 +91,16 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "mistral@mistral-plugin-cc": true
+  },
   "extraKnownMarketplaces": {
     "mistral-plugin-cc": {
       "source": {
@@ -149,7 +109,47 @@
       }
     }
   },
-  "enabledPlugins": {
-    "mistral@mistral-plugin-cc": true
+  "feedbackSurveyRate": 0,
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "high"
+    }
+  },
+  "advisorModel": "opus",
+  "awaySummaryEnabled": true,
+  "askUserQuestionTimeout": "10m",
+  "dialogExpiry": "10m",
+  "autoUpdatesChannel": "stable",
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": false,
+  "theme": "auto",
+  "editorMode": "normal",
+  "verbose": false,
+  "preferredNotifChannel": "ghostty",
+  "switchModelsOnFlag": false,
+  "remoteControlAtStartup": true,
+  "crossSessionInbound": "accept",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "useAutoModeDuringPlan": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "GitHub collaboration: authoring or updating issues, creating or updating pull requests, and merging pull requests (gh CLI or GitHub MCP tools)",
+      "GitOps deploy flow for all environments including prd: pushing feature branches, opening PRs against master, merging to master, re-pinning overlays/acc and overlays/prd image digests, promoting releases to prd, creating vX.Y.Z release tags"
+    ],
+    "soft_deny": [
+      "$defaults"
+    ],
+    "environment": [
+      "$defaults",
+      "Organization: personal setup of Miguel Lo-A-Foe (software engineer); primary use: software development and GitOps-based Kubernetes operations",
+      "Source control: github.com/epiccoolguy and all repos under it",
+      "Trusted internal domains: *.mlzw.dev",
+      "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the revocable agent kubeconfig ~/.kube/agent.mlzw.config",
+      "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster"
+    ]
   }
 }
