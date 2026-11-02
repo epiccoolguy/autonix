@@ -106,5 +106,6 @@
       "Key internal services: Argo CD at argocd.mlzw.dev, Grafana at grafana.mlzw.dev, the mlzw Kubernetes cluster accessed via the revocable agent kubeconfig ~/.kube/agent.mlzw.config",
       "Sensitive remote targets: prd-suffixed namespaces, apps, and contexts on the mlzw cluster"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }
