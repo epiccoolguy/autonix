@@ -10,6 +10,9 @@
   users.users.miguel.home = "/Users/miguel";
 
   homebrew.brews = [
+    # Not nixpkgs: its Rust vibe-rs is not in cache.nixos.org for darwin, so every
+    # flake update compiled it locally; the formula is bottled.
+    "mistral-vibe"
     "wimlib"
   ];
   homebrew.casks = [
