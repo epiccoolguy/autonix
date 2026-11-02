@@ -83,10 +83,16 @@ run_vibe() {
 working_tree_context() {
   echo "## git status"
   git status --short --untracked-files=all
+  echo
   if git rev-parse --quiet --verify HEAD >/dev/null; then
-    echo
     echo "## Tracked changes (git diff HEAD)"
     git diff HEAD
+  else
+    echo "## Staged changes (no commits yet)"
+    git diff --cached
+    echo
+    echo "## Unstaged changes"
+    git diff
   fi
   local f
   git ls-files --others --exclude-standard -z | while IFS= read -r -d '' f; do
@@ -122,6 +128,8 @@ review() {
     die "/mistral:review takes no focus text; use /mistral:adversarial-review"
 
   git rev-parse --git-dir >/dev/null 2>&1 || die "not inside a git repository"
+  # Diffs and untracked-file listings must cover the whole repository, not the cwd subtree.
+  cd "$(repo_root)"
   if [ "$scope" = auto ]; then
     if [ -n "$base" ]; then
       scope=branch
