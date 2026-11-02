@@ -140,5 +140,16 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "mistral-plugin-cc": {
+      "source": {
+        "source": "github",
+        "repo": "epiccoolguy/mistral-plugin-cc"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "mistral@mistral-plugin-cc": true
   }
 }
