@@ -146,9 +146,9 @@
         "${pkgs.writeShellScript "renovate-triage" ''
           echo "== $(date)"
           dir=${config.home.homeDirectory}/.local/state/renovate-triage/mlzw-infra
-          [ -d "$dir/.git" ] || git clone -q https://github.com/mlzw-dev/mlzw-infra.git "$dir" || exit 1
-          cd "$dir" || exit 1
-          if ! { git fetch -q origin && git checkout -q --detach origin/master && git reset -q --hard; } ||
+          if ! { [ -d "$dir/.git" ] || git clone -q https://github.com/mlzw-dev/mlzw-infra.git "$dir"; } ||
+            ! cd "$dir" ||
+            ! { git fetch -q origin && git checkout -q -f --detach origin/master && git clean -qfd; } ||
             ! /opt/homebrew/bin/claude -p "/renovate-triage" \
             --allowedTools "Bash Read Grep Glob Skill"; then
             /usr/bin/osascript -e 'display notification "See ~/Library/Logs/renovate-triage.log" with title "mlzw Renovate triage failed"'
