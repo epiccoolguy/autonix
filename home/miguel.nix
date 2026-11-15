@@ -139,6 +139,8 @@
   # cloud routine, because verifying a deploy needs the LAN-only cluster and Argo. A missed
   # run (asleep) runs on wake; failures raise a notification. It runs from its own clone at
   # origin/master, so the state of the working checkout (a branch, a detached HEAD) never blocks it.
+  # Claude signs in with the long-lived `claude setup-token` token, which the owner keeps in the
+  # login keychain (service claude-code-oauth-token); an interactive sign-in expires within weeks.
   launchd.agents.renovate-triage = {
     enable = true;
     config = {
@@ -149,6 +151,8 @@
           if ! { [ -d "$dir/.git" ] || git clone -q https://github.com/mlzw-dev/mlzw-infra.git "$dir"; } ||
             ! cd "$dir" ||
             ! { git fetch -q origin && git checkout -q -f --detach origin/master && git clean -qfd; } ||
+            ! CLAUDE_CODE_OAUTH_TOKEN="$(/usr/bin/security find-generic-password -a ${config.home.username} -s claude-code-oauth-token -w)" ||
+            ! export CLAUDE_CODE_OAUTH_TOKEN ||
             ! /opt/homebrew/bin/claude -p "/renovate-triage" \
             --allowedTools "Bash Read Grep Glob Skill"; then
             /usr/bin/osascript -e 'display notification "See ~/Library/Logs/renovate-triage.log" with title "mlzw Renovate triage failed"'
