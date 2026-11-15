@@ -137,15 +137,19 @@
   # Daily Renovate triage (mlzw-infra decisions/0021): headless Claude runs the repo's
   # /renovate-triage skill as the mlzw-agent App with read-only cluster access. Local, not a
   # cloud routine, because verifying a deploy needs the LAN-only cluster and Argo. A missed
-  # run (asleep) runs on wake; failures raise a notification.
+  # run (asleep) runs on wake; failures raise a notification. It runs from its own clone at
+  # origin/master, so the state of the working checkout (a branch, a detached HEAD) never blocks it.
   launchd.agents.renovate-triage = {
     enable = true;
     config = {
       ProgramArguments = [
         "${pkgs.writeShellScript "renovate-triage" ''
           echo "== $(date)"
-          cd ${config.home.homeDirectory}/github.com/epiccoolguy/mlzw-infra || exit 1
-          if ! git pull -q --ff-only || ! /opt/homebrew/bin/claude -p "/renovate-triage" \
+          dir=${config.home.homeDirectory}/.local/state/renovate-triage/mlzw-infra
+          [ -d "$dir/.git" ] || git clone -q https://github.com/mlzw-dev/mlzw-infra.git "$dir" || exit 1
+          cd "$dir" || exit 1
+          if ! { git fetch -q origin && git checkout -q --detach origin/master && git reset -q --hard; } ||
+            ! /opt/homebrew/bin/claude -p "/renovate-triage" \
             --allowedTools "Bash Read Grep Glob Skill"; then
             /usr/bin/osascript -e 'display notification "See ~/Library/Logs/renovate-triage.log" with title "mlzw Renovate triage failed"'
             exit 1
