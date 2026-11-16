@@ -39,9 +39,7 @@
       "azure-cli"
       "copilot-cli"
       "drawio"
-      "ghostty"
       "git-credential-manager"
-      "google-chrome"
       "visual-studio-code"
       "windows-app"
     ];

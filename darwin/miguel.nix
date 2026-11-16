@@ -23,6 +23,8 @@
     "claude"
     "claude-code@latest"
     "codex"
+    "ghostty"
+    "google-chrome"
     "iina"
     "transmission"
   ];

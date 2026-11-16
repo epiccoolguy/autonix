@@ -342,32 +342,6 @@ in
     jq.enable = true;
     go.enable = true;
 
-    ghostty = {
-      enable = true;
-      # The app comes from the homebrew cask; nixpkgs ghostty is broken on darwin.
-      package = null;
-      settings = {
-        # Left Option acts as Meta (word jumps, Claude Code Option shortcuts);
-        # right Option still types special characters.
-        macos-option-as-alt = "left";
-        theme = "light:GitHub Light Default,dark:GitHub Dark Default";
-        # Remotes lack the xterm-ghostty terminfo, breaking rendering and
-        # cursor handling over ssh: install it on the remote when possible,
-        # else fall back to TERM=xterm-256color. Unlisted features keep their
-        # defaults.
-        shell-integration-features = "ssh-env,ssh-terminfo";
-        # Ghostty's default shift+enter sends a bare CR, so Claude Code submits
-        # instead of inserting a newline; send ESC+CR (option+enter's sequence)
-        # so it inserts one.
-        keybind = [
-          "shift+enter=text:\\x1b\\r"
-          # Browser-style tab switching.
-          "opt+cmd+left=previous_tab"
-          "opt+cmd+right=next_tab"
-        ];
-      };
-    };
-
     ssh = {
       enable = true;
       enableDefaultConfig = false;
@@ -641,16 +615,6 @@ in
       XDG_CACHE_HOME="${config.xdg.cacheHome}" \
       ${pkgs.pnpm}/bin/pnpm runtime set node ${pkgs.nodejs_24.version} -g </dev/null \
       || warnEcho "pnpm: could not install global Node.js ${pkgs.nodejs_24.version}"
-  '';
-
-  # macOS has no "default terminal" setting; the closest is claiming the
-  # LaunchServices types Terminal.app owns by default: double-clicked .command
-  # and .tool scripts and bare unix executables. Ghostty declares no ssh://
-  # URL scheme, so those links are out of reach. duti writes are idempotent.
-  home.activation.defaultTerminal = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    for type in .command .tool public.unix-executable; do
-      $DRY_RUN_CMD ${pkgs.duti}/bin/duti -s com.mitchellh.ghostty "$type" all
-    done
   '';
 
   # kubernetes-mcp-server 0.0.68 dropped its CLI flags for a TOML config. Read-only, pinned
