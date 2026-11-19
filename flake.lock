@@ -41,11 +41,11 @@
     "claude-plugins-official": {
       "flake": false,
       "locked": {
-        "lastModified": 1794967153,
-        "narHash": "sha256-J6JgsD2V+fAhCLACVcAM/z+60QNuF5W99SzcHkG1g1w=",
+        "lastModified": 1795050896,
+        "narHash": "sha256-cVfCTknLEP3IJ3GTaL6bLmnNU6Z1UhC0ZjgdvletP6g=",
         "owner": "anthropics",
         "repo": "claude-plugins-official",
-        "rev": "e6143c9807a001832badb63e89d58ffe25d542ec",
+        "rev": "df9699a55c56707e9948a32951ea356638ea8519",
         "type": "github"
       },
       "original": {
@@ -180,11 +180,11 @@
     "homebrew-cask": {
       "flake": false,
       "locked": {
-        "lastModified": 1794994243,
-        "narHash": "sha256-DylYf5SdJ1l6SLsq6lyVHs8xlP/SCuALXvVYWADhUlE=",
+        "lastModified": 1795079526,
+        "narHash": "sha256-Z6gJtY3SSUcGMGlNE3sAQe3h/4q5ury55JwvqkbaNTc=",
         "owner": "homebrew",
         "repo": "homebrew-cask",
-        "rev": "08ceab009e6045a48287fe9e199d63cf87c550ec",
+        "rev": "01a79e9fbf268e75dd5b53726f2b58158ae8a3e8",
         "type": "github"
       },
       "original": {
@@ -196,11 +196,11 @@
     "homebrew-core": {
       "flake": false,
       "locked": {
-        "lastModified": 1794992793,
-        "narHash": "sha256-TO7DvXeboMSNcvvMJ9lIFUSn+1+08vzHjZmJOP0VdMk=",
+        "lastModified": 1795080694,
+        "narHash": "sha256-BioMNCtuiEaxqJccbY1rTMvWqEc9kPo4zNlo8RIOUrI=",
         "owner": "homebrew",
         "repo": "homebrew-core",
-        "rev": "eb06f702350e824f0c7dc4e34dcb2fd3cb6c5c03",
+        "rev": "ba316530a7f35263167e52c4f8446de48fb6c2e6",
         "type": "github"
       },
       "original": {
@@ -291,11 +291,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1794984540,
-        "narHash": "sha256-gnXOx6XcXWygmfD9aEvHBoyvGToyPnoCdx/Mk1Irb4E=",
+        "lastModified": 1795071277,
+        "narHash": "sha256-cV7fcenrEpJ1s1AjI8X3BnAQVqmzMYt5oPV/fjR9P1c=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "a70f941d77bcad4edcd831ee5684235ff1fe7242",
+        "rev": "f80658b487635b3e7156ad61606033f0dc5316bf",
         "type": "github"
       },
       "original": {
