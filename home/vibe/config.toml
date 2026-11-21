@@ -51,6 +51,6 @@ allowlist = [
     "whoami",
 ]
 
-# Reviews and slices run headless on the default routed model; low thinking keeps them fast.
+# Matches Codex's model_reasoning_effort (home/codex/config.toml).
 [models.mistral-large-4-0-3]
-thinking = "low"
+thinking = "medium"
