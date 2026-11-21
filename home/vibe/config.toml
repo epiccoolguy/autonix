@@ -50,3 +50,7 @@ allowlist = [
     "which",
     "whoami",
 ]
+
+# Reviews and slices run headless on the default routed model; low thinking keeps them fast.
+[models.mistral-large-4-0-3]
+thinking = "low"
