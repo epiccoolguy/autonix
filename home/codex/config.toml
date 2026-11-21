@@ -8,6 +8,12 @@ trust_level = "trusted"
 [projects."/Users/miguel/github.com/epiccoolguy"]
 trust_level = "trusted"
 
+[projects."/Users/miguel/github.com/epiccoolguy/mlzw-database"]
+trust_level = "trusted"
+
+[projects."/Users/miguel/github.com/epiccoolguy/mlzw-identity"]
+trust_level = "trusted"
+
 [tui]
 screen_reader_detection_done = true
 
