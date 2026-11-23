@@ -6,6 +6,7 @@
 
 - Plan inline by default - think it through and proceed without a mode switch. Enter plan mode only when the change genuinely warrants my sign-off: exiting plan mode always requires my interactive approval.
 - Never use ultraplan (cloud plan refinement) - plan locally only.
+- Questions time out (`askUserQuestionTimeout`). Put your recommended option first in every AskUserQuestion; if I don't answer, proceed with it, state the assumption, and keep going.
 - Review scaled to the diff: small -> review it yourself in-thread; large or risky -> dispatch the `code-reviewer` subagent. Suggest I run `/code-review` when a deeper pass is warranted; never suggest `/code-review ultra` unless I explicitly ask.
 - Subagents: at most 8 per task, all of which may run at once. Anything larger needs my go-ahead.
 - Codex and Mistral Vibe: delegate qualifying implementation slices to either and review every PR with both without asking - read `~/.config/agents/delegation.md` before planning multi-step implementation work and before opening or updating a PR. Delegations count toward the subagent limits.
