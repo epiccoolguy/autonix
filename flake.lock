@@ -41,11 +41,11 @@
     "claude-plugins-official": {
       "flake": false,
       "locked": {
-        "lastModified": 1795223871,
-        "narHash": "sha256-tG21jUglH8pac5VSDZN7f68vCwThl3GkBOnxz9T9VyE=",
+        "lastModified": 1795478020,
+        "narHash": "sha256-RgRJXQWhAUkCM0xNrJt2WVwkN47JV005CF8IK9wMZhg=",
         "owner": "anthropics",
         "repo": "claude-plugins-official",
-        "rev": "73c8cf3ea7e296057b467990f2f5d61b4c922260",
+        "rev": "5cec6716767283f4675a05f5f8855b5b49c81783",
         "type": "github"
       },
       "original": {
@@ -180,11 +180,11 @@
     "homebrew-cask": {
       "flake": false,
       "locked": {
-        "lastModified": 1795428120,
-        "narHash": "sha256-d93U8SrWZKfXI/1xDcOrMeD7jDOf2LDsTh0M3FlBVtU=",
+        "lastModified": 1795518945,
+        "narHash": "sha256-094cUu/moFdGbt0biqLLRaR4VngFWmUNkzcPDAT+bgU=",
         "owner": "homebrew",
         "repo": "homebrew-cask",
-        "rev": "9c91a4a69068c3e7b3df1a60fc9b78749a47a5d8",
+        "rev": "a3762f66f71796510b69144c238c63276921c32f",
         "type": "github"
       },
       "original": {
@@ -196,11 +196,11 @@
     "homebrew-core": {
       "flake": false,
       "locked": {
-        "lastModified": 1795422844,
-        "narHash": "sha256-UqT0Z59RMgWk4SRcyv87kLqbiP6hkkhGvzMioZl1ti4=",
+        "lastModified": 1795520742,
+        "narHash": "sha256-qtrs6IkpNgCvLyqMUZj6P1UbUc4gdqsZ3XKh/ObskAI=",
         "owner": "homebrew",
         "repo": "homebrew-core",
-        "rev": "5d148843d74688ba8a8d4ab403285d4c2a3cce3f",
+        "rev": "bcb92cd329083a9e53e75d330bcdd1d4fb0660e6",
         "type": "github"
       },
       "original": {
@@ -291,11 +291,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1795416618,
-        "narHash": "sha256-yt+hZIQ/IvwOCNFO5npT8KLrXZ+U7vDeQxjX8ZvoHQ8=",
+        "lastModified": 1795511924,
+        "narHash": "sha256-qV1tHChWK6j+AwznYsYPWMbqbUbD5HT33WX1FWa6kQs=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "661f7bc4cfed8c0143603f3df2fd89a0e5fcf04a",
+        "rev": "19b08a92e904f2e6da2ca7565bdb26dbd9286faa",
         "type": "github"
       },
       "original": {
@@ -401,11 +401,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1795249095,
-        "narHash": "sha256-8JDgyVvWUZg5m9hNlL8Ge9aT647ng3Ukc8NPMiKNTPQ=",
+        "lastModified": 1795371335,
+        "narHash": "sha256-oa2P5WZer1A4wuhatl92JyHHEjrrOdIyuvTuI5LUi9Q=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "93a9ed0a866099a230ed5146a5bb7d16fd5c9b14",
+        "rev": "619c39f6eac5d1ed6b8f073a9414baf7034b2356",
         "type": "github"
       },
       "original": {
